@@ -1,5 +1,6 @@
 pub contract ISPOManager {
 
+    // ISPORecord
     pub resource ISPORecord {
         pub let id: String
 
@@ -11,9 +12,6 @@ pub contract ISPOManager {
     }
 
     access(contract) let ispoRecords : @{String: ISPORecord}
-
-    pub let ispoStoragePath: StoragePath
-    pub let ispoPublicPath: PublicPath
 
     pub fun getISPORecords(): [String] {
         let ispoIds : [String] = [] 
@@ -37,6 +35,9 @@ pub contract ISPOManager {
     }
 
     // ISPO
+
+    pub let ispoStoragePath: StoragePath
+    pub let ispoPublicPath: PublicPath
 
     pub resource interface ISPOPublic {
         pub var id: String
