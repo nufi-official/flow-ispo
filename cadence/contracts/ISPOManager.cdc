@@ -1,6 +1,7 @@
 pub contract ISPOManager {
 
     // ISPORecord
+    
     pub resource ISPORecord {
         pub let id: String
 
