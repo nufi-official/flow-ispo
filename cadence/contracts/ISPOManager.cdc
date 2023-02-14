@@ -24,7 +24,7 @@ pub contract ISPOManager {
 
     access(contract) fun removeISPORecord(id: String) {
         pre {
-            self.ispoRecords.containsKey(id): "Cannot ISPO record that does not exist"
+            self.ispoRecords.containsKey(id): "Cannot remove ISPO record that does not exist"
         }
         self.ispoRecords.remove(key: id)
     }
@@ -38,7 +38,7 @@ pub contract ISPOManager {
     pub resource ISPO: ISPOPublic {
         pub var id: String
 
-        init (id: String) {
+        init (id: String) { // options, conditions etc
             self.id = id
             ISPOManager.recordISPO(id: id)
         }
