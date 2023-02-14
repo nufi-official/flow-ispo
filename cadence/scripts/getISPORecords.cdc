@@ -1,5 +1,5 @@
 import ISPOManager from "../contracts/ISPOManager.cdc"
 
-pub fun main(): {String: ISPOManager.ISPORecord} {
+pub fun main(): [String] {
   return ISPOManager.getISPORecords()
 }
