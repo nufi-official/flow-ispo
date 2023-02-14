@@ -38,7 +38,7 @@ pub contract ISPOManager {
     pub resource ISPO: ISPOPublic {
         pub var id: String
 
-        init (id: String) { // options, conditions etc
+        init (id: String) {
             self.id = id
             ISPOManager.recordISPO(id: id)
         }
