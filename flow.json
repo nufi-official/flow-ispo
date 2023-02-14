@@ -12,11 +12,11 @@
     }
   },
   "contracts": {
-    "HelloWorld": "./cadence/contracts/HelloWorld.cdc"
+    "ISPOManager": "./cadence/contracts/ISPOManager.cdc"
   },
   "deployments": {
     "emulator": {
-      "emulator-account": ["HelloWorld"]
+      "emulator-account": ["ISPOManager"]
     }
   }
 }
