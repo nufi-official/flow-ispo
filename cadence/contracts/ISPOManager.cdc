@@ -1,6 +1,6 @@
 pub contract ISPOManager {
 
-    pub struct ISPORecord {
+    pub resource ISPORecord {
         pub let id: String
 
         init(
@@ -10,23 +10,30 @@ pub contract ISPOManager {
         }
     }
 
-    access(contract) let ispoRecords : {String: ISPORecord}
+    access(contract) let ispoRecords : @{String: ISPORecord}
+
     pub let ispoStoragePath: StoragePath
     pub let ispoPublicPath: PublicPath
 
-    pub fun getISPORecords(): {String: ISPORecord} {
-        return self.ispoRecords
+    pub fun getISPORecords(): [String] {
+        let ispoIds : [String] = [] 
+        ISPOManager.ispoRecords.forEachKey(fun (key: String): Bool {
+           let ispoRecordRef: &ISPOManager.ISPORecord? = &ISPOManager.ispoRecords[key] as &ISPOManager.ISPORecord?
+           ispoIds.append(ispoRecordRef!.id)
+           return true
+        })
+        return ispoIds
     }
 
     access(contract) fun recordISPO(id: String) {
-        self.ispoRecords.insert(key: id, ISPORecord(id: id))
+        self.ispoRecords[id] <-! create ISPORecord(id: id)
     }
 
     access(contract) fun removeISPORecord(id: String) {
         pre {
             self.ispoRecords.containsKey(id): "Cannot remove ISPO record that does not exist"
         }
-        self.ispoRecords.remove(key: id)
+        destroy self.ispoRecords.remove(key: id)!
     }
 
     // ISPO
@@ -54,7 +61,7 @@ pub contract ISPOManager {
 
 
     init() {
-        self.ispoRecords = {}
+        self.ispoRecords <- {}
         self.ispoStoragePath = /storage/ISPO
         self.ispoPublicPath = /public/ISPO
     }
