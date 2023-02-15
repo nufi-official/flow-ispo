@@ -4,6 +4,19 @@ pub contract ISPOManager {
 
     // ISPORecord
 
+    pub struct ISPORecordInfo {
+        access(self) let id: String
+        access(self) let rewardTokenBalance: UFix64
+
+        init(
+            id: String,
+            rewardTokenBalance: UFix64
+        ) {
+            self.id = id
+            self.rewardTokenBalance = rewardTokenBalance
+        }
+    }
+
     pub resource ISPORecord {
         pub let id: String
         access(self) let rewardTokenVault: @FungibleToken.Vault
@@ -16,6 +29,10 @@ pub contract ISPOManager {
             self.rewardTokenVault <- rewardTokenVault
         }
 
+        pub fun getInfo(): ISPORecordInfo {
+            return ISPORecordInfo(id: self.id, rewardTokenBalance: self.rewardTokenVault.balance)
+        }
+
         destroy() {
             pre {
                 self.rewardTokenVault.balance == UFix64(0.0): "ISPO record still hold some reward token, so it cannot be destroyed"
@@ -26,14 +43,14 @@ pub contract ISPOManager {
 
     access(contract) let ispoRecords : @{String: ISPORecord}
 
-    pub fun getISPORecords(): [String] {
-        let ispoIds : [String] = [] 
+    pub fun getISPORecordInfos(): [ISPORecordInfo] {
+        let ispoInfos : [ISPORecordInfo] = [] 
         ISPOManager.ispoRecords.forEachKey(fun (key: String): Bool {
            let ispoRecordRef: &ISPOManager.ISPORecord? = &ISPOManager.ispoRecords[key] as &ISPOManager.ISPORecord?
-           ispoIds.append(ispoRecordRef!.id)
+           ispoInfos.append(ispoRecordRef!.getInfo())
            return true
         })
-        return ispoIds
+        return ispoInfos
     }
 
     access(contract) fun recordISPO(id: String, rewardTokenVault: @FungibleToken.Vault) {
