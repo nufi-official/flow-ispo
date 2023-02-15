@@ -5,11 +5,11 @@ pub contract ISPOManager {
     // ISPORecord
 
     pub struct ISPORecordInfo {
-        access(self) let id: String
+        access(self) let id: UInt64
         access(self) let rewardTokenBalance: UFix64
 
         init(
-            id: String,
+            id: UInt64,
             rewardTokenBalance: UFix64
         ) {
             self.id = id
@@ -18,11 +18,11 @@ pub contract ISPOManager {
     }
 
     pub resource ISPORecord {
-        access(self) let id: String
+        access(self) let id: UInt64
         access(self) let rewardTokenVault: @FungibleToken.Vault
 
         init(
-            id: String,
+            id: UInt64,
             rewardTokenVault: @FungibleToken.Vault
         ) {
             self.id = id
@@ -41,9 +41,9 @@ pub contract ISPOManager {
         }
     }
 
-    access(contract) let ispoRecords : @{String: ISPORecord}
+    access(contract) let ispoRecords : @{UInt64: ISPORecord}
 
-    access(contract) fun borrowISPORecord(id: String): &ISPOManager.ISPORecord {
+    access(contract) fun borrowISPORecord(id: UInt64): &ISPOManager.ISPORecord {
         pre {
             self.ispoRecords.containsKey(id): "Specified ISPO record does not exist"
         }
@@ -52,7 +52,7 @@ pub contract ISPOManager {
 
     pub fun getISPORecordInfos(): [ISPORecordInfo] {
         let ispoInfos : [ISPORecordInfo] = [] 
-        ISPOManager.ispoRecords.forEachKey(fun (key: String): Bool {
+        ISPOManager.ispoRecords.forEachKey(fun (key: UInt64): Bool {
            let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: key)
            ispoInfos.append(ispoRecordRef.getInfo())
            return true
@@ -60,7 +60,7 @@ pub contract ISPOManager {
         return ispoInfos
     }
 
-    access(contract) fun recordISPO(id: String, rewardTokenVault: @FungibleToken.Vault) {
+    access(contract) fun recordISPO(id: UInt64, rewardTokenVault: @FungibleToken.Vault) {
         pre {
             !self.ispoRecords.containsKey(id): "Resource with same id already exists"
         }
@@ -71,7 +71,7 @@ pub contract ISPOManager {
         destroy tmpRecord
     }
 
-    access(contract) fun removeISPORecord(id: String) {
+    access(contract) fun removeISPORecord(id: UInt64) {
         pre {
             self.ispoRecords.containsKey(id): "Cannot remove ISPO record that does not exist"
         }
@@ -83,20 +83,18 @@ pub contract ISPOManager {
     pub let ispoAdminStoragePath: StoragePath
 
     pub resource ISPOAdmin {
-        pub var id: String
 
-        init (id: String, rewardTokenVault: @FungibleToken.Vault) {
-            self.id = id
-            ISPOManager.recordISPO(id: id, rewardTokenVault: <- rewardTokenVault)
+        init (rewardTokenVault: @FungibleToken.Vault) {
+            ISPOManager.recordISPO(id: self.uuid, rewardTokenVault: <- rewardTokenVault)
         }
 
         destroy() {
-          ISPOManager.removeISPORecord(id: self.id)
+          ISPOManager.removeISPORecord(id: self.uuid)
         }
     }
 
-    pub fun createISPOAdmin(id: String, rewardTokenVault: @FungibleToken.Vault): @ISPOAdmin {
-      return <- create ISPOAdmin(id: id, rewardTokenVault: <- rewardTokenVault)
+    pub fun createISPOAdmin(rewardTokenVault: @FungibleToken.Vault): @ISPOAdmin {
+      return <- create ISPOAdmin(rewardTokenVault: <- rewardTokenVault)
     }
 
     init() {
