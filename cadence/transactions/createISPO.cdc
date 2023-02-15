@@ -19,4 +19,6 @@ transaction(rewardTokenAmount: UFix64) {
 
   execute {}
 }
+
+// TODO: this should be a script template, the ISPO admin will have to provide (contractName, contractAddress, storageVaultPath)
  
