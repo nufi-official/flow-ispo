@@ -4,7 +4,7 @@ import FungibleToken from "../contracts/standard/FungibleToken.cdc"
 transaction(id: String, rewardTokenAmount: UFix64) {
 
   prepare(acct: AuthAccount) {
-    if acct.borrow<&ISPOManager.ISPO>(from: ISPOManager.ispoStoragePath) != nil {
+    if acct.borrow<&ISPOManager.ISPOAdmin>(from: ISPOManager.ispoAdminStoragePath) != nil {
       panic("ISPO already exists")
     }
 
@@ -12,13 +12,8 @@ transaction(id: String, rewardTokenAmount: UFix64) {
 			?? panic("Could not borrow reference to the owner's Vault!")
 
     acct.save(
-      <-ISPOManager.createISPO(id: id, rewardTokenVault: <- vaultRef.withdraw(amount: rewardTokenAmount)),
-      to: ISPOManager.ispoStoragePath
-    )
-
-    acct.link<&ISPOManager.ISPO{ISPOManager.ISPOPublic}>(
-        ISPOManager.ispoPublicPath,
-        target: ISPOManager.ispoStoragePath
+      <-ISPOManager.createISPOAdmin(id: id, rewardTokenVault: <- vaultRef.withdraw(amount: rewardTokenAmount)),
+      to: ISPOManager.ispoAdminStoragePath
     )
   }
 
