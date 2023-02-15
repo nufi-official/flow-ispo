@@ -18,7 +18,7 @@ pub contract ISPOManager {
     }
 
     pub resource ISPORecord {
-        pub let id: String
+        access(self) let id: String
         access(self) let rewardTokenVault: @FungibleToken.Vault
 
         init(
@@ -43,11 +43,18 @@ pub contract ISPOManager {
 
     access(contract) let ispoRecords : @{String: ISPORecord}
 
+    access(contract) fun borrowISPORecord(id: String): &ISPOManager.ISPORecord {
+        pre {
+            self.ispoRecords.containsKey(id): "Specified ISPO record does not exist"
+        }
+        return (&self.ispoRecords[id] as &ISPOManager.ISPORecord?)!
+    }
+
     pub fun getISPORecordInfos(): [ISPORecordInfo] {
         let ispoInfos : [ISPORecordInfo] = [] 
         ISPOManager.ispoRecords.forEachKey(fun (key: String): Bool {
-           let ispoRecordRef: &ISPOManager.ISPORecord? = &ISPOManager.ispoRecords[key] as &ISPOManager.ISPORecord?
-           ispoInfos.append(ispoRecordRef!.getInfo())
+           let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: key)
+           ispoInfos.append(ispoRecordRef.getInfo())
            return true
         })
         return ispoInfos
