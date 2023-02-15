@@ -12,7 +12,15 @@
     }
   },
   "contracts": {
-    "ISPOManager": "./cadence/contracts/ISPOManager.cdc"
+    "ISPOManager": "./cadence/contracts/ISPOManager.cdc",
+    "FungibleToken": {
+      "source": "./cadence/contracts/standard/FungibleToken.cdc",
+      "aliases": {
+        "testnet": "0x9a0766d93b6608b7",
+        "emulator": "0xee82856bf20e2aa6",
+        "mainnet": "0xf233dcee88fe0abe"
+      }
+    }
   },
   "deployments": {
     "emulator": {
