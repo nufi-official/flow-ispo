@@ -80,14 +80,9 @@ pub contract ISPOManager {
 
     // ISPO
 
-    pub let ispoStoragePath: StoragePath
-    pub let ispoPublicPath: PublicPath
+    pub let ispoAdminStoragePath: StoragePath
 
-    pub resource interface ISPOPublic {
-        pub var id: String
-    }
-
-    pub resource ISPO: ISPOPublic {
+    pub resource ISPOAdmin {
         pub var id: String
 
         init (id: String, rewardTokenVault: @FungibleToken.Vault) {
@@ -100,15 +95,13 @@ pub contract ISPOManager {
         }
     }
 
-    pub fun createISPO(id: String, rewardTokenVault: @FungibleToken.Vault): @ISPO {
-      return <- create ISPO(id: id, rewardTokenVault: <- rewardTokenVault)
+    pub fun createISPOAdmin(id: String, rewardTokenVault: @FungibleToken.Vault): @ISPOAdmin {
+      return <- create ISPOAdmin(id: id, rewardTokenVault: <- rewardTokenVault)
     }
-
 
     init() {
         self.ispoRecords <- {}
-        self.ispoStoragePath = /storage/ISPO
-        self.ispoPublicPath = /public/ISPO
+        self.ispoAdminStoragePath = /storage/ISPO
     }
 }
  
