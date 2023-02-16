@@ -77,6 +77,11 @@ pub contract ISPOManager {
             self.epochEnd = epochEnd
         }
 
+        access(self) fun isISPOActive(): Bool {
+            let currentEpoch: UInt64 = FlowEpoch.currentEpochCounter
+            return currentEpoch >= self.epochStart && currentEpoch < self.epochEnd
+        }
+
         pub fun getInfo(): ISPORecordInfo {
             return ISPORecordInfo(id: self.id, rewardTokenBalance: self.rewardTokenVault.balance, epochStart: self.epochStart, epochEnd: self.epochEnd)
         }
@@ -84,6 +89,7 @@ pub contract ISPOManager {
         pub fun createNewDelegator(delegatorId: UInt64, flowVault: @FungibleToken.Vault) {
             pre {
                 !self.delegators.containsKey(delegatorId): "Delegator with same id already exists"
+                self.isISPOActive(): "ISPO is not active"
             }
 
             let nodeId: String = ISPOManager.defaultNodeId // TODO: possibly get as setting from ISPORecord
