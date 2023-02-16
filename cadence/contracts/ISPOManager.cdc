@@ -1,5 +1,6 @@
 import FungibleToken from "./standard/FungibleToken.cdc"
 import FlowIDTableStaking from "./standard/FlowIdTableStaking.cdc"
+import FlowEpoch from "./standard/FlowEpoch.cdc"
 
 pub contract ISPOManager {
 
@@ -20,9 +21,26 @@ pub contract ISPOManager {
 
     pub resource DelegatorRecord {
         access(self) let nodeDelegator: @FlowIDTableStaking.NodeDelegator
+        access(self) let epochFlowCommitments: {UInt64: UFix64}
 
         init(nodeDelegator: @FlowIDTableStaking.NodeDelegator) {
             self.nodeDelegator <- nodeDelegator
+            self.epochFlowCommitments = {}
+        }
+
+        access(self) fun updateCurrentEpochFlowCommitment(amount: UFix64) {
+            let currentEpoch: UInt64 = FlowEpoch.currentEpochCounter
+            if (self.epochFlowCommitments.containsKey(currentEpoch)) {
+                let currentEpochCommitment: UFix64 = self.epochFlowCommitments[currentEpoch]!
+                self.epochFlowCommitments[currentEpoch] = currentEpochCommitment + amount
+            }
+            self.epochFlowCommitments[currentEpoch]
+        }
+
+        pub fun delegateNewTokens(flowVault: @FungibleToken.Vault) {
+            let amount: UFix64 = flowVault.balance
+            self.nodeDelegator.delegateNewTokens(from: <- flowVault)
+            self.updateCurrentEpochFlowCommitment(amount: amount)
         }
 
         destroy() {
@@ -58,9 +76,10 @@ pub contract ISPOManager {
 
             let nodeId: String = ISPOManager.defaultNodeId // TODO: possibly get as setting from ISPORecord
             let nodeDelegator: @FlowIDTableStaking.NodeDelegator <- FlowIDTableStaking.registerNewDelegator(nodeID: nodeId) 
-            nodeDelegator.delegateNewTokens(from: <- flowVault)
 
-            self.delegators[delegatorId] <-! create DelegatorRecord(nodeDelegator: <- nodeDelegator)
+            let newDelegatorRecord: @ISPOManager.DelegatorRecord <- create DelegatorRecord(nodeDelegator: <- nodeDelegator)
+            newDelegatorRecord.delegateNewTokens(flowVault: <- flowVault)
+            self.delegators[delegatorId] <-! newDelegatorRecord
         }
 
         destroy() {
