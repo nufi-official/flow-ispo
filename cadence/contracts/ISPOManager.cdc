@@ -9,13 +9,19 @@ pub contract ISPOManager {
     pub struct ISPORecordInfo {
         access(self) let id: UInt64
         access(self) let rewardTokenBalance: UFix64
+        access(self) let epochStart: UInt64
+        access(self) let epochEnd: UInt64
 
         init(
             id: UInt64,
-            rewardTokenBalance: UFix64
+            rewardTokenBalance: UFix64,
+            epochStart: UInt64,
+            epochEnd: UInt64,
         ) {
             self.id = id
             self.rewardTokenBalance = rewardTokenBalance
+            self.epochStart = epochStart
+            self.epochEnd = epochEnd
         }
     }
 
@@ -55,18 +61,24 @@ pub contract ISPOManager {
         access(self) let id: UInt64
         access(self) let rewardTokenVault: @FungibleToken.Vault
         access(self) let delegators: @{UInt64: DelegatorRecord}
+        access(self) let epochStart: UInt64
+        access(self) let epochEnd: UInt64
 
         init(
             id: UInt64,
-            rewardTokenVault: @FungibleToken.Vault
+            rewardTokenVault: @FungibleToken.Vault,
+            epochStart: UInt64,
+            epochEnd: UInt64,
         ) {
             self.id = id
             self.rewardTokenVault <- rewardTokenVault
             self.delegators <- {}
+            self.epochStart = epochStart
+            self.epochEnd = epochEnd
         }
 
         pub fun getInfo(): ISPORecordInfo {
-            return ISPORecordInfo(id: self.id, rewardTokenBalance: self.rewardTokenVault.balance)
+            return ISPORecordInfo(id: self.id, rewardTokenBalance: self.rewardTokenVault.balance, epochStart: self.epochStart, epochEnd: self.epochEnd)
         }
 
         pub fun createNewDelegator(delegatorId: UInt64, flowVault: @FungibleToken.Vault) {
@@ -111,11 +123,11 @@ pub contract ISPOManager {
         return ispoInfos
     }
 
-    access(contract) fun recordISPO(id: UInt64, rewardTokenVault: @FungibleToken.Vault) {
+    access(contract) fun recordISPO(id: UInt64, rewardTokenVault: @FungibleToken.Vault, epochStart: UInt64, epochEnd: UInt64) {
         pre {
             !self.ispoRecords.containsKey(id): "Resource with same id already exists"
         }
-        var tmpRecord: @ISPORecord? <- create ISPORecord(id: id, rewardTokenVault: <- rewardTokenVault)
+        var tmpRecord: @ISPORecord? <- create ISPORecord(id: id, rewardTokenVault: <- rewardTokenVault, epochStart: epochStart, epochEnd: epochEnd)
         self.ispoRecords[id] <-> tmpRecord
         // we destroy this "tmpRecord" but at this point it must contain null as it was swapped with previous value of "ispoRecords[id]"
         // https://developers.flow.com/cadence/language/resources
@@ -137,8 +149,8 @@ pub contract ISPOManager {
 
     pub resource ISPOAdmin {
 
-        init (rewardTokenVault: @FungibleToken.Vault) {
-            ISPOManager.recordISPO(id: self.uuid, rewardTokenVault: <- rewardTokenVault)
+        init (rewardTokenVault: @FungibleToken.Vault, epochStart: UInt64, epochEnd: UInt64) {
+            ISPOManager.recordISPO(id: self.uuid, rewardTokenVault: <- rewardTokenVault, epochStart: epochStart, epochEnd: epochEnd)
         }
 
         destroy() {
@@ -146,8 +158,8 @@ pub contract ISPOManager {
         }
     }
 
-    pub fun createISPOAdmin(rewardTokenVault: @FungibleToken.Vault): @ISPOAdmin {
-      return <- create ISPOAdmin(rewardTokenVault: <- rewardTokenVault)
+    pub fun createISPOAdmin(rewardTokenVault: @FungibleToken.Vault, epochStart: UInt64, epochEnd: UInt64): @ISPOAdmin {
+      return <- create ISPOAdmin(rewardTokenVault: <- rewardTokenVault, epochStart: epochStart, epochEnd: epochEnd)
     }
 
     // ISPOClient
