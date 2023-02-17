@@ -28,10 +28,12 @@ pub contract ISPOManager {
     pub resource DelegatorRecord {
         access(self) let nodeDelegator: @FlowIDTableStaking.NodeDelegator
         access(self) let epochFlowCommitments: {UInt64: UFix64}
+        pub var hasWithdrawRewardToken: Bool
 
         init(nodeDelegator: @FlowIDTableStaking.NodeDelegator) {
             self.nodeDelegator <- nodeDelegator
             self.epochFlowCommitments = {}
+            self.hasWithdrawRewardToken = false
         }
 
         access(self) fun updateCurrentEpochFlowCommitment(amount: UFix64) {
@@ -49,6 +51,14 @@ pub contract ISPOManager {
             self.updateCurrentEpochFlowCommitment(amount: amount)
         }
 
+        pub fun getEpochFlowCommitments(): {UInt64: UFix64} {
+            return self.epochFlowCommitments
+        }
+
+        pub fun setHasWithrawnRewardToken() {
+            self.hasWithdrawRewardToken = true
+        }
+
         destroy() {
             pre {
                 // TODO: pre conditions for destroying nodeDelegator
@@ -59,6 +69,7 @@ pub contract ISPOManager {
 
     pub resource ISPORecord {
         access(self) let id: UInt64
+        access(self) let totalRewardTokenAmount: UFix64
         access(self) let rewardTokenVault: @FungibleToken.Vault
         access(self) let delegators: @{UInt64: DelegatorRecord}
         access(self) let epochStart: UInt64
@@ -71,6 +82,7 @@ pub contract ISPOManager {
             epochEnd: UInt64,
         ) {
             self.id = id
+            self.totalRewardTokenAmount = rewardTokenVault.balance
             self.rewardTokenVault <- rewardTokenVault
             self.delegators <- {}
             self.epochStart = epochStart
@@ -79,7 +91,7 @@ pub contract ISPOManager {
 
         access(self) fun isISPOActive(): Bool {
             let currentEpoch: UInt64 = FlowEpoch.currentEpochCounter
-            return currentEpoch >= self.epochStart && currentEpoch < self.epochEnd
+            return currentEpoch >= self.epochStart && currentEpoch <= self.epochEnd
         }
 
         pub fun getInfo(): ISPORecordInfo {
@@ -98,6 +110,56 @@ pub contract ISPOManager {
             let newDelegatorRecord: @ISPOManager.DelegatorRecord <- create DelegatorRecord(nodeDelegator: <- nodeDelegator)
             newDelegatorRecord.delegateNewTokens(flowVault: <- flowVault)
             self.delegators[delegatorId] <-! newDelegatorRecord
+        }
+
+        access(self) fun borrowDelegatorRecord(delegatorId: UInt64): &DelegatorRecord {
+            pre {
+                self.delegators.containsKey(delegatorId): "Specified delegator ID does not exist"
+            }
+            return (&self.delegators[delegatorId] as &DelegatorRecord?)!
+        }
+
+        access(self) fun getDelegatorWeight(delegatorRef: &ISPOManager.DelegatorRecord): UFix64 {
+            let epochFlowCommitments: {UInt64: UFix64} = delegatorRef.getEpochFlowCommitments()
+
+            var epochIndexIterator: UInt64 = self.epochStart
+            var weight: UFix64 = 0.0
+            var lastCommitedValue: UFix64 = 0.0
+            while (epochIndexIterator <= self.epochEnd) {
+                let epochCommitment: UFix64? = epochFlowCommitments[epochIndexIterator]
+                if (epochCommitment != nil) {
+                    lastCommitedValue = lastCommitedValue + epochCommitment!
+                    weight = weight + lastCommitedValue
+                } else {
+                    weight = weight + lastCommitedValue
+                }
+                epochIndexIterator = epochIndexIterator + 1
+            }
+            return weight
+        }
+
+        access(self) fun getTotalDelegatorWeight(): UFix64 {
+            var totalWeight: UFix64 = 0.0
+            for key in self.delegators.keys {
+                let delegatorRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: key)
+                totalWeight = totalWeight + self.getDelegatorWeight(delegatorRef: delegatorRef)
+            }
+            return totalWeight
+        }
+
+        pub fun withdrawRewardToken(delegatorId: UInt64): @FungibleToken.Vault {
+            pre {
+                !self.isISPOActive(): "ISPO must be inactive to withdraw reward token"
+            }
+            let totalDelegatorWeight: UFix64 = self.getTotalDelegatorWeight()
+            let delegatorRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: delegatorId)
+            if (delegatorRef.hasWithdrawRewardToken) {
+                panic("Reward token has already been withdrawn")
+            }
+            let delegatorWeight: UFix64 = self.getDelegatorWeight(delegatorRef: delegatorRef)
+            let rewardAmount: UFix64 = self.totalRewardTokenAmount * (delegatorWeight / totalDelegatorWeight) // TODO: remove division?
+            delegatorRef.setHasWithrawnRewardToken()
+            return <- self.rewardTokenVault.withdraw(amount: rewardAmount)
         }
 
         destroy() {
@@ -177,6 +239,11 @@ pub contract ISPOManager {
             self.ispoId = ispoId
             let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: ispoId)
             ispoRecordRef.createNewDelegator(delegatorId: self.uuid, flowVault: <- flowVault)
+        }
+
+        pub fun withdrawRewardToken(): @FungibleToken.Vault {
+            let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: self.ispoId)
+            return <- ispoRecordRef.withdrawRewardToken(delegatorId: self.uuid)
         }
 
         // TODO: destroy
