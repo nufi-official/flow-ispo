@@ -159,7 +159,7 @@ pub contract ISPOManager {
             return totalWeight
         }
 
-        pub fun withdrawRewardToken(delegatorId: UInt64): @FungibleToken.Vault {
+        pub fun withdrawRewardTokens(delegatorId: UInt64): @FungibleToken.Vault {
             pre {
                 !self.isISPOActive(): "ISPO must be inactive to withdraw reward token"
             }
@@ -186,10 +186,6 @@ pub contract ISPOManager {
                 
             }
             return <- totalRewardsVault!
-        }
-        
-        pub fun createEmptyRewardTokenVault(): @FungibleToken.Vault {
-            return <- self.rewardTokenVault.withdraw(amount: 0.0)
         }
 
         destroy() {
@@ -305,7 +301,7 @@ pub contract ISPOManager {
     // ISPOClient
 
     pub resource ISPOClient {
-        access(self) let ispoId: UInt64
+        pub let ispoId: UInt64
 
         init(ispoId: UInt64, flowVault: @FungibleToken.Vault) {
             self.ispoId = ispoId
@@ -313,19 +309,14 @@ pub contract ISPOManager {
             ispoRecordRef.delegateNewTokens(delegatorId: self.uuid, flowVault: <- flowVault)
         }
 
-        pub fun createEmptyRewardTokenVault(): @FungibleToken.Vault {
-            let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: self.ispoId)
-            return <- ispoRecordRef.createEmptyRewardTokenVault()
-        }
-
         pub fun delegateNewTokens(flowVault: @FungibleToken.Vault) {
             let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: self.ispoId)
             ispoRecordRef.delegateNewTokens(delegatorId: self.uuid, flowVault: <- flowVault)
         }
 
-        pub fun withdrawRewardToken(): @FungibleToken.Vault {
+        pub fun withdrawRewardTokens(): @FungibleToken.Vault {
             let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: self.ispoId)
-            return <- ispoRecordRef.withdrawRewardToken(delegatorId: self.uuid)
+            return <- ispoRecordRef.withdrawRewardTokens(delegatorId: self.uuid)
         }
 
         // TODO: destroy
