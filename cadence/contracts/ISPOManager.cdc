@@ -62,6 +62,11 @@ pub contract ISPOManager {
             self.hasWithdrawRewardToken = true
         }
 
+        pub fun withdrawRewards(): @FungibleToken.Vault {
+            let rewardBalance: UFix64 = FlowIDTableStaking.DelegatorInfo(nodeID: self.nodeDelegator.nodeID, delegatorID: self.nodeDelegator.id).tokensRewarded
+            return <- self.nodeDelegator.withdrawRewardedTokens(amount: rewardBalance)
+        }
+
         destroy() {
             pre {
                 // TODO: pre conditions for destroying nodeDelegator
@@ -168,6 +173,20 @@ pub contract ISPOManager {
             delegatorRef.setHasWithrawnRewardToken()
             return <- self.rewardTokenVault.withdraw(amount: rewardAmount)
         }
+
+        pub fun withdrawDelegatorRewards(): @FungibleToken.Vault {
+            var totalRewardsVault: @FungibleToken.Vault? <- nil
+            for key in self.delegators.keys {
+                if (totalRewardsVault == nil) {
+                    totalRewardsVault <-! self.borrowDelegatorRecord(delegatorId: key).withdrawRewards()
+                } else {
+                    let totalRewardsVaultRef: &FungibleToken.Vault? = &totalRewardsVault as &FungibleToken.Vault?
+                    totalRewardsVaultRef!.deposit(from: <- self.borrowDelegatorRecord(delegatorId: key).withdrawRewards())
+                }
+                
+            }
+            return <- totalRewardsVault!
+        }
         
         pub fun createEmptyRewardTokenVault(): @FungibleToken.Vault {
             return <- self.rewardTokenVault.withdraw(amount: 0.0)
@@ -258,6 +277,10 @@ pub contract ISPOManager {
             epochEnd: UInt64,
         ) {
             ISPOManager.recordISPO(id: self.uuid, rewardTokenVault: <- rewardTokenVault, rewardTokenMetadata: rewardTokenMetadata, epochStart: epochStart, epochEnd: epochEnd)
+        }
+
+        pub fun withdrawDelegatorRewards(): @FungibleToken.Vault {
+            return <- ISPOManager.borrowISPORecord(id: self.uuid).withdrawDelegatorRewards()
         }
 
         destroy() {
