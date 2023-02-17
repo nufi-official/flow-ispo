@@ -1,5 +1,5 @@
 import FungibleToken from "./standard/FungibleToken.cdc"
-import FlowIDTableStaking from "./standard/FlowIdTableStaking.cdc"
+import FlowIDTableStaking from "./standard/FlowIDTableStaking.cdc"
 import FlowEpoch from "./standard/FlowEpoch.cdc"
 
 pub contract ISPOManager {

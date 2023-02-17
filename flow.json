@@ -20,6 +20,62 @@
         "emulator": "0xee82856bf20e2aa6",
         "mainnet": "0xf233dcee88fe0abe"
       }
+    },
+    "FlowToken": {
+      "source": "./cadence/contracts/standard/FlowToken.cdc",
+      "aliases": {
+        "testnet": "0x7e60df042a9c0868",
+        "emulator": "0x0ae53cb6e3f42a79",
+        "mainnet": "0x1654653399040a61"
+      }
+    },
+    "FlowFees": {
+      "source": "./cadence/contracts/standard/FlowFees.cdc",
+      "aliases": {
+        "testnet": "0x912d5440f7e3769e",
+        "emulator": "0x0ae53cb6e3f42a79",
+        "mainnet": "0xf919ee77447b7497"
+      }
+    },
+    "FlowEpoch": {
+      "source": "./cadence/contracts/standard/FlowEpoch.cdc",
+      "aliases": {
+        "testnet": "0x9eca2b38b18b5dfe",
+        "emulator": "0xf8d6e0586b0a20c7",
+        "mainnet": "0x8624b52f9ddcd04a"
+      }
+    },
+    "FlowClusterQC": {
+      "source": "./cadence/contracts/standard/FlowClusterQC.cdc",
+      "aliases": {
+        "testnet": "0x9eca2b38b18b5dfe",
+        "emulator": "0xf8d6e0586b0a20c7",
+        "mainnet": "0x8624b52f9ddcd04a"
+      }
+    },
+    "FlowDKG": {
+      "source": "./cadence/contracts/standard/FlowDKG.cdc",
+      "aliases": {
+        "testnet": "0x9eca2b38b18b5dfe",
+        "emulator": "0xf8d6e0586b0a20c7",
+        "mainnet": "0x8624b52f9ddcd04a"
+      }
+    },
+    "FlowIDTableStaking": {
+      "source": "./cadence/contracts/standard/FlowIDTableStaking.cdc",
+      "aliases": {
+        "testnet": "0x9eca2b38b18b5dfe",
+        "emulator": "0xf8d6e0586b0a20c7",
+        "mainnet": "0x8624b52f9ddcd04a"
+      }
+    },
+    "FlowStorageFees": {
+      "source": "./cadence/contracts/standard/FlowStorageFees.cdc",
+      "aliases": {
+        "testnet": "0x8c5303eaa26202d6",
+        "emulator": "0x0ae53cb6e3f42a79",
+        "mainnet": "0xe467b9dd11fa00df"
+      }
     }
   },
   "deployments": {
