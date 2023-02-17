@@ -10,7 +10,7 @@
 	"accounts": {
 		"default": {
 			"address": "f3fcd2c1a78f5eee",
-			"key": "c7a5c9759e5a98265a57877aa0319bea1f8d5186e5904ffcef891e25f480f90b"
+			"key": "e186b425cb1dc53a9cae26fa40180bb884e17437fd7a0f91aba724ac2ed63d1f"
 		},
 		"emulator-account": {
 			"fromFile": "./emulator.private.json"
