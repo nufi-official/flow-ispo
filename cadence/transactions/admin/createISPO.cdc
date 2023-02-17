@@ -1,5 +1,5 @@
-import ISPOManager from "../contracts/ISPOManager.cdc"
-import FungibleToken from "../contracts/standard/FungibleToken.cdc"
+import ISPOManager from "../../contracts/ISPOManager.cdc"
+import FungibleToken from "../../contracts/standard/FungibleToken.cdc"
 
 transaction(rewardTokenAmount: UFix64, epochStart: UInt64, epochEnd: UInt64) {
 

@@ -1,4 +1,4 @@
-import ISPOManager from "../contracts/ISPOManager.cdc"
+import ISPOManager from "../../contracts/ISPOManager.cdc"
 
 transaction() {
 

@@ -1,5 +1,5 @@
-import ISPOManager from "../contracts/ISPOManager.cdc"
-import FungibleToken from "../contracts/standard/FungibleToken.cdc"
+import ISPOManager from "../../contracts/ISPOManager.cdc"
+import FungibleToken from "../../contracts/standard/FungibleToken.cdc"
 
 transaction(ispoId: UInt64, amount: UFix64) {
 
