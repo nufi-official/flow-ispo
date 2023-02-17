@@ -98,18 +98,21 @@ pub contract ISPOManager {
             return ISPORecordInfo(id: self.id, rewardTokenBalance: self.rewardTokenVault.balance, epochStart: self.epochStart, epochEnd: self.epochEnd)
         }
 
-        pub fun createNewDelegator(delegatorId: UInt64, flowVault: @FungibleToken.Vault) {
+        pub fun delegateNewTokens(delegatorId: UInt64, flowVault: @FungibleToken.Vault) {
             pre {
-                !self.delegators.containsKey(delegatorId): "Delegator with same id already exists"
                 self.isISPOActive(): "ISPO is not active"
             }
 
-            let nodeId: String = ISPOManager.defaultNodeId // TODO: possibly get as setting from ISPORecord
-            let nodeDelegator: @FlowIDTableStaking.NodeDelegator <- FlowIDTableStaking.registerNewDelegator(nodeID: nodeId) 
+            if (self.delegators.containsKey(delegatorId)) {
+                self.borrowDelegatorRecord(delegatorId: delegatorId).delegateNewTokens(flowVault: <- flowVault)
+            } else {
+                let nodeId: String = ISPOManager.defaultNodeId // TODO: possibly get as setting from ISPORecord
+                let nodeDelegator: @FlowIDTableStaking.NodeDelegator <- FlowIDTableStaking.registerNewDelegator(nodeID: nodeId) 
 
-            let newDelegatorRecord: @ISPOManager.DelegatorRecord <- create DelegatorRecord(nodeDelegator: <- nodeDelegator)
-            newDelegatorRecord.delegateNewTokens(flowVault: <- flowVault)
-            self.delegators[delegatorId] <-! newDelegatorRecord
+                let newDelegatorRecord: @ISPOManager.DelegatorRecord <- create DelegatorRecord(nodeDelegator: <- nodeDelegator)
+                newDelegatorRecord.delegateNewTokens(flowVault: <- flowVault)
+                self.delegators[delegatorId] <-! newDelegatorRecord
+            }
         }
 
         access(self) fun borrowDelegatorRecord(delegatorId: UInt64): &DelegatorRecord {
@@ -238,7 +241,12 @@ pub contract ISPOManager {
         init(ispoId: UInt64, flowVault: @FungibleToken.Vault) {
             self.ispoId = ispoId
             let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: ispoId)
-            ispoRecordRef.createNewDelegator(delegatorId: self.uuid, flowVault: <- flowVault)
+            ispoRecordRef.delegateNewTokens(delegatorId: self.uuid, flowVault: <- flowVault)
+        }
+
+        pub fun delegateNewTokens(flowVault: @FungibleToken.Vault) {
+            let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: self.ispoId)
+            ispoRecordRef.delegateNewTokens(delegatorId: self.uuid, flowVault: <- flowVault)
         }
 
         pub fun withdrawRewardToken(): @FungibleToken.Vault {
