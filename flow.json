@@ -9,8 +9,8 @@
 	},
 	"accounts": {
 		"default": {
-			"address": "120e725050340cab",
-			"key": "b1c3114badb1334cbe32cdc2b1af9eea5cdd704ec0c45ca1aa54f7f61e10f099"
+			"address": "f3fcd2c1a78f5eee",
+			"key": "c7a5c9759e5a98265a57877aa0319bea1f8d5186e5904ffcef891e25f480f90b"
 		},
 		"emulator-account": {
 			"fromFile": "./emulator.private.json"

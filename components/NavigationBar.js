@@ -10,11 +10,12 @@ export default function NavigationBar() {
   return (
     <Navbar bg="light">
       <Container>
-        <Navbar.Brand href="/">BlockTalk</Navbar.Brand>
+        <Navbar.Brand href="/">Flow ISPO</Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/mints">Mint</Nav.Link>
+            <Nav.Link href="/create">Create</Nav.Link>
+            <Nav.Link href="/participate">Participate</Nav.Link>
           </Nav>
         </Navbar.Collapse>
         <Navbar.Collapse className="justify-content-end">

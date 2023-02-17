@@ -8,22 +8,28 @@ export default function Home() {
     <div className={styles.container}>
       
       <Head>
-        <title>BlockTalk</title>
-        <meta name="description" content="Mint messages on the Flow Blockchain" />
+        <title>Flow ISPO</title>
+        <meta name="description" content="Suppport projects by delegating for them." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          BlockTalk
+          Flow ISPO
         </h1>
 
         <p className={styles.description}>
-          Mint BlockTalks directly on the Flow Blockchain
+          Suppport projects by delegating for them. It`s a win-win!
         </p>
 
-        <Link href="/mints">
-          <Button>Start Minting</Button>
+        <Link href="/create">
+          <Button>Create ISPO</Button>
+        </Link>
+
+        <p></p>
+
+        <Link href="/participate">
+          <Button>Participate</Button>
         </Link>
 
       </main>
