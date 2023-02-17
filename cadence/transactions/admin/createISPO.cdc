@@ -1,7 +1,14 @@
 import ISPOManager from "../../contracts/ISPOManager.cdc"
 import FungibleToken from "../../contracts/standard/FungibleToken.cdc"
 
-transaction(rewardTokenAmount: UFix64, epochStart: UInt64, epochEnd: UInt64) {
+transaction(
+  epochStart: UInt64,
+  epochEnd: UInt64,
+  rewardTokenVaultStoragePath: String,
+  rewardTokenReceiverPublicPath: String,
+  rewardTokenBalancePublicPath: String,
+  totalRewardTokenAmount: UFix64
+) {
 
   prepare(acct: AuthAccount) {
     if acct.borrow<&ISPOManager.ISPOAdmin>(from: ISPOManager.ispoAdminStoragePath) != nil {
@@ -12,15 +19,15 @@ transaction(rewardTokenAmount: UFix64, epochStart: UInt64, epochEnd: UInt64) {
 			?? panic("Could not borrow reference to the owner's Vault!")
 
     let rewardTokenMetadata: ISPOManager.RewardTokenMetadata = ISPOManager.RewardTokenMetadata(
-      rewardTokenVaultStoragePath: /storage/rewardToken, // TODO: pass these in the transaction
-      rewardTokenReceiverPublicPath: /public/rewardTokenReceiver,
-      rewardTokenBalancePublicPath: /public/rewardTokenReceiver,
-      totalRewardTokenAmount: vaultRef.balance
+      rewardTokenVaultStoragePath: StoragePath(identifier: rewardTokenVaultStoragePath)!,
+      rewardTokenReceiverPublicPath: PublicPath(identifier: rewardTokenReceiverPublicPath)!,
+      rewardTokenBalancePublicPath: PublicPath(identifier: rewardTokenBalancePublicPath)!,
+      totalRewardTokenAmount: totalRewardTokenAmount
     )
 
     acct.save(
       <-ISPOManager.createISPOAdmin(
-        rewardTokenVault: <- vaultRef.withdraw(amount: rewardTokenAmount),
+        rewardTokenVault: <- vaultRef.withdraw(amount: totalRewardTokenAmount),
         rewardTokenMetadata: rewardTokenMetadata,
         epochStart: epochStart,
         epochEnd: epochEnd,
