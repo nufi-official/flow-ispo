@@ -164,6 +164,10 @@ pub contract ISPOManager {
             delegatorRef.setHasWithrawnRewardToken()
             return <- self.rewardTokenVault.withdraw(amount: rewardAmount)
         }
+        
+        pub fun createEmptyRewardTokenVault(): @FungibleToken.Vault {
+            return <- self.rewardTokenVault.withdraw(amount: 0.0)
+        }
 
         destroy() {
             pre {
@@ -242,6 +246,11 @@ pub contract ISPOManager {
             self.ispoId = ispoId
             let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: ispoId)
             ispoRecordRef.delegateNewTokens(delegatorId: self.uuid, flowVault: <- flowVault)
+        }
+
+        pub fun createEmptyRewardTokenVault(): @FungibleToken.Vault {
+            let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: self.ispoId)
+            return <- ispoRecordRef.createEmptyRewardTokenVault()
         }
 
         pub fun delegateNewTokens(flowVault: @FungibleToken.Vault) {
