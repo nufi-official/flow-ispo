@@ -9,7 +9,7 @@ transaction() {
     if (ispoAdminRef == nil) {
       panic("ISPO does not exist")
     }
-    let delegatorRewardsVault: @FungibleToken.Vault <- ispoAdminRef!.withdrawDelegatorRewards()
+    let delegatorRewardsVault: @FungibleToken.Vault <- ispoAdminRef!.withdrawRewards()
 
     let vaultRef: &FungibleToken.Vault = acct.borrow<&FungibleToken.Vault>(from: /storage/flowTokenVault)
 			?? panic("Could not borrow reference to the owner's Vault!")
