@@ -73,6 +73,7 @@ pub contract ISPOManager {
             return <- self.borrowNodeDelegator().withdrawRewardedTokens(amount: amount)
         }
 
+        // current delegator rewards plus those previously withdrawn
         pub fun getTotalRewardsReceived(): UFix64 {
             let nodeDelegatorRef: &FlowIDTableStaking.NodeDelegator = self.borrowNodeDelegator()
             let rewardBalance: UFix64 = FlowIDTableStaking.DelegatorInfo(nodeID: nodeDelegatorRef.nodeID, delegatorID: nodeDelegatorRef.id).tokensRewarded
@@ -80,6 +81,7 @@ pub contract ISPOManager {
         }
 
         pub fun withdrawNodeDelegator(): @FlowIDTableStaking.NodeDelegator {
+            // TODO: preconditions
             var nodeDelegator:  @FlowIDTableStaking.NodeDelegator? <- self.nodeDelegator <- nil
             return <- nodeDelegator!
         }
@@ -97,8 +99,8 @@ pub contract ISPOManager {
         access(self) let rewardTokenVault: @FungibleToken.Vault
         access(self) let delegators: @{UInt64: DelegatorRecord}
         access(self) let epochStart: UInt64
-        access(self) let epochEnd: UInt64
-        access(self) var stakingRewardsVault: @FungibleToken.Vault?
+        access(self) let epochEnd: UInt64 // TODO: rename to endEpoch/startEpoch
+        access(self) var stakingRewardsVault: @FungibleToken.Vault? // used for cumulating reward when delegator decides to unstake
         pub let rewardTokenMetadata: ISPOManager.RewardTokenMetadata
 
         init(
@@ -150,6 +152,7 @@ pub contract ISPOManager {
             return (&self.delegators[delegatorId] as &DelegatorRecord?)!
         }
 
+        // returns "prefix sum" array of commited tokens 
         access(self) fun getDelegatorWeights(delegatorRef: &ISPOManager.DelegatorRecord): {UInt64: UFix64} {
             let epochFlowCommitments: {UInt64: UFix64} = delegatorRef.getEpochFlowCommitments()
 
@@ -167,6 +170,7 @@ pub contract ISPOManager {
             return weights
         }
 
+        // sums all delegator weighs, (per epoch)
         access(self) fun getTotalDelegatorWeights(): {UInt64: UFix64} {
             var totalWeights: {UInt64: UFix64} = {}
             for key in self.delegators.keys {
@@ -208,6 +212,8 @@ pub contract ISPOManager {
             return <- self.rewardTokenVault.withdraw(amount: rewardAmount)
         }
 
+        // this calculation relies on the reward distribution to be the same each epoch, e.g. same amount of FLOW
+        // gets rewarded
         access(self) fun calculateAdminRewardAmount(delegatorRef: &ISPOManager.DelegatorRecord): UFix64 {
             let delegatorWeights: {UInt64: UFix64} = self.getDelegatorWeights(delegatorRef: delegatorRef)
             var totalWeightDuringISPO: UFix64 = 0.0
@@ -218,7 +224,7 @@ pub contract ISPOManager {
                 }
                 totalWeightAfterISPO = totalWeightAfterISPO + delegatorWeights[key]!
             }
-            let adminRewardCut: UFix64 = totalWeightDuringISPO / totalWeightAfterISPO
+            let adminRewardCut: UFix64 = totalWeightDuringISPO / (totalWeightDuringISPO + totalWeightAfterISPO) // TODO avoid division? 
             let totalRewardsReceived: UFix64 = delegatorRef.getTotalRewardsReceived()
             return (totalRewardsReceived * adminRewardCut) - delegatorRef.withdrawnFlowTokenRewardAmount
         }
@@ -238,7 +244,9 @@ pub contract ISPOManager {
             return <- stakingRewardsVaultRef!.withdraw(amount: stakingRewardsVaultRef!.balance)
         }
         
+        // withdraws admin portion of delegator rewards to ISPO rewardsVault, and return NodeDelegator 
         pub fun withdrawNodeDelegator(delegatorId: UInt64): @FlowIDTableStaking.NodeDelegator {
+            // TODO: we could reuse withdrawAdminFlowRewards
             let delegatorRecordRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: delegatorId)
             let adminRewardAmount: UFix64 = self.calculateAdminRewardAmount(delegatorRef: delegatorRecordRef)
             let rewardsVault: @FungibleToken.Vault <- delegatorRecordRef.withdrawRewards(amount: adminRewardAmount)
