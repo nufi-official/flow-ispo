@@ -4,9 +4,9 @@ import FlowEpoch from "./standard/FlowEpoch.cdc"
 
 pub contract ISPOManager {
 
-    // ISPORecord
+    // ISPO
 
-    pub struct ISPORecordInfo {
+    pub struct ISPOInfo {
         access(self) let id: UInt64
         access(self) let rewardTokenBalance: UFix64
         access(self) let rewardTokenMetadata: ISPOManager.RewardTokenMetadata
@@ -92,7 +92,7 @@ pub contract ISPOManager {
         }
     }
 
-    pub resource ISPORecord {
+    pub resource ISPO {
         access(self) let id: UInt64
         access(self) let rewardTokenVault: @FungibleToken.Vault
         access(self) let delegators: @{UInt64: DelegatorRecord}
@@ -122,8 +122,8 @@ pub contract ISPOManager {
             return currentEpoch >= self.epochStart && currentEpoch <= self.epochEnd
         }
 
-        pub fun getInfo(): ISPORecordInfo {
-            return ISPORecordInfo(id: self.id, rewardTokenBalance: self.rewardTokenVault.balance, rewardTokenMetadata: self.rewardTokenMetadata, epochStart: self.epochStart, epochEnd: self.epochEnd)
+        pub fun getInfo(): ISPOInfo {
+            return ISPOInfo(id: self.id, rewardTokenBalance: self.rewardTokenVault.balance, rewardTokenMetadata: self.rewardTokenMetadata, epochStart: self.epochStart, epochEnd: self.epochEnd)
         }
 
         pub fun delegateNewTokens(delegatorId: UInt64, flowVault: @FungibleToken.Vault) {
@@ -262,25 +262,25 @@ pub contract ISPOManager {
         }
     }
 
-    access(contract) let ispoRecords: @{UInt64: ISPORecord}
+    access(contract) let ispos: @{UInt64: ISPO}
     access(contract) let defaultNodeId: String
 
-    access(contract) fun borrowISPORecord(id: UInt64): &ISPOManager.ISPORecord {
+    access(contract) fun borrowISPORecord(id: UInt64): &ISPOManager.ISPO {
         pre {
-            self.ispoRecords.containsKey(id): "Specified ISPO record does not exist"
+            self.ispos.containsKey(id): "Specified ISPO record does not exist"
         }
-        return (&self.ispoRecords[id] as &ISPOManager.ISPORecord?)!
+        return (&self.ispos[id] as &ISPOManager.ISPO?)!
     }
 
     pub fun getISPORewardTokenMetadata(id: UInt64): ISPOManager.RewardTokenMetadata {
         return self.borrowISPORecord(id: id).rewardTokenMetadata
     }
 
-    pub fun getISPORecordInfos(): [ISPORecordInfo] {
-        let ispoInfos : [ISPORecordInfo] = [] 
-        ISPOManager.ispoRecords.forEachKey(fun (key: UInt64): Bool {
-           let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: key)
-           ispoInfos.append(ispoRecordRef.getInfo())
+    pub fun getISPOInfos(): [ISPOInfo] {
+        let ispoInfos : [ISPOInfo] = [] 
+        ISPOManager.ispos.forEachKey(fun (key: UInt64): Bool {
+           let ispoRef: &ISPOManager.ISPO = ISPOManager.borrowISPORecord(id: key)
+           ispoInfos.append(ispoRef.getInfo())
            return true
         })
         return ispoInfos
@@ -288,10 +288,10 @@ pub contract ISPOManager {
 
     access(contract) fun recordISPO(id: UInt64, rewardTokenVault: @FungibleToken.Vault, rewardTokenMetadata: ISPOManager.RewardTokenMetadata, epochStart: UInt64, epochEnd: UInt64) {
         pre {
-            !self.ispoRecords.containsKey(id): "Resource with same id already exists"
+            !self.ispos.containsKey(id): "Resource with same id already exists"
         }
-        var tmpRecord: @ISPORecord? <- create ISPORecord(id: id, rewardTokenVault: <- rewardTokenVault, rewardTokenMetadata: rewardTokenMetadata, epochStart: epochStart, epochEnd: epochEnd)
-        self.ispoRecords[id] <-> tmpRecord
+        var tmpRecord: @ISPO? <- create ISPO(id: id, rewardTokenVault: <- rewardTokenVault, rewardTokenMetadata: rewardTokenMetadata, epochStart: epochStart, epochEnd: epochEnd)
+        self.ispos[id] <-> tmpRecord
         // we destroy this "tmpRecord" but at this point it must contain null as it was swapped with previous value of "ispoRecords[id]"
         // https://developers.flow.com/cadence/language/resources
         destroy tmpRecord
@@ -299,9 +299,9 @@ pub contract ISPOManager {
 
     access(contract) fun removeISPORecord(id: UInt64) {
         pre {
-            self.ispoRecords.containsKey(id): "Cannot remove ISPO record that does not exist"
+            self.ispos.containsKey(id): "Cannot remove ISPO record that does not exist"
         }
-        destroy self.ispoRecords.remove(key: id)!
+        destroy self.ispos.remove(key: id)!
     }
 
     // ISPOAdmin
@@ -370,23 +370,23 @@ pub contract ISPOManager {
 
         init(ispoId: UInt64, flowVault: @FungibleToken.Vault) {
             self.ispoId = ispoId
-            let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: ispoId)
-            ispoRecordRef.delegateNewTokens(delegatorId: self.uuid, flowVault: <- flowVault)
+            let ispoRef: &ISPOManager.ISPO = ISPOManager.borrowISPORecord(id: ispoId)
+            ispoRef.delegateNewTokens(delegatorId: self.uuid, flowVault: <- flowVault)
         }
 
         pub fun delegateNewTokens(flowVault: @FungibleToken.Vault) {
-            let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: self.ispoId)
-            ispoRecordRef.delegateNewTokens(delegatorId: self.uuid, flowVault: <- flowVault)
+            let ispoRef: &ISPOManager.ISPO = ISPOManager.borrowISPORecord(id: self.ispoId)
+            ispoRef.delegateNewTokens(delegatorId: self.uuid, flowVault: <- flowVault)
         }
 
         pub fun withdrawNodeDelegator(): @FlowIDTableStaking.NodeDelegator {
-            let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: self.ispoId)
-            return <- ispoRecordRef.withdrawNodeDelegator(delegatorId: self.uuid)
+            let ispoRef: &ISPOManager.ISPO = ISPOManager.borrowISPORecord(id: self.ispoId)
+            return <- ispoRef.withdrawNodeDelegator(delegatorId: self.uuid)
         }
 
         pub fun withdrawRewardTokens(): @FungibleToken.Vault {
-            let ispoRecordRef: &ISPOManager.ISPORecord = ISPOManager.borrowISPORecord(id: self.ispoId)
-            return <- ispoRecordRef.withdrawRewardTokens(delegatorId: self.uuid)
+            let ispoRef: &ISPOManager.ISPO = ISPOManager.borrowISPORecord(id: self.ispoId)
+            return <- ispoRef.withdrawRewardTokens(delegatorId: self.uuid)
         }
 
         // TODO: destroy
@@ -397,7 +397,7 @@ pub contract ISPOManager {
     }
 
     init() {
-        self.ispoRecords <- {}
+        self.ispos <- {}
         self.defaultNodeId = ""
         self.ispoAdminStoragePath = /storage/ISPOAdmin
         self.ispoClientStoragePath = /storage/ISPOClient
