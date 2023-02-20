@@ -100,11 +100,12 @@
         "emulator": "0xf8d6e0586b0a20c7",
         "mainnet": "0x8d0e87b65159ae63"
       }
-    }
+    },
+    "ISPOExampleRewardToken": "./cadence/contracts/ISPOExampleRewardToken.cdc"
   },
   "deployments": {
     "emulator": {
-      "emulator-account": ["ISPOManager"]
+      "emulator-account": ["ISPOManager", "ISPOExampleRewardToken"]
     }
   }
 }
