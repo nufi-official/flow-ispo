@@ -12,6 +12,7 @@ config({
   'discovery.wallet': `https://fcl-discovery.onflow.org/${flowNetwork}/authn`,
   'app.detail.icon': 'https://avatars.githubusercontent.com/u/62387156?v=4',
   'app.detail.title': 'FCL Next Scaffold',
+  // path to address mappings
   '0xISPOManager': '0xf8d6e0586b0a20c7', // works just for emulator, TODO make this configurable
 }).load({ flowJSON })
  
