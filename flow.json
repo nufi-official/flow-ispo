@@ -7,8 +7,12 @@
   },
   "accounts": {
     "emulator-account": {
-      "address": "f8d6e0586b0a20c7",
+      "address": "0xf8d6e0586b0a20c7",
       "key": "cf141d995afb2971958f2f0e914fd763bb62ee3ca8e948b56eb91ee2ad62e2cf"
+    },
+    "testnet-account": {
+      "address": "0xd69c8a771f3b18b7",
+      "key": "ba68d45a5acaa52f3cacf4ad3a64d9523e0ce0ae3addb1ee6805385b380b7646"
     }
   },
   "contracts": {
@@ -106,6 +110,9 @@
   "deployments": {
     "emulator": {
       "emulator-account": ["ISPOManager", "ISPOExampleRewardToken"]
+    },
+    "testnet": {
+      "testnet-account": ["ISPOManager", "ISPOExampleRewardToken"]
     }
   }
 }
