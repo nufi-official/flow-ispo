@@ -1,5 +1,6 @@
-import ISPOExampleRewardToken from  0xf8d6e0586b0a20c7
-import FungibleToken from  0xee82856bf20e2aa6
+import ISPOExampleRewardToken from  "../../contracts/ISPOExampleRewardToken.cdc"
+import FungibleToken from  "../../contracts/standard/FungibleToken.cdc"
+
 transaction(amount: UFix64) {
     prepare(adminAccount: AuthAccount) {
       let vault <- ISPOExampleRewardToken.createEmptyVault()
