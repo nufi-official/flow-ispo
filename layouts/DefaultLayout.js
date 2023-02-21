@@ -1,15 +1,13 @@
-import NavigationBar from '../components/NavigationBar'
-import EventToastList from '../components/EventToastList'
-import Container from 'react-bootstrap/Container'
+import NavigationBar from "../components/NavigationBar";
+import { Box } from "@mui/material";
 
 export default function DefaultLayout({ children }) {
   return (
-    <>
-      <EventToastList />
+    <Box display="flex" flexDirection="column" minHeight="100vh">
       <NavigationBar />
-      <Container>
-        <main>{children}</main>
-      </Container>
-    </>
-  )
+      <Box component="main" flex={1}>
+        {children}
+      </Box>
+    </Box>
+  );
 }

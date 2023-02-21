@@ -1,19 +1,20 @@
-import '../styles/globals.css'
-import DefaultLayout from '../layouts/DefaultLayout'
-
+import { ThemeProvider } from "@mui/material";
+import CssBaseline from "@mui/material/CssBaseline";
+import theme from "../theme";
+import "../styles/globals.css";
+import DefaultLayout from "../layouts/DefaultLayout";
 // Import Flow config
-import '../config/fcl.js'
-
-// Importing the Bootstrap CSS
-import 'bootstrap/dist/css/bootstrap.min.css'
-
+import "../config/fcl.js";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <DefaultLayout>
-      <Component {...pageProps} />
-    </DefaultLayout>
-  )
+    <ThemeProvider theme={theme}>
+      <DefaultLayout>
+        <CssBaseline />
+        <Component {...pageProps} />
+      </DefaultLayout>
+    </ThemeProvider>
+  );
 }
 
-export default MyApp
+export default MyApp;
