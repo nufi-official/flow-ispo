@@ -13,7 +13,8 @@ config({
   'app.detail.icon': 'https://avatars.githubusercontent.com/u/62387156?v=4',
   'app.detail.title': 'FCL Next Scaffold',
   // path to address mappings
-  '0xISPOManager': process.env.NEXT_CONTRACT_ADDRESS || '0xf8d6e0586b0a20c7', // works just for emulator, TODO make this configurable
-  '0xFungibleToken': process.env.NEXT_FUNGIBLE_TOKEN_ADDRESS || '0xee82856bf20e2aa6'
+  '0xISPOManager': process.env.NEXT_CONTRACT_ADDRESS || '0xf8d6e0586b0a20c7',
+  '0xFungibleToken': process.env.NEXT_FUNGIBLE_TOKEN_ADDRESS || '0xee82856bf20e2aa6',
+  '0xISPOExampleRewardToken': process.env.NEXT_REWARD_TOKEN_ADDRESS || '0xf8d6e0586b0a20c7',
 }).load({ flowJSON })
  
