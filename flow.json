@@ -1,59 +1,111 @@
 {
-	"contracts": {
-		"BlockTalk": "cadence/contracts/BlockTalk.cdc",
-		"FlowClusterQC": "cadence/contracts/standard/FlowClusterQC.cdc",
-		"FlowDKG": "cadence/contracts/standard/FlowDKG.cdc",
-		"FlowEpoch": "cadence/contracts/standard/FlowEpoch.cdc",
-		"FlowFees": "cadence/contracts/standard/FlowFees.cdc",
-		"FlowIDTableStaking": "cadence/contracts/standard/FlowIDTableStaking.cdc",
-		"FlowStakingCollection": "cadence/contracts/standard/FlowStakingCollection.cdc",
-		"FlowStorageFees": "cadence/contracts/standard/FlowStorageFees.cdc",
-		"FlowToken": "cadence/contracts/standard/FlowToken.cdc",
-		"FungibleToken": "cadence/contracts/standard/FungibleToken.cdc",
-		"ISPOExampleRewardToken": "cadence/contracts/ISPOExampleRewardToken.cdc",
-		"ISPOManager": "cadence/contracts/ISPOManager.cdc",
-		"LockedTokens": "cadence/contracts/standard/LockedTokens.cdc",
-		"StakingProxy": "cadence/contracts/standard/StakingProxy.cdc"
-	},
-	"networks": {
-		"emulator": "127.0.0.1:3569",
-		"mainnet": "access.mainnet.nodes.onflow.org:9000",
-		"testnet": "access.devnet.nodes.onflow.org:9000"
-	},
-	"accounts": {
-		"default": {
-			"address": "f669cb8d41ce0c74",
-			"key": "0d0a268da913b53d3e6868cb97f0e4b3dd40ebba2ac94a40f1143692c015dd94"
-		},
-		"emulator-account": {
-			"address": "f8d6e0586b0a20c7",
-			"key": "cf141d995afb2971958f2f0e914fd763bb62ee3ca8e948b56eb91ee2ad62e2cf"
-		},
-		"standard": {
-			"address": "fd43f9148d4b725d",
-			"key": "3f05fea7df74eb71a1b6b1a4a415616411cb61cc6d59a5ab1fadeba7f1d271f8"
-		}
-	},
-	"deployments": {
-		"emulator": {
-			"default": [
-				"BlockTalk",
-				"ISPOExampleRewardToken",
-				"ISPOManager"
-			],
-			"standard": [
-				"FlowClusterQC",
-				"FlowDKG",
-				"FlowEpoch",
-				"FlowFees",
-				"FlowIDTableStaking",
-				"FlowStakingCollection",
-				"FlowStorageFees",
-				"FlowToken",
-				"FungibleToken",
-				"LockedTokens",
-				"StakingProxy"
-			]
-		}
-	}
+  "networks": {
+    "emulator": "127.0.0.1:3569",
+    "mainnet": "access.mainnet.nodes.onflow.org:9000",
+    "sandboxnet": "access.sandboxnet.nodes.onflow.org:9000",
+    "testnet": "access.devnet.nodes.onflow.org:9000"
+  },
+  "accounts": {
+    "emulator-account": {
+      "address": "f8d6e0586b0a20c7",
+      "key": "cf141d995afb2971958f2f0e914fd763bb62ee3ca8e948b56eb91ee2ad62e2cf"
+    }
+  },
+  "contracts": {
+    "ISPOManager": "./cadence/contracts/ISPOManager.cdc",
+    "ISPOExampleRewardToken": "cadence/contracts/ISPOExampleRewardToken.cdc",
+    "FungibleToken": {
+      "source": "./cadence/contracts/standard/FungibleToken.cdc",
+      "aliases": {
+        "testnet": "0x9a0766d93b6608b7",
+        "emulator": "0xee82856bf20e2aa6",
+        "mainnet": "0xf233dcee88fe0abe"
+      }
+    },
+    "FlowToken": {
+      "source": "./cadence/contracts/standard/FlowToken.cdc",
+      "aliases": {
+        "testnet": "0x7e60df042a9c0868",
+        "emulator": "0x0ae53cb6e3f42a79",
+        "mainnet": "0x1654653399040a61"
+      }
+    },
+    "FlowFees": {
+      "source": "./cadence/contracts/standard/FlowFees.cdc",
+      "aliases": {
+        "testnet": "0x912d5440f7e3769e",
+        "emulator": "0xe5a8b7f23e8b548f",
+        "mainnet": "0xf919ee77447b7497"
+      }
+    },
+    "FlowEpoch": {
+      "source": "./cadence/contracts/standard/FlowEpoch.cdc",
+      "aliases": {
+        "testnet": "0x9eca2b38b18b5dfe",
+        "emulator": "0xf8d6e0586b0a20c7",
+        "mainnet": "0x8624b52f9ddcd04a"
+      }
+    },
+    "FlowClusterQC": {
+      "source": "./cadence/contracts/standard/FlowClusterQC.cdc",
+      "aliases": {
+        "testnet": "0x9eca2b38b18b5dfe",
+        "emulator": "0xf8d6e0586b0a20c7",
+        "mainnet": "0x8624b52f9ddcd04a"
+      }
+    },
+    "FlowDKG": {
+      "source": "./cadence/contracts/standard/FlowDKG.cdc",
+      "aliases": {
+        "testnet": "0x9eca2b38b18b5dfe",
+        "emulator": "0xf8d6e0586b0a20c7",
+        "mainnet": "0x8624b52f9ddcd04a"
+      }
+    },
+    "FlowIDTableStaking": {
+      "source": "./cadence/contracts/standard/FlowIDTableStaking.cdc",
+      "aliases": {
+        "testnet": "0x9eca2b38b18b5dfe",
+        "emulator": "0xf8d6e0586b0a20c7",
+        "mainnet": "0x8624b52f9ddcd04a"
+      }
+    },
+    "FlowStorageFees": {
+      "source": "./cadence/contracts/standard/FlowStorageFees.cdc",
+      "aliases": {
+        "testnet": "0x8c5303eaa26202d6",
+        "emulator": "0xf8d6e0586b0a20c7",
+        "mainnet": "0xe467b9dd11fa00df"
+      }
+    },
+    "LockedTokens": {
+      "source": "./cadence/contracts/standard/LockedTokens.cdc",
+      "aliases": {
+        "testnet": "0x95e019a17d0e23d7",
+        "emulator": "0xf8d6e0586b0a20c7",
+        "mainnet": "0x8d0e87b65159ae63"
+      }
+    },
+    "StakingProxy": {
+      "source": "./cadence/contracts/standard/StakingProxy.cdc",
+      "aliases": {
+        "testnet": "0x7aad92e5a0715d21",
+        "emulator": "0xf8d6e0586b0a20c7",
+        "mainnet": "0x62430cf28c26d095"
+      }
+    },
+    "FlowStakingCollection": {
+      "source": "./cadence/contracts/standard/FlowStakingCollection.cdc",
+      "aliases": {
+        "testnet": "0x95e019a17d0e23d7",
+        "emulator": "0xf8d6e0586b0a20c7",
+        "mainnet": "0x8d0e87b65159ae63"
+      }
+    }
+  },
+  "deployments": {
+    "emulator": {
+      "emulator-account": ["ISPOManager", "ISPOExampleRewardToken"]
+    }
+  }
 }
