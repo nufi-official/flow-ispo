@@ -1,18 +1,21 @@
 import * as fcl from '@onflow/fcl'
 import Button from 'react-bootstrap/Button'
-import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Form from 'react-bootstrap/Form'
 import Alert from 'react-bootstrap/Alert'
-import { useReducer, useState } from 'react'
-import CreateTalk from '../cadence/transactions/CreateTalk.cdc'
+import { useState } from 'react'
+import createISPO from '../cadence/web/transactions/admin/createISPO.cdc'
 
+function toUFixString(numStr) { 
+  const num = Number(numStr)
+  if (Number.isInteger(num)) { 
+    return num + ".0"
+  } else {
+    return num.toString(); 
+  }
+}
 
-export function CreateIspoForm({ onMint }) {
-  const [mintData, setMintData] = useReducer(
-    (data, newData) => ({ ...data, ...newData }),
-    { text: '', tweetID: null }
-  )
-  const [showAlert, setShowAlert] = useState(false)
+export function CreateIspoForm() {
+  const [alertMsg, setAlert] = useState(null)
   const [form, setForm] = useState({})
 
   const handleChange = (e) => {
@@ -20,27 +23,30 @@ export function CreateIspoForm({ onMint }) {
   }
 
   const onSubmit = async () => {
-    console.log(form)
-    // TODO submit tx to FCL
-    /*
-    await fcl.mutate({
-      cadence: CreateTalk,
+    try {
+    const transactionId = await fcl.mutate({
+      cadence: createISPO,
       args: (arg, t) => [
-        arg(mintData?.text, t.String),
-        arg(mintData?.tweetID, t.Optional(t.String))
+        arg(form?.startEpoch, t.UInt64),
+        arg(form?.endEpoch, t.UInt64),
+        arg('ISPO1Vault', t.String),
+        arg('ISPO1Receiver', t.String),
+        arg('ISPO1Balance', t.String),
+        arg(toUFixString(form?.totalRewardTokensAmount), t.UFix64),
       ]
     })
-
-    setShowAlert(false)
-    setMintData({ text: '' })
-    onMint()*/
+      const transaction = await fcl.tx(transactionId).onceSealed()
+      setAlert(null)
+    } catch (e) {
+      setAlert(e.toString())
+    }
   }
 
   return (
     <div>
-      {showAlert && 
+      {alertMsg && 
         <Alert key='danger' variant='danger'>
-          You have to write something. Can you block the talk?
+          {alertMsg}
         </Alert>
       }
       <Form>
@@ -49,7 +55,7 @@ export function CreateIspoForm({ onMint }) {
             <Form.Control type="input" name="startEpoch" placeholder="Start epoch" onChange={handleChange}/>
             <Form.Label>End epoch</Form.Label>
             <Form.Control type="input" name="endEpoch" placeholder="End epoch" onChange={handleChange}/>
-            <Form.Label>End epoch</Form.Label>
+            <Form.Label>Total reward tokens amount</Form.Label>
             <Form.Control type="input" name="totalRewardTokensAmount" placeholder="Total reward tokens amount" onChange={handleChange}/>
         </Form.Group>
         <Button variant="primary" onClick={onSubmit}>

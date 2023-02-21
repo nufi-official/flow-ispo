@@ -14,5 +14,6 @@ config({
   'app.detail.title': 'FCL Next Scaffold',
   // path to address mappings
   '0xISPOManager': '0xf8d6e0586b0a20c7', // works just for emulator, TODO make this configurable
+  '0xFungibleToken': '0xee82856bf20e2aa6',
 }).load({ flowJSON })
  
