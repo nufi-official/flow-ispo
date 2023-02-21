@@ -10,7 +10,7 @@
     "dev:testnet:deploy": "flow project deploy --network=testnet --update && NEXT_PUBLIC_FLOW_NETWORK=testnet npm run dev",
     "dev:testnet:update": "flow project deploy --network=testnet --update",
     "dev:mainnet": "NEXT_PUBLIC_FLOW_NETWORK=mainnet npm run dev",
-    "dev:local:orchestrate": "concurrently \"flow emulator start\" \"sleep 1 && flow dev-wallet\" \"sleep 2 && flow dev\" \"npm run dev:local\"",
+    "dev:local:orchestrate": "concurrently \"flow emulator start\" \"sleep 1 && flow project deploy\" \"sleep 3 && flow dev-wallet\" \"sleep 2 && flow dev\" \"npm run dev:local\"",
     "test": "jest",
     "build": "next build",
     "start": "next start",
