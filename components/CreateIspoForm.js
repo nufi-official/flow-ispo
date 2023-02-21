@@ -4,15 +4,7 @@ import { Button, Alert, TextField, Box } from "@mui/material";
 import Card from "./Card";
 import createISPO from "../cadence/web/transactions/admin/createISPO.cdc";
 import mintRewardToken from "../cadence/web/transactions/admin/mintRewardToken.cdc";
-
-function toUFixString(numStr) {
-  const num = Number(numStr);
-  if (Number.isInteger(num)) {
-    return num + ".0";
-  } else {
-    return num.toString();
-  }
-}
+import { toUFixString } from "../helpers/utils";
 
 export function CreateIspoForm() {
   const [alertMsg, setAlert] = useState(null);
