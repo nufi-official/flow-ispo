@@ -2,6 +2,7 @@ import ISPOManager from 0xISPOManager
 import FungibleToken from 0xFungibleToken
 
 transaction(
+  ispoName: String,
   epochStart: UInt64,
   epochEnd: UInt64,
   rewardTokenVaultStoragePath: String,
@@ -27,6 +28,7 @@ transaction(
 
     acct.save(
       <-ISPOManager.createISPOAdmin(
+        name: ispoName,
         rewardTokenVault: <- vaultRef.withdraw(amount: totalRewardTokenAmount),
         rewardTokenMetadata: rewardTokenMetadata,
         epochStart: epochStart,

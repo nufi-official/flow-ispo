@@ -35,6 +35,7 @@ export function CreateIspoForm() {
       const createIspoTxId = await fcl.mutate({
         cadence: createISPO,
         args: (arg, t) => [
+          arg(form?.ispoName, t.String),
           arg(form?.startEpoch, t.UInt64),
           arg(form?.endEpoch, t.UInt64),
           arg('ispoExampleRewardTokenVault', t.String),
@@ -60,6 +61,8 @@ export function CreateIspoForm() {
       }
       <Form>
         <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Label>Name</Form.Label>
+            <Form.Control type="input" name="ispoName" placeholder="ISPO Name" onChange={handleChange}/>
             <Form.Label>Start epoch</Form.Label>
             <Form.Control type="input" name="startEpoch" placeholder="Start epoch" onChange={handleChange}/>
             <Form.Label>End epoch</Form.Label>
