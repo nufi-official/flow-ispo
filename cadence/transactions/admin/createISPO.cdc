@@ -15,7 +15,7 @@ transaction(
       panic("ISPO already exists")
     }
 
-    let vaultRef: &FungibleToken.Vault = acct.borrow<&FungibleToken.Vault>(from: /storage/flowTokenVault)
+    let vaultRef: &FungibleToken.Vault = acct.borrow<&FungibleToken.Vault>(from: StoragePath(identifier: rewardTokenVaultStoragePath)!)
 			?? panic("Could not borrow reference to the owner's Vault!")
 
     let rewardTokenMetadata: ISPOManager.RewardTokenMetadata = ISPOManager.RewardTokenMetadata(
