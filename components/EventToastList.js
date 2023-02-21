@@ -4,7 +4,7 @@ import useEvents from '../hooks/useEvents'
 import { sansPrefix } from '@onflow/fcl'
 
 export default function EventToastList() {
-  const events = useEvents(`A.${sansPrefix(process.env.CONTRACT_ADDRESS)}.BlockTalk.TalkSaved`)
+  const events = useEvents(`A.${sansPrefix(process.env.NEXT_CONTRACT_ADDRESS)}.BlockTalk.TalkSaved`)
 
   return (
     <ToastContainer position={'bottom-end'}>
