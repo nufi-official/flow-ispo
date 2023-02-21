@@ -1,30 +1,49 @@
-import * as fcl from '@onflow/fcl'
-import useCurrentUser from '../hooks/useCurrentUser'
-import Container from 'react-bootstrap/Container'
-import Navbar from 'react-bootstrap/Navbar'
-import Nav from 'react-bootstrap/Nav'
-import { Button } from 'react-bootstrap'
+import * as fcl from "@onflow/fcl";
+import useCurrentUser from "../hooks/useCurrentUser";
+import Link from "next/link";
+import {
+  AppBar,
+  Box,
+  Typography,
+  Button,
+  Toolbar,
+  Link as MuiLink,
+} from "@mui/material";
 
 export default function NavigationBar() {
-  const user = useCurrentUser()
+  const user = useCurrentUser();
   return (
-    <Navbar bg="light">
-      <Container>
-        <Navbar.Brand href="/">Flow ISPO</Navbar.Brand>
-        <Navbar.Toggle />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="/create">Create</Nav.Link>
-            <Nav.Link href="/participate">Participate</Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-        <Navbar.Collapse className="justify-content-end">
-          <Nav>
-            {!user.loggedIn && <Button onClick={fcl.authenticate}>Log In With Wallet</Button>}
-            {user.loggedIn && <Button onClick={fcl.unauthenticate}>Log Out Of Wallet</Button>}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
-  )
+    <AppBar
+      color="transparent"
+      position="relative"
+      sx={{ boxShadow: "none", maxWidth: "1980px", margin: "0 auto" }}
+    >
+      <Toolbar sx={{ justifyContent: "space-between" }}>
+        <Box display="flex" gap={2} alignItems="center">
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Flow ISPO
+          </Typography>
+          <MuiLink component={Link} href="/create">
+            Create
+          </MuiLink>
+          <MuiLink component={Link} href="/participate">
+            Participate
+          </MuiLink>
+        </Box>
+
+        <div>
+          {!user.loggedIn && (
+            <Button variant="contained" onClick={fcl.authenticate}>
+              Log In With Wallet
+            </Button>
+          )}
+          {user.loggedIn && (
+            <Button variant="contained" onClick={fcl.unauthenticate}>
+              Log Out Of Wallet
+            </Button>
+          )}
+        </div>
+      </Toolbar>
+    </AppBar>
+  );
 }
