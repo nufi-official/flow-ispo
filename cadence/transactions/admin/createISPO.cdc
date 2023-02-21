@@ -2,7 +2,10 @@ import ISPOManager from "../../contracts/ISPOManager.cdc"
 import FungibleToken from "../../contracts/standard/FungibleToken.cdc"
 
 transaction(
+<<<<<<< HEAD
   ispoName: String,
+=======
+>>>>>>> master
   epochStart: UInt64,
   epochEnd: UInt64,
   rewardTokenVaultStoragePath: String,
@@ -16,7 +19,11 @@ transaction(
       panic("ISPO already exists")
     }
 
+<<<<<<< HEAD
     let vaultRef: &FungibleToken.Vault = acct.borrow<&FungibleToken.Vault>(from: StoragePath(identifier: rewardTokenVaultStoragePath)!)
+=======
+    let vaultRef: &FungibleToken.Vault = acct.borrow<&FungibleToken.Vault>(from: /storage/flowTokenVault)
+>>>>>>> master
 			?? panic("Could not borrow reference to the owner's Vault!")
 
     let rewardTokenMetadata: ISPOManager.RewardTokenMetadata = ISPOManager.RewardTokenMetadata(
@@ -28,7 +35,10 @@ transaction(
 
     acct.save(
       <-ISPOManager.createISPOAdmin(
+<<<<<<< HEAD
         name: ispoName,
+=======
+>>>>>>> master
         rewardTokenVault: <- vaultRef.withdraw(amount: totalRewardTokenAmount),
         rewardTokenMetadata: rewardTokenMetadata,
         epochStart: epochStart,
