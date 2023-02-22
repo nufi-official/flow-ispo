@@ -27,9 +27,9 @@ export function CreateIspoForm() {
         cadence: createISPO,
         args: (arg, t) => [
           arg(form?.ispoName, t.String),
-          arg('dummyProjectUrl', t.String),
-          arg('dummyProjectDescription', t.String),
-          arg('dummyLogoUrl', t.String),
+          arg(form?.projectUrl || '', t.String),
+          arg(form?.projectDescription || '', t.String),
+          arg(form?.logoUrl || '', t.String),
           arg('2b4dac560725d23c016af31567cff35bdcbc6d3e166419d1570de74dd9ecc416', t.String), // some testnet validator
           arg(form?.startEpoch, t.UInt64),
           arg(form?.endEpoch, t.UInt64),
@@ -61,6 +61,24 @@ export function CreateIspoForm() {
           variant="standard"
           name="ispoName"
           label="Name"
+          onChange={handleChange}
+        />
+        <TextField
+          variant="standard"
+          name="projectUrl"
+          label="Project URL (Optional)"
+          onChange={handleChange}
+        />
+        <TextField
+          variant="standard"
+          name="projectDescription"
+          label="Project Description (Optional)"
+          onChange={handleChange}
+        />
+        <TextField
+          variant="standard"
+          name="logoUrl"
+          label="Project URL (Optional)"
           onChange={handleChange}
         />
         <TextField
