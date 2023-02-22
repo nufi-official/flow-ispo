@@ -3,6 +3,7 @@ import FungibleToken from "../../contracts/standard/FungibleToken.cdc"
 
 transaction(
   ispoName: String,
+  delegatorNodeId: String,
   epochStart: UInt64,
   epochEnd: UInt64,
   rewardTokenVaultStoragePath: String,
@@ -29,6 +30,7 @@ transaction(
     acct.save(
       <-ISPOManager.createISPOAdmin(
         name: ispoName,
+        delegatorNodeId: delegatorNodeId,
         rewardTokenVault: <- vaultRef.withdraw(amount: totalRewardTokenAmount),
         rewardTokenMetadata: rewardTokenMetadata,
         epochStart: epochStart,

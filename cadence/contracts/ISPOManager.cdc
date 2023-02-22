@@ -109,6 +109,7 @@ pub contract ISPOManager {
     pub resource ISPO {
         access(self) let id: UInt64
         access(self) let name: String
+        access(self) let delegatorNodeId: String
         access(self) let rewardTokenVault: @FungibleToken.Vault
         access(self) let delegators: @{UInt64: DelegatorRecord}
         access(self) let epochStart: UInt64
@@ -119,6 +120,7 @@ pub contract ISPOManager {
         init(
             id: UInt64,
             name: String,
+            delegatorNodeId: String,
             rewardTokenVault: @FungibleToken.Vault,
             rewardTokenMetadata: ISPOManager.RewardTokenMetadata,
             epochStart: UInt64,
@@ -126,6 +128,7 @@ pub contract ISPOManager {
         ) {
             self.id = id
             self.name = name
+            self.delegatorNodeId = delegatorNodeId
             self.rewardTokenVault <- rewardTokenVault
             self.rewardTokenMetadata = rewardTokenMetadata
             self.delegators <- {}
@@ -161,7 +164,7 @@ pub contract ISPOManager {
             if (self.delegators.containsKey(delegatorId)) {
                 self.borrowDelegatorRecord(delegatorId: delegatorId).delegateNewTokens(flowVault: <- flowVault)
             } else {
-                let nodeId: String = ISPOManager.defaultNodeId // TODO: possibly get as setting from ISPORecord
+                let nodeId: String = self.delegatorNodeId
                 let nodeDelegator: @FlowIDTableStaking.NodeDelegator <- FlowIDTableStaking.registerNewDelegator(nodeID: nodeId) 
 
                 let newDelegatorRecord: @ISPOManager.DelegatorRecord <- create DelegatorRecord(nodeDelegator: <- nodeDelegator)
@@ -382,11 +385,11 @@ pub contract ISPOManager {
         return ispoInfos
     }
 
-    access(contract) fun recordISPO(id: UInt64, name: String, rewardTokenVault: @FungibleToken.Vault, rewardTokenMetadata: ISPOManager.RewardTokenMetadata, epochStart: UInt64, epochEnd: UInt64) {
+    access(contract) fun recordISPO(id: UInt64, name: String, delegatorNodeId: String, rewardTokenVault: @FungibleToken.Vault, rewardTokenMetadata: ISPOManager.RewardTokenMetadata, epochStart: UInt64, epochEnd: UInt64) {
         pre {
             !self.ispos.containsKey(id): "Resource with same id already exists"
         }
-        var tmpRecord: @ISPO? <- create ISPO(id: id, name: name, rewardTokenVault: <- rewardTokenVault, rewardTokenMetadata: rewardTokenMetadata, epochStart: epochStart, epochEnd: epochEnd)
+        var tmpRecord: @ISPO? <- create ISPO(id: id, name: name, delegatorNodeId: delegatorNodeId, rewardTokenVault: <- rewardTokenVault, rewardTokenMetadata: rewardTokenMetadata, epochStart: epochStart, epochEnd: epochEnd)
         self.ispos[id] <-> tmpRecord
         // we destroy this "tmpRecord" but at this point it must contain null as it was swapped with previous value of "ispoRecords[id]"
         // https://developers.flow.com/cadence/language/resources
@@ -427,12 +430,21 @@ pub contract ISPOManager {
 
         init (
             name: String,
+            delegatorNodeId: String,
             rewardTokenVault: @FungibleToken.Vault,
             rewardTokenMetadata: ISPOManager.RewardTokenMetadata,
             epochStart: UInt64,
             epochEnd: UInt64,
         ) {
-            ISPOManager.recordISPO(id: self.uuid, name: name, rewardTokenVault: <- rewardTokenVault, rewardTokenMetadata: rewardTokenMetadata, epochStart: epochStart, epochEnd: epochEnd)
+            ISPOManager.recordISPO(
+                id: self.uuid,
+                name: name,
+                delegatorNodeId: delegatorNodeId,
+                rewardTokenVault: <- rewardTokenVault,
+                rewardTokenMetadata: rewardTokenMetadata,
+                epochStart: epochStart,
+                epochEnd: epochEnd
+            )
         }
 
         pub fun withdrawRewards(): @FungibleToken.Vault {
@@ -446,6 +458,7 @@ pub contract ISPOManager {
 
     pub fun createISPOAdmin(
         name: String,
+        delegatorNodeId: String,
         rewardTokenVault: @FungibleToken.Vault,
         rewardTokenMetadata: ISPOManager.RewardTokenMetadata,
         epochStart: UInt64,
@@ -453,6 +466,7 @@ pub contract ISPOManager {
     ): @ISPOAdmin {
         return <- create ISPOAdmin(
             name: name,
+            delegatorNodeId: delegatorNodeId,
             rewardTokenVault: <- rewardTokenVault,
             rewardTokenMetadata: rewardTokenMetadata,
             epochStart: epochStart,

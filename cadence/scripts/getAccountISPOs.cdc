@@ -1,4 +1,4 @@
-import ISPOManager from 0xISPOManager
+import ISPOManager from "../contracts/ISPOManager.cdc"
 
 pub fun main(acct: Address): ISPOManager.ISPOClientInfo? {
   var ispoClient = getAuthAccount(acct).borrow<&ISPOManager.ISPOClient>(from: ISPOManager.ispoClientStoragePath)

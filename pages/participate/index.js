@@ -1,12 +1,18 @@
 import { useState } from "react";
-import { useIspos } from "../../hooks/useIspos";
+import { useAccountIspos, useIspos } from "../../hooks/ispo";
 import { Alert, Box, Button, MenuItem, Select, TextField } from "@mui/material";
 import Card from "../../components/Card";
 import * as fcl from "@onflow/fcl";
 import delegateToISPO from "../../cadence/web/transactions/client/delegateToISPO.cdc"
 import { toUFixString } from "../../helpers/utils";
+import useCurrentUser from "../../hooks/useCurrentUser";
 
 export default function ParticipateIspoPage() {
+  const { addr } = useCurrentUser();
+  const accountIspos = useAccountIspos(addr)
+
+  console.log(accountIspos)
+
   const ispos = useIspos();
   const [form, setForm] = useState({});
   const [alertMsg, setAlert] = useState(null);
