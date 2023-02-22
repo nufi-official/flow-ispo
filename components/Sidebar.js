@@ -19,6 +19,7 @@ import {
   AccountBox as OverviewIcon,
   SettingsApplications as MyISPOIcon,
 } from '@mui/icons-material'
+
 const defaultSidebarWidth = 300
 
 const navList = [
@@ -29,21 +30,6 @@ const navList = [
         label: 'My Overview',
         href: '/',
         Icon: OverviewIcon,
-      },
-    ],
-  },
-  {
-    category: 'ISPOS',
-    links: [
-      {
-        label: 'Create ISPO',
-        href: '/create',
-        Icon: CreateISPOIcon,
-      },
-      {
-        label: 'My ISPOS',
-        href: '/my-ispos',
-        Icon: MyISPOIcon,
       },
     ],
   },
@@ -62,6 +48,21 @@ const navList = [
       },
     ],
   },
+  {
+    category: 'ISPO Management',
+    links: [
+      {
+        label: 'Create ISPO',
+        href: '/create',
+        Icon: CreateISPOIcon,
+      },
+      {
+        label: 'My ISPOS',
+        href: '/my-ispos',
+        Icon: MyISPOIcon,
+      },
+    ],
+  },
 ]
 
 export default function Sidebar(props) {
@@ -74,13 +75,18 @@ export default function Sidebar(props) {
         '& .MuiDrawer-paper': {
           width: props.width || defaultSidebarWidth,
           boxSizing: 'border-box',
+          border: 'none',
+          boxShadow: ({shadows}) => shadows[1],
+          background: 'rgba(255,255,255,0.3)',
+          backdropFilter: 'blur(5px)',
         },
+        border: 'none',
       }}
       variant="permanent"
       anchor="left"
     >
-      <Toolbar sx={{justifyContent: 'center', px: {md: 2}}}>
-        <b>FLOW ISPO</b>
+      <Toolbar sx={{justifyContent: 'center', px: {md: 2}, fontSize: 20, textTransform: 'uppercase', letterSpacing: 6}}>
+        <b>Veles</b>
       </Toolbar>
 
       <List sx={{px: 2}}>
@@ -108,7 +114,11 @@ export default function Sidebar(props) {
                   <ListItemIcon sx={{minWidth: '40px'}}>
                     <Icon />
                   </ListItemIcon>
-                  <ListItemText primary={label} />
+                  <ListItemText
+                    primary={label}
+                    disableTypography
+                    sx={{fontWeight: 500}}
+                  />
                 </ListItemButton>
               </ListItem>
             ))}

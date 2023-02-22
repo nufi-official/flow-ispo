@@ -397,7 +397,7 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
 
           <Box display="flex" flexDirection="column">
             <Button
-              variant="outlined"
+              variant="gradient"
               disabled={isSubmitting}
               type="submit"
               sx={{width: 'fit-content', alignSelf: 'center', mt: 2}}

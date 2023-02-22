@@ -5,12 +5,13 @@ export default function Card(props) {
     <MuiCard
       {...props}
       sx={{
-        margin: '0 auto',
         borderRadius: '20px',
         p: 3,
+        background: 'rgba(255,255,255,0.3)',
+        backdropFilter: 'blur(5px)',
+        boxShadow: ({shadows}) => shadows[1],
         ...props.sx,
       }}
-      raised
     >
       {props.title && (
         <Typography
