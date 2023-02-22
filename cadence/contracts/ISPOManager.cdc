@@ -13,6 +13,9 @@ pub contract ISPOManager {
         access(self) let rewardTokenMetadata: ISPOManager.RewardTokenMetadata
         access(self) let epochStart: UInt64
         access(self) let epochEnd: UInt64
+        access(self) let delegationsCount: Int
+        access(self) let delegatedFlowBalance: UFix64
+        access(self) let flowRewardsBalance: UFix64
 
         init(
             id: UInt64,
@@ -21,6 +24,9 @@ pub contract ISPOManager {
             rewardTokenMetadata: ISPOManager.RewardTokenMetadata,
             epochStart: UInt64,
             epochEnd: UInt64,
+            delegationsCount: Int,
+            delegatedFlowBalance: UFix64,
+            flowRewardsBalance: UFix64
         ) {
             self.id = id
             self.name = name
@@ -28,6 +34,9 @@ pub contract ISPOManager {
             self.rewardTokenMetadata = rewardTokenMetadata
             self.epochStart = epochStart
             self.epochEnd = epochEnd
+            self.delegationsCount = delegationsCount
+            self.delegatedFlowBalance = delegatedFlowBalance
+            self.flowRewardsBalance = flowRewardsBalance
         }
     }
 
@@ -131,7 +140,17 @@ pub contract ISPOManager {
         }
 
         pub fun getInfo(): ISPOInfo {
-            return ISPOInfo(id: self.id, name: self.name, rewardTokenBalance: self.rewardTokenVault.balance, rewardTokenMetadata: self.rewardTokenMetadata, epochStart: self.epochStart, epochEnd: self.epochEnd)
+            return ISPOInfo(
+                id: self.id,
+                name: self.name,
+                rewardTokenBalance: self.rewardTokenVault.balance,
+                rewardTokenMetadata: self.rewardTokenMetadata,
+                epochStart: self.epochStart,
+                epochEnd: self.epochEnd,
+                delegationsCount: self.getDelegatorsCount(),
+                delegatedFlowBalance: self.getDelegatedFlowBalance(),
+                flowRewardsBalance: self.getFlowRewardsBalance(),
+            )
         }
 
         pub fun delegateNewTokens(delegatorId: UInt64, flowVault: @FungibleToken.Vault) {
@@ -174,6 +193,34 @@ pub contract ISPOManager {
                 epochIndexIterator = epochIndexIterator + 1
             }
             return weights
+        }
+
+        access(self) fun getDelegatorsCount(): Int {
+            return self.delegators.keys.length
+        }
+
+        // sums all delegated flow
+        access(self) fun getDelegatedFlowBalance(): UFix64 {
+            var res: UFix64 = 0.0
+            for delegatorKey in self.delegators.keys {
+                let delegatorRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: delegatorKey)
+                let commitments = delegatorRef.getEpochFlowCommitments()
+                for commitmentKey in commitments.keys {
+                    res = res + commitments[commitmentKey]!
+                }
+            }
+            return res
+        }
+
+        // sums all delegated available flow rewards
+        access(self) fun getFlowRewardsBalance(): UFix64 {
+            var res: UFix64 = 0.0
+            for key in self.delegators.keys {
+                let delegatorRecordRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: key)
+                let adminRewardAmount: UFix64 = self.calculateAdminRewardAmount(delegatorRef: delegatorRecordRef)
+                res = res + adminRewardAmount
+            }
+            return res
         }
 
         // sums all delegator weighs, (per epoch)
