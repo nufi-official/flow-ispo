@@ -27,6 +27,9 @@ export function CreateIspoForm() {
         cadence: createISPO,
         args: (arg, t) => [
           arg(form?.ispoName, t.String),
+          arg('dummyProjectUrl', t.String),
+          arg('dummyProjectDescription', t.String),
+          arg('dummyLogoUrl', t.String),
           arg('2b4dac560725d23c016af31567cff35bdcbc6d3e166419d1570de74dd9ecc416', t.String), // some testnet validator
           arg(form?.startEpoch, t.UInt64),
           arg(form?.endEpoch, t.UInt64),
