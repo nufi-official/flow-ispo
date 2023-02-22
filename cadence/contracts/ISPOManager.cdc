@@ -148,7 +148,9 @@ pub contract ISPOManager {
 
         access(self) fun isISPOActive(): Bool {
             let currentEpoch: UInt64 = FlowEpoch.currentEpochCounter
-            return currentEpoch >= self.epochStart && currentEpoch <= self.epochEnd
+            // TODO we should probably check for epochStart as well, but the check was removed
+            // to be able to delegate before ISPO start
+            return currentEpoch <= self.epochEnd
         }
 
         pub fun getInfo(): ISPOInfo {
