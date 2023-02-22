@@ -44,7 +44,7 @@ export function CreateIspoForm() {
   };
 
   return (
-    <Card>
+    <Card title="Create new ISPO">
       <Box
         component="form"
         sx={{
@@ -89,4 +89,3 @@ export function CreateIspoForm() {
     </Card>
   );
 }
- 

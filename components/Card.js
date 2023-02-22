@@ -5,16 +5,20 @@ export default function Card(props) {
     <MuiCard
       {...props}
       sx={{
-        minWidth: "600px",
         margin: "0 auto",
-        borderRadius: 5,
+        borderRadius: "20px",
         p: 3,
         ...props.sx,
       }}
       raised
     >
       {props.title && (
-        <Typography variant="h6" fontWeight="bold" gutterBottom>
+        <Typography
+          variant="h6"
+          fontWeight="bold"
+          gutterBottom
+          textAlign="center"
+        >
           {props.title}
         </Typography>
       )}

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useIspos } from "../../hooks/useIspos";
-import { Alert, Box, Button, MenuItem, Select, TextField } from "@mui/material";
-import Card from "../../components/Card";
+import { Alert, Box, Button, TextField } from "@mui/material";
+import ISPOCard from "../../components/ISPOCard";
 import * as fcl from "@onflow/fcl";
-import delegateToISPO from "../../cadence/web/transactions/client/delegateToISPO.cdc"
+import delegateToISPO from "../../cadence/web/transactions/client/delegateToISPO.cdc";
 import { toUFixString } from "../../helpers/utils";
 
 export default function ParticipateIspoPage() {
@@ -17,7 +17,7 @@ export default function ParticipateIspoPage() {
 
   const onSubmit = async () => {
     try {
-      console.log(form)
+      console.log(form);
       const delegateToIspoTxId = await fcl.mutate({
         cadence: delegateToISPO,
         args: (arg, t) => [
@@ -34,44 +34,35 @@ export default function ParticipateIspoPage() {
   };
 
   return (
-    <Card sx={{width: "300px"}}>
-      <Box textAlign="center" component="form"
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          "& > *:not(:first-child)": { mt: 2 },
-        }}>
-        {ispos?.length > 0 ? (<>
-          <div>ISPOS:</div>
-          <Select
-            labelId="ispo-select-label"
-            id="ispo-select"
-            name="ispoId"
-            value={form?.ispoId}
-            label="ISPO"
-            onChange={handleChange}
+    <>
+      {ispos.map((ispo) => (
+        <ISPOCard {...ispo}>
+          <Box
+            textAlign="center"
+            component="form"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              "& > *:not(:first-child)": { mt: 2 },
+            }}
           >
-            {ispos.map((ispo) =>(
-              <MenuItem value={ispo.id} key={ispo.id}>{ispo.name}</MenuItem>
-            ))}
-          </Select>
-          <TextField
-            variant="standard"
-            name="lockedFlowAmount"
-            label="Locked $FLOW amount"
-            onChange={handleChange}
-          />
-          <Button
-            variant="outlined"
-            onClick={onSubmit}
-            sx={{ width: "fit-content", alignSelf: "center" }}
-          >
-            Join ISPO
-          </Button>
-        </>) : 'No data'}
-        {alertMsg && <Alert severity="error">{alertMsg}</Alert>}
-      </Box>
-    </Card>
-  )
+            <TextField
+              variant="standard"
+              name="lockedFlowAmount"
+              label="Locked $FLOW amount"
+              onChange={handleChange}
+            />
+            <Button
+              variant="outlined"
+              onClick={onSubmit}
+              sx={{ width: "fit-content", alignSelf: "center" }}
+            >
+              Join ISPO
+            </Button>
+            {alertMsg && <Alert severity="error">{alertMsg}</Alert>}
+          </Box>
+        </ISPOCard>
+      ))}
+    </>
+  );
 }
- 
