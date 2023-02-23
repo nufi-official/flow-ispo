@@ -30,7 +30,7 @@ export function useCurrentEpoch() {
 
 export function useEpochToDate() {
     const [epochSchedule, setEpochSchedule] = useState(null)
-    const defaultApiUrl = 'https://query.testnet.flowgraph.co/06c16d570831aa35211075aba17cf165f7d53dfa'
+    const defaultApiUrl = 'https://query.testnet.flowgraph.co/?token=06c16d570831aa35211075aba17cf165f7d53dfa'
 
     const fetchEpochSchedule = async () => {
         let res
