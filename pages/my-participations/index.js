@@ -1,5 +1,15 @@
 import Link from 'next/link'
-import {Box, Button, Tooltip, Typography, CircularProgress} from '@mui/material'
+import {useState} from 'react'
+import {
+  Box,
+  Button,
+  Tooltip,
+  Typography,
+  CircularProgress,
+  Backdrop,
+  Portal,
+  Alert,
+} from '@mui/material'
 import ISPOCard, {IspoDetail} from '../../components/ISPOCard'
 import {useAccountIspos} from '../../hooks/ispo'
 import useCurrentUser from '../../hooks/useCurrentUser'
@@ -20,46 +30,9 @@ export default function MyParticipations() {
         </Box>
       )}
       {!accountIspos && !!addr && <CircularProgress />}
-      {accountIspos?.map(
-        ({ispo, delegatedFlowBalance, rewardTokenBalance, createdAt}) => (
-          <ISPOCard
-            {...ispo}
-            body={
-              <Box
-                display="flex"
-                justifyContent="space-around"
-                flexWrap="wrap"
-                alignItems="center"
-                gap={2}
-              >
-                <IspoDetail
-                  label="Joined"
-                  value={new Date(createdAt).toLocaleDateString()}
-                />
-                <IspoDetail
-                  label="Earned rewards"
-                  highlight
-                  value={`${formatCompactAmount(rewardTokenBalance)} tokens`}
-                />
-                <IspoDetail
-                  label="Delegated"
-                  value={`${formatCompactAmount(delegatedFlowBalance)} $FLOW`}
-                />
-              </Box>
-            }
-            key={ispo.id}
-            footerContent={
-              <Tooltip title="You can withdraw rewards after the last ISPO epoch">
-                <div>
-                  <Button variant="outlined" sx={{width: '100%'}} disabled>
-                    Withdraw rewards
-                  </Button>
-                </div>
-              </Tooltip>
-            }
-          />
-        ),
-      )}
+      {accountIspos?.map((data) => (
+        <MyParticipationCard {...data} key={data.id} />
+      ))}
       {accountIspos?.length === 0 && (
         <Box
           sx={{
@@ -79,5 +52,81 @@ export default function MyParticipations() {
         </Box>
       )}
     </CardGrid>
+  )
+}
+
+function MyParticipationCard({
+  ispo,
+  delegatedFlowBalance,
+  rewardTokenBalance,
+  createdAt,
+}) {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [alertMsg, setAlert] = useState(null)
+
+  const onWithdrawFlow = async () => {
+    setAlert(null)
+    setIsSubmitting(true)
+    try {
+      // mock
+      await new Promise((res) => setTimeout(res, 5000))
+    } catch (e) {
+      setAlert(e.toString())
+    }
+    setIsSubmitting(false)
+  }
+
+  return (
+    <ISPOCard
+      {...ispo}
+      body={
+        <Box
+          display="flex"
+          justifyContent="space-around"
+          flexWrap="wrap"
+          alignItems="center"
+          gap={2}
+        >
+          <IspoDetail
+            label="Joined"
+            value={new Date(createdAt).toLocaleDateString()}
+          />
+          <IspoDetail
+            label="Earned rewards"
+            highlight
+            value={`${formatCompactAmount(rewardTokenBalance)} tokens`}
+          />
+          <IspoDetail
+            label="Delegated"
+            value={`${formatCompactAmount(delegatedFlowBalance)} $FLOW`}
+          />
+        </Box>
+      }
+      footerContent={
+        <>
+          <Box sx={{display: 'flex', gap: 2, '& > *': {width: '50%'}, mb: 1}}>
+            <Tooltip title="You can withdraw rewards after the last ISPO epoch">
+              <div>
+                <Button variant="outlined" disabled>
+                  Claim rewards
+                </Button>
+              </div>
+            </Tooltip>
+            <Button variant="gradient" onClick={onWithdrawFlow}>
+              withdraw flow
+            </Button>
+          </Box>
+          {alertMsg && <Alert severity="error">{alertMsg}</Alert>}
+          <Portal>
+            <Backdrop
+              sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}}
+              open={isSubmitting}
+            >
+              <CircularProgress color="inherit" />
+            </Backdrop>
+          </Portal>
+        </>
+      }
+    />
   )
 }
