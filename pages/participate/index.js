@@ -28,6 +28,11 @@ export default function ParticipateIspoPage() {
       {ispos?.map((ispo) => (
         <ParticipateCard ispoData={ispo} key={ispo.id} />
       ))}
+      {ispos?.length === 0 && (
+        <Typography variant="h5" sx={{fontWeight: 'bold'}}>
+          No offerings found
+        </Typography>
+      )}
     </CardGrid>
   )
 }

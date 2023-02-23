@@ -70,7 +70,7 @@ export default function MyIspos() {
           }}
         >
           <Typography variant="h5" sx={{fontWeight: 'bold'}}>
-            No active ISPOs found.
+            No active ISPOs found
           </Typography>
           <Button variant="gradient" component={Link} href="/create">
             Create ISPO{' '}
