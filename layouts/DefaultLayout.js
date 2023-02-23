@@ -70,7 +70,16 @@ export default function DefaultLayout({children}) {
                 value={
                   <MuiLink
                     target="_blank"
-                    sx={{display: 'inline-flex', alignItems: 'center', gap: 1}}
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      textDecoration: 'underline',
+                      color: ({palette}) => palette.info.main,
+                      '&:hover': {
+                        color: ({palette}) => palette.info.dark,
+                      },
+                    }}
                     href={getFlowAddressExplorerLink(user.addr)}
                   >
                     {user.addr}
