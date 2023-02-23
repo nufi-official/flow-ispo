@@ -7,6 +7,7 @@ const flowNetwork = process.env.NEXT_PUBLIC_FLOW_NETWORK
 console.log('Dapp running on network:', flowNetwork)
 console.log(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS)
 
+// TODO: why we actually use Next.JS and server side rendering?
 config({
   'flow.network': flowNetwork,
   'accessNode.api': ACCESS_NODE_URLS[flowNetwork],
