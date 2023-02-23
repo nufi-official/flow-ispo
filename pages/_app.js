@@ -1,18 +1,27 @@
 import {ThemeProvider} from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
+import dynamic from 'next/dynamic'
 import theme from '../theme'
+
 import '../styles/globals.css'
-import DefaultLayout from '../layouts/DefaultLayout'
-// Import Flow config
-import '../config/fcl.js'
+
+const InitFlow = dynamic(() => import('../components/InitFlow'), {
+  ssr: false,
+})
+
+const Layout = dynamic(() => import('../layouts/DefaultLayout'), {
+  ssr: false,
+})
 
 function MyApp({Component, pageProps}) {
   return (
     <ThemeProvider theme={theme}>
-      <DefaultLayout>
-        <CssBaseline />
-        <Component {...pageProps} />
-      </DefaultLayout>
+      <CssBaseline />
+      <InitFlow>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </InitFlow>
     </ThemeProvider>
   )
 }

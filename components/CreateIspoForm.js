@@ -128,7 +128,7 @@ const createRegisterSchema = ({currentEpoch}) => {
   })
 }
 
-export function CreateIspoForm() {
+export default function CreateIspoForm() {
   const [submitted, setSubmitted] = useState(false)
   const router = useRouter()
 
@@ -147,7 +147,11 @@ export function CreateIspoForm() {
   if (submitted) {
     return (
       <Box
-        sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
       >
         <Typography variant="h4" mb={1}>
           ISPO successfully created!

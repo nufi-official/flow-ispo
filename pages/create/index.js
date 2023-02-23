@@ -1,11 +1,14 @@
-import useCurrentUser from '../../hooks/useCurrentUser'
-import {CreateIspoForm} from '../../components/CreateIspoForm'
 import {Container} from '@mui/material'
-import {useAccountIspos} from '../../hooks/ispo'
+import dynamic from 'next/dynamic'
+
+const CreateIspoForm = dynamic(
+  () => import('../../components/CreateIspoForm'),
+  {
+    ssr: false,
+  },
+)
 
 export default function CreateIspoPage() {
-  const {addr} = useCurrentUser()
-
   return (
     <Container maxWidth="sm">
       <CreateIspoForm />
