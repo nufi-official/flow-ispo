@@ -1,20 +1,21 @@
 import React from 'react'
-import {Box,} from '@mui/material'
+import {Box} from '@mui/material'
 
 const CardGrid = ({children}) => {
   return (
     <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '20px',
-          minHeight: '100%',
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '10px',
+        minHeight: '100%',
         pb: 4,
-
-        }}
-      >{children}</Box>
+      }}
+    >
+      {children}
+    </Box>
   )
 }
 

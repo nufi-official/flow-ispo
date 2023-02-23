@@ -98,7 +98,7 @@ export default function Sidebar(props) {
         <b>Veles</b>
       </Toolbar>
 
-      <List sx={{px: 2}}>
+      <List sx={{px: 1}}>
         {navList.map(({category, links}, index) => (
           <Box key={category} pb={2}>
             <Typography
@@ -113,14 +113,14 @@ export default function Sidebar(props) {
             </Typography>
             <Divider />
             {links.map(({label, href, Icon}) => (
-              <ListItem key={label + href}>
+              <ListItem key={label + href} sx={{p: 1}}>
                 <ListItemButton
                   component={Link}
                   href={href}
                   selected={router.pathname === href}
-                  sx={{borderRadius: ({shape}) => shape.borderRadius}}
+                  sx={{borderRadius: 1, p: 1}}
                 >
-                  <ListItemIcon sx={{minWidth: '40px'}}>
+                  <ListItemIcon sx={{minWidth: '35px'}}>
                     <Icon />
                   </ListItemIcon>
                   <ListItemText

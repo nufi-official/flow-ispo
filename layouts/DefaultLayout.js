@@ -17,7 +17,7 @@ import useConfig from '../hooks/useConfig'
 import {useCurrentEpoch} from '../hooks/epochs'
 
 const appTopBar = 64
-const sideBarWidth = 320
+const sideBarWidth = 260
 
 export default function DefaultLayout({children}) {
   const user = useCurrentUser()
