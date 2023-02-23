@@ -10,10 +10,12 @@ export function useIspos() {
     const fetchIspos = async () => {
         let res
         try {
-            res = await fcl.query({
+            res = (await fcl.query({
                 cadence: getIspoInfos,
                 args: (arg, t) => []
-            })
+            })).map((ispo) => (
+                {...ispo, createdAt: new Date(Number(ispo.createdAt) * 1000)}
+            ))
         } catch(e) {
             // Likely need to mint first to create capability if this fails
             res = []

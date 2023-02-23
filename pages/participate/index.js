@@ -11,8 +11,6 @@ export default function ParticipateIspoPage() {
   const { addr } = useCurrentUser();
   const accountIspos = useAccountIspos(addr)
 
-  console.log(accountIspos)
-
   const ispos = useIspos();
   const [form, setForm] = useState({});
   const [alertMsg, setAlert] = useState(null);
@@ -23,7 +21,6 @@ export default function ParticipateIspoPage() {
 
   const onSubmit = async () => {
     try {
-      console.log(form);
       const delegateToIspoTxId = await fcl.mutate({
         cadence: delegateToISPO,
         args: (arg, t) => [

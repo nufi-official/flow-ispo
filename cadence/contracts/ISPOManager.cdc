@@ -16,6 +16,7 @@ pub contract ISPOManager {
         access(self) let delegationsCount: Int
         access(self) let delegatedFlowBalance: UFix64
         access(self) let flowRewardsBalance: UFix64
+        access(self) let createdAt: UFix64
 
         init(
             id: UInt64,
@@ -26,7 +27,8 @@ pub contract ISPOManager {
             epochEnd: UInt64,
             delegationsCount: Int,
             delegatedFlowBalance: UFix64,
-            flowRewardsBalance: UFix64
+            flowRewardsBalance: UFix64,
+            createdAt: UFix64,
         ) {
             self.id = id
             self.name = name
@@ -37,6 +39,7 @@ pub contract ISPOManager {
             self.delegationsCount = delegationsCount
             self.delegatedFlowBalance = delegatedFlowBalance
             self.flowRewardsBalance = flowRewardsBalance
+            self.createdAt = createdAt
         }
     }
 
@@ -117,6 +120,7 @@ pub contract ISPOManager {
         access(self) let delegators: @{UInt64: DelegatorRecord}
         access(self) let epochStart: UInt64
         access(self) let epochEnd: UInt64 // TODO: rename to endEpoch/startEpoch
+        access(self) let createdAt: UFix64
         access(self) var stakingRewardsVault: @FungibleToken.Vault? // used for cumulating reward when delegator decides to unstake
         pub let rewardTokenMetadata: ISPOManager.RewardTokenMetadata
 
@@ -131,6 +135,7 @@ pub contract ISPOManager {
             rewardTokenMetadata: ISPOManager.RewardTokenMetadata,
             epochStart: UInt64,
             epochEnd: UInt64,
+            createdAt: UFix64,
         ) {
             self.id = id
             self.name = name
@@ -144,6 +149,7 @@ pub contract ISPOManager {
             self.epochStart = epochStart
             self.epochEnd = epochEnd
             self.stakingRewardsVault <- nil
+            self.createdAt = createdAt
         }
 
         access(self) fun isISPOActive(): Bool {
@@ -164,6 +170,7 @@ pub contract ISPOManager {
                 delegationsCount: self.getDelegatorsCount(),
                 delegatedFlowBalance: self.getTotalDelegatedFlowBalance(),
                 flowRewardsBalance: self.getTotalFlowRewardsBalance(),
+                createdAt: self.createdAt,
             )
         }
 
@@ -406,7 +413,8 @@ pub contract ISPOManager {
         rewardTokenVault: @FungibleToken.Vault,
         rewardTokenMetadata: ISPOManager.RewardTokenMetadata,
         epochStart: UInt64,
-        epochEnd: UInt64
+        epochEnd: UInt64,
+        createdAt: UFix64,
     ) {
         pre {
             !self.ispos.containsKey(id): "Resource with same id already exists"
@@ -421,7 +429,8 @@ pub contract ISPOManager {
             rewardTokenVault: <- rewardTokenVault,
             rewardTokenMetadata: rewardTokenMetadata,
             epochStart: epochStart,
-            epochEnd: epochEnd
+            epochEnd: epochEnd,
+            createdAt: createdAt,
         )
         self.ispos[id] <-> tmpRecord
         // we destroy this "tmpRecord" but at this point it must contain null as it was swapped with previous value of "ispoRecords[id]"
@@ -482,7 +491,8 @@ pub contract ISPOManager {
                 rewardTokenVault: <- rewardTokenVault,
                 rewardTokenMetadata: rewardTokenMetadata,
                 epochStart: epochStart,
-                epochEnd: epochEnd
+                epochEnd: epochEnd,
+                createdAt: getCurrentBlock().timestamp,
             )
         }
 
