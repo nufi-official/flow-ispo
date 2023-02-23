@@ -25,7 +25,7 @@ const fetchIspos = async () => {
 }
 
 export function useIspos() {
-  const [ispos, setIspos] = useState([])
+  const [ispos, setIspos] = useState(undefined)
 
   const fetch = async () => {
     setIspos(await fetchIspos())
