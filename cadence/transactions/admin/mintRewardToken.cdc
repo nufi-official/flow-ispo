@@ -3,8 +3,10 @@ import FungibleToken from  "../../contracts/standard/FungibleToken.cdc"
 
 transaction(amount: UFix64) {
     prepare(adminAccount: AuthAccount) {
-      let vault <- ISPOExampleRewardToken.createEmptyVault()
-      adminAccount.save(<-vault, to: /storage/ispoExampleRewardTokenVault)
+      var oldTokenVault <- adminAccount.load<@FungibleToken.Vault>(from: /storage/ispoExampleRewardTokenVault)
+      destroy oldTokenVault // this destroys any leftover tokens from other potential deployments of the contract
+      
+      adminAccount.save(<-ISPOExampleRewardToken.createEmptyVault(), to: /storage/ispoExampleRewardTokenVault)
 
         // Create a public capability to the stored Vault that only exposes
         // the `deposit` method through the `Receiver` interface
@@ -29,7 +31,7 @@ transaction(amount: UFix64) {
       let minterRef = &adminRef.createNewMinter(allowedAmount: amount) as &ISPOExampleRewardToken.Minter?
       let mintedVault <- minterRef!.mintTokens(amount: amount)
       let vaultRef = adminAccount.borrow<&ISPOExampleRewardToken.Vault>(from: /storage/ispoExampleRewardTokenVault)!
-      adminAccount.save(<-admin, to: /storage/ispoExampleRewardTokenAdmin)
+      destroy admin
       vaultRef.deposit(from: <- mintedVault)
     }   
 }

@@ -9,7 +9,6 @@ import useCurrentUser from '../../hooks/useCurrentUser'
 
 export default function ParticipateIspoPage() {
   const {addr} = useCurrentUser()
-  const accountIspos = useAccountIspos(addr)
 
   const ispos = useIspos()
   const [form, setForm] = useState({})
@@ -27,6 +26,7 @@ export default function ParticipateIspoPage() {
           arg(ispoId, t.UInt64),
           arg(toUFixString(form?.lockedFlowAmount), t.UFix64),
         ],
+        limit: 1000
       })
       await fcl.tx(delegateToIspoTxId).onceSealed()
 

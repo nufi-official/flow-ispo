@@ -38,35 +38,37 @@ export function useIspos() {
 }
 
 const mockIspo = {
-  ispo: {
-    id: '44',
-    name: 'Mock ISPO',
-    rewardTokenBalance: '47000.00000000',
-    rewardTokenMetadata: {
-      rewardTokenVaultStoragePath: {
-        domain: 'storage',
-        identifier: 'ispoExampleRewardTokenVault',
-      },
-      rewardTokenReceiverPublicPath: {
-        domain: 'public',
-        identifier: 'ispoExampleRewardTokenReceiver',
-      },
-      rewardTokenBalancePublicPath: {
-        domain: 'public',
-        identifier: 'ispoExampleRewardTokenBalance',
-      },
-      totalRewardTokenAmount: '47000.00000000',
+    "id": "133359407",
+    "ispo": {
+        "id": "133359190",
+        "name": "Test ISPO",
+        "rewardTokenBalance": "10000.00000000",
+        "rewardTokenMetadata": {
+            "rewardTokenVaultStoragePath": {
+                "domain": "storage",
+                "identifier": "ispoExampleRewardTokenVault"
+            },
+            "rewardTokenReceiverPublicPath": {
+                "domain": "public",
+                "identifier": "ispoExampleRewardTokenReceiver"
+            },
+            "rewardTokenBalancePublicPath": {
+                "domain": "public",
+                "identifier": "ispoExampleRewardTokenBalance"
+            },
+            "totalRewardTokenAmount": "10000.00000000"
+        },
+        "epochStart": "477",
+        "epochEnd": "2000",
+        "delegationsCount": "1",
+        "delegatedFlowBalance": "0.00000000",
+        "flowRewardsBalance": "0.00000000",
+        "createdAt": "2023-02-23T22:25:24.000Z"
     },
-    epochStart: '0',
-    epochEnd: '12',
-    delegationsCount: '0',
-    delegatedFlowBalance: '0.00000000',
-    flowRewardsBalance: '0.00000000',
-    createdAt: '2023-02-23T13:24:42.000Z',
-  },
-  createdAt: '2023-02-23T13:30:42.000Z',
-  delegatedFlowBalance: '123456.0',
-  rewardTokenBalance: '4747',
+    "ispoId": "133359190",
+    "delegatedFlowBalance": "0.00000000",
+    "rewardTokenBalance": "10000.00000000",
+    "createdAt": "2023-02-23T22:29:04.000Z"
 }
 
 export function useAccountIspos(address) {
@@ -75,17 +77,26 @@ export function useAccountIspos(address) {
   const fetchAccountIspos = async () => {
     let res
     try {
-      res = address
+      const allIspos = await fetchIspos()
+      const rawIspos = address
         ? await fcl.query({
             cadence: getAccountISPOs,
             args: (arg, t) => [arg(address, t.Address)],
           })
-        : []
+        : {}
+      res = Object.entries(rawIspos).map(([key, value]) => (
+        {
+          id: key,
+          ispo: allIspos.find((ispo) => ispo.id === value.ispoId),
+          ...value,
+          createdAt: new Date(Number(value.createdAt) * 1000),
+        }
+      ))
     } catch (e) {
       // Likely need to mint first to create capability if this fails
       res = []
     } finally {
-      res = !res?.length ? [mockIspo] : []
+      res = !res?.length ? [mockIspo] : res
       setIspos(res)
     }
   }

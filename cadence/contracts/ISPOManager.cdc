@@ -210,7 +210,8 @@ pub contract ISPOManager {
                 if (epochCommitment != nil) {
                     lastCommitedValue = lastCommitedValue + epochCommitment!
                 } 
-                weights[epochIndexIterator] = lastCommitedValue
+                // TODO proper weight, for now just hardcode some dummy weight
+                weights[epochIndexIterator] = 1.0 // lastCommitedValue
                 epochIndexIterator = epochIndexIterator + 1
             }
             return weights
@@ -254,7 +255,7 @@ pub contract ISPOManager {
                 var epochIndexIterator: UInt64 = self.epochStart
                 while (epochIndexIterator <= self.epochEnd) {
                     let epochCommitment: UFix64? = delegatorEpochWeights[epochIndexIterator]!
-                    if (totalWeights[epochIndexIterator] != nil) {
+                    if (totalWeights[epochIndexIterator] == nil) {
                         totalWeights[epochIndexIterator] = epochCommitment!
                     } 
                     totalWeights[epochIndexIterator] = totalWeights[epochIndexIterator]! + epochCommitment!
@@ -287,13 +288,10 @@ pub contract ISPOManager {
         }
 
         pub fun getRewardTokensBalance(delegatorId: UInt64): UFix64 {
-            pre {
-                !self.isISPOActive(): "ISPO must be inactive to withdraw reward tokens"
-            }
             let totalWeights: {UInt64: UFix64} = self.getTotalDelegatorWeights()
             let delegatorRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: delegatorId)
             if (delegatorRef.hasWithdrawRewardToken) {
-                panic("Reward token has already been withdrawn")
+                return 0.0
             }
             let delegatorWeights: {UInt64: UFix64} = self.getDelegatorWeights(delegatorRef: delegatorRef)
 
@@ -304,7 +302,6 @@ pub contract ISPOManager {
                 rewardAmount = rewardAmount + (totalRewardTokenAmountPerEpoch * (delegatorWeights[epochIndexIterator]! / totalWeights[epochIndexIterator]!)) // TODO: remove division?
                 epochIndexIterator = epochIndexIterator + 1
             }
-            delegatorRef.setHasWithrawnRewardToken()
             return self.rewardTokenVault.balance
         }
 

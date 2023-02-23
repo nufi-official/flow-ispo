@@ -179,13 +179,6 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
 
   const onSubmit = async (data) => {
     try {
-      const mintTxId = await fcl.mutate({
-        cadence: mintRewardToken,
-        args: (arg, t) => [
-          arg(toUFixString(data.totalRewardTokensAmount), t.UFix64),
-        ],
-      })
-      await fcl.tx(mintTxId).onceSealed()
       const createIspoTxId = await fcl.mutate({
         cadence: createISPO,
         args: (arg, t) => [
