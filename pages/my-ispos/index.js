@@ -11,7 +11,14 @@ export default function MyIspos() {
   const accountIspos = useAccountAdminIspos(addr)
   return (
     <CardGrid>
-      {!accountIspos && <CircularProgress />}
+      {!addr && (
+        <Box>
+          <Typography variant="h5" sx={{fontWeight: 'bold'}}>
+            You are not logged in.
+          </Typography>
+        </Box>
+      )}
+      {!accountIspos && !!addr && <CircularProgress />}
       {accountIspos?.map((ispo) => (
         <ISPOCard
           {...ispo}
