@@ -6,8 +6,8 @@
 }
 
 .button:hover {
-  color: #00EC82;
-  border-color: #00EC82;
+  color: #00ec82;
+  border-color: #00ec82;
 }
 
 .input {
@@ -18,5 +18,5 @@
 
 .link {
   cursor: pointer;
-  color: #00EC82;
+  color: #00ec82;
 }

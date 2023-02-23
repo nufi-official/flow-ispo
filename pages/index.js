@@ -1,6 +1,6 @@
-import Head from "next/head";
-import { Button, Box } from "@mui/material";
-import Link from "next/link";
+import Head from 'next/head'
+import {Button, Box} from '@mui/material'
+import Link from 'next/link'
 
 export default function Home() {
   return (
@@ -26,10 +26,10 @@ export default function Home() {
         variant="outlined"
         component={Link}
         href="/participate"
-        sx={{ mt: 1 }}
+        sx={{mt: 1}}
       >
         Participate
       </Button>
     </Box>
-  );
+  )
 }

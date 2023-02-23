@@ -1,14 +1,14 @@
-import Card from "./Card";
-import { Box } from "@mui/material";
+import Card from './Card'
+import {Box} from '@mui/material'
 
 export default function ISPOCard(props) {
   return (
-    <Card title={props.name} {...props} sx={{ minWidth: "200px" }}>
+    <Card title={props.name} {...props} sx={{minWidth: '200px'}}>
       <Box
         sx={{
-          display: "flex",
+          display: 'flex',
           gap: 4,
-          justifyContent: "space-between",
+          justifyContent: 'space-between',
         }}
       >
         {props.epochStart && (
@@ -26,16 +26,14 @@ export default function ISPOCard(props) {
       </Box>
       {props.children}
     </Card>
-  );
+  )
 }
 
-function CardValue({ title, value }) {
+function CardValue({title, value}) {
   return (
-    <Box
-      sx={({ typography }) => ({ ...typography.caption, textAlign: "center" })}
-    >
-      <Box sx={{ fontWeight: "bold", fontSize: "150%" }}>{value}</Box>
+    <Box sx={({typography}) => ({...typography.caption, textAlign: 'center'})}>
+      <Box sx={{fontWeight: 'bold', fontSize: '150%'}}>{value}</Box>
       {title}
     </Box>
-  );
+  )
 }

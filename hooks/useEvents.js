@@ -1,7 +1,7 @@
 import * as fcl from '@onflow/fcl'
-import { useEffect, useState } from 'react'
+import {useEffect, useState} from 'react'
 
-const unique = arr => {
+const unique = (arr) => {
   const uniqueIds = new Set()
   return arr.filter((item) => {
     if (uniqueIds.has(item.id)) {

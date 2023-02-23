@@ -1,12 +1,12 @@
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import theme from "../theme";
-import "../styles/globals.css";
-import DefaultLayout from "../layouts/DefaultLayout";
+import {ThemeProvider} from '@mui/material/styles'
+import CssBaseline from '@mui/material/CssBaseline'
+import theme from '../theme'
+import '../styles/globals.css'
+import DefaultLayout from '../layouts/DefaultLayout'
 // Import Flow config
-import "../config/fcl.js";
+import '../config/fcl.js'
 
-function MyApp({ Component, pageProps }) {
+function MyApp({Component, pageProps}) {
   return (
     <ThemeProvider theme={theme}>
       <DefaultLayout>
@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }) {
         <Component {...pageProps} />
       </DefaultLayout>
     </ThemeProvider>
-  );
+  )
 }
 
-export default MyApp;
+export default MyApp

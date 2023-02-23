@@ -1,5 +1,5 @@
 import * as fcl from '@onflow/fcl'
-import { useEffect, useState } from 'react'
+import {useEffect, useState} from 'react'
 
 export default function useConfig() {
   const [network, setNetwork] = useState()
@@ -12,5 +12,5 @@ export default function useConfig() {
     getConfig()
   }, [])
 
-  return { network }
+  return {network}
 }

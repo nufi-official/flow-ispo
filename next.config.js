@@ -3,13 +3,12 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   webpack: (config) => {
-    
     config.module.rules.push({
       test: /\.cdc$/,
-      loader: "raw-loader",
+      loader: 'raw-loader',
     })
 
-    return config;
+    return config
   },
 }
 

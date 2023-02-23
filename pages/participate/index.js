@@ -1,23 +1,23 @@
-import { useState } from "react";
-import { useAccountIspos, useIspos } from "../../hooks/ispo";
-import { Alert, Box, Button, TextField } from "@mui/material";
-import ISPOCard from "../../components/ISPOCard";
-import * as fcl from "@onflow/fcl";
-import delegateToISPO from "../../cadence/web/transactions/client/delegateToISPO.cdc";
-import { toUFixString } from "../../helpers/utils";
-import useCurrentUser from "../../hooks/useCurrentUser";
+import {useState} from 'react'
+import {useAccountIspos, useIspos} from '../../hooks/ispo'
+import {Alert, Box, Button, TextField} from '@mui/material'
+import ISPOCard from '../../components/ISPOCard'
+import * as fcl from '@onflow/fcl'
+import delegateToISPO from '../../cadence/web/transactions/client/delegateToISPO.cdc'
+import {toUFixString} from '../../helpers/utils'
+import useCurrentUser from '../../hooks/useCurrentUser'
 
 export default function ParticipateIspoPage() {
-  const { addr } = useCurrentUser();
+  const {addr} = useCurrentUser()
   const accountIspos = useAccountIspos(addr)
 
-  const ispos = useIspos();
-  const [form, setForm] = useState({});
-  const [alertMsg, setAlert] = useState(null);
+  const ispos = useIspos()
+  const [form, setForm] = useState({})
+  const [alertMsg, setAlert] = useState(null)
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    setForm({...form, [e.target.name]: e.target.value})
+  }
 
   const onSubmit = async () => {
     try {
@@ -27,14 +27,14 @@ export default function ParticipateIspoPage() {
           arg(Number(form?.ispoId), t.UInt64),
           arg(toUFixString(form?.lockedFlowAmount), t.UFix64),
         ],
-      });
-      await fcl.tx(delegateToIspoTxId).onceSealed();
+      })
+      await fcl.tx(delegateToIspoTxId).onceSealed()
 
-      setAlert(null);
+      setAlert(null)
     } catch (e) {
-      setAlert(e.toString());
+      setAlert(e.toString())
     }
-  };
+  }
 
   return (
     <>
@@ -44,9 +44,9 @@ export default function ParticipateIspoPage() {
             textAlign="center"
             component="form"
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              "& > *:not(:first-child)": { mt: 2 },
+              display: 'flex',
+              flexDirection: 'column',
+              '& > *:not(:first-child)': {mt: 2},
             }}
           >
             <TextField
@@ -58,7 +58,7 @@ export default function ParticipateIspoPage() {
             <Button
               variant="outlined"
               onClick={onSubmit}
-              sx={{ width: "fit-content", alignSelf: "center" }}
+              sx={{width: 'fit-content', alignSelf: 'center'}}
             >
               Join ISPO
             </Button>
@@ -67,5 +67,5 @@ export default function ParticipateIspoPage() {
         </ISPOCard>
       ))}
     </>
-  );
+  )
 }
