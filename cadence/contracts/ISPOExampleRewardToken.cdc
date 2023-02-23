@@ -202,4 +202,3 @@ pub contract ISPOExampleRewardToken: FungibleToken {
         // emit TokensInitialized(initialSupply: self.totalSupply)
     }
 }
- 

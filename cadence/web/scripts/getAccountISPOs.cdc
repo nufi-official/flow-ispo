@@ -9,4 +9,3 @@ pub fun main(acct: Address): ISPOManager.ISPOClientInfo? {
 
   return ispoClient!.getInfo()
 }
- 

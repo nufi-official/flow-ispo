@@ -610,4 +610,3 @@ pub contract ISPOManager {
         self.ispoClientStoragePath = /storage/ISPOClient
     }
 }
- 

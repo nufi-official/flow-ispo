@@ -41,4 +41,3 @@ transaction(ispoClientId: UInt64) {
 
   execute {}
 }
- 

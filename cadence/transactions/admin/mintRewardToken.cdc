@@ -33,4 +33,3 @@ transaction(amount: UFix64) {
       vaultRef.deposit(from: <- mintedVault)
     }   
 }
- 
