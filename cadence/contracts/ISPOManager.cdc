@@ -211,8 +211,7 @@ pub contract ISPOManager {
                 if (epochCommitment != nil) {
                     lastCommitedValue = lastCommitedValue + epochCommitment!
                 } 
-                // TODO proper weight, for now just hardcode some dummy weight
-                weights[epochIndexIterator] = 1.0 // lastCommitedValue
+                weights[epochIndexIterator] = lastCommitedValue
                 epochIndexIterator = epochIndexIterator + 1
             }
             return weights
