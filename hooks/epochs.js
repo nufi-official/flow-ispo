@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import getCurrentEpoch from '../cadence/web/scripts/getCurrentEpoch.cdc'
-import {request} from 'graphql-request'
 import * as fcl from '@onflow/fcl'
 
 
