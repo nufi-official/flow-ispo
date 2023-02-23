@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import {Box, Button, Tooltip, Typography} from '@mui/material'
+import {Box, Button, Tooltip, Typography, CircularProgress} from '@mui/material'
 import ISPOCard, {IspoDetail} from '../../components/ISPOCard'
 import {useAccountIspos} from '../../hooks/ispo'
 import useCurrentUser from '../../hooks/useCurrentUser'
@@ -12,6 +12,7 @@ export default function MyParticipations() {
 
   return (
     <CardGrid>
+      {!accountIspos && <CircularProgress />}
       {accountIspos?.map(
         ({ispo, delegatedFlowBalance, rewardTokenBalance, createdAt}) => (
           <ISPOCard
