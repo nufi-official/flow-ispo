@@ -1,14 +1,12 @@
 import ISPOManager from "../../contracts/ISPOManager.cdc"
 import FungibleToken from "../../contracts/standard/FungibleToken.cdc"
 
-transaction() {
+transaction(ispoClientId: UInt64) {
 
   prepare(acct: AuthAccount) {
-    let ispoClientRef: &ISPOManager.ISPOClient? = acct.borrow<&ISPOManager.ISPOClient>(from: ISPOManager.ispoClientStoragePath)
-    if (ispoClientRef == nil) {
-      panic("ISPO client does not exist")
-    }
+    let ispoClientsRef: &{UInt64: ISPOManager.ISPOClient} = acct.borrow<&{UInt64: ISPOManager.ISPOClient}>(from: ISPOManager.ispoClientStoragePath)!
 
+    let ispoClientRef = &ispoClientsRef[ispoClientId] as &ISPOManager.ISPOClient?
     let ispoRewardTokens: @FungibleToken.Vault <- ispoClientRef!.withdrawRewardTokens()
 
     let ispoRewardTokenMetadata: ISPOManager.RewardTokenMetadata = ISPOManager.getISPORewardTokenMetadata(id: ispoClientRef!.ispoId)

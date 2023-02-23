@@ -537,23 +537,28 @@ pub contract ISPOManager {
         access(self) let ispoId: UInt64
         access(self) let delegatedFlowBalance: UFix64
         access(self) let rewardTokenBalance: UFix64
+        access(self) let createdAt: UFix64
 
         init(
             ispoId: UInt64,
             delegatedFlowBalance: UFix64,
-            rewardTokenBalance: UFix64
+            rewardTokenBalance: UFix64,
+            createdAt: UFix64,
         ) {
             self.ispoId = ispoId
             self.delegatedFlowBalance = delegatedFlowBalance
             self.rewardTokenBalance = rewardTokenBalance
+            self.createdAt = createdAt
         }
     }
 
     pub resource ISPOClient {
         pub let ispoId: UInt64
+        pub let createdAt: UFix64
 
-        init(ispoId: UInt64, flowVault: @FungibleToken.Vault) {
+        init(ispoId: UInt64, flowVault: @FungibleToken.Vault, createdAt: UFix64) {
             self.ispoId = ispoId
+            self.createdAt = createdAt
             let ispoRef: &ISPOManager.ISPO = ISPOManager.borrowISPORecord(id: ispoId)
             ispoRef.delegateNewTokens(delegatorId: self.uuid, flowVault: <- flowVault)
         }
@@ -587,14 +592,15 @@ pub contract ISPOManager {
             return ISPOClientInfo(
                 ispoId: self.ispoId,
                 delegatedFlowBalance: self.getDelegatedFlowBalance(),
-                rewardTokenBalance: self.getRewardTokenBalance()
+                rewardTokenBalance: self.getRewardTokenBalance(),
+                createdAt: self.createdAt,
             )
         }
         // TODO: destroy
     }
 
     pub fun createISPOClient(ispoId: UInt64, flowVault: @FungibleToken.Vault): @ISPOClient {
-      return <- create ISPOClient(ispoId: ispoId, flowVault: <- flowVault)
+      return <- create ISPOClient(ispoId: ispoId, flowVault: <- flowVault, createdAt: getCurrentBlock().timestamp)
     }
 
     init() {

@@ -19,12 +19,12 @@ export default function ParticipateIspoPage() {
     setForm({...form, [e.target.name]: e.target.value})
   }
 
-  const onSubmit = async () => {
+  const getOnSubmit = (ispoId) => (async () => {
     try {
       const delegateToIspoTxId = await fcl.mutate({
         cadence: delegateToISPO,
         args: (arg, t) => [
-          arg(Number(form?.ispoId), t.UInt64),
+          arg(ispoId, t.UInt64),
           arg(toUFixString(form?.lockedFlowAmount), t.UFix64),
         ],
       })
@@ -34,7 +34,7 @@ export default function ParticipateIspoPage() {
     } catch (e) {
       setAlert(e.toString())
     }
-  }
+  })
 
   return (
     <>
@@ -57,7 +57,7 @@ export default function ParticipateIspoPage() {
             />
             <Button
               variant="outlined"
-              onClick={onSubmit}
+              onClick={getOnSubmit(ispo.id)}
               sx={{width: 'fit-content', alignSelf: 'center'}}
             >
               Join ISPO

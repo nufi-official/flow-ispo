@@ -64,6 +64,7 @@ const mockIspo = {
     flowRewardsBalance: '0.00000000',
     createdAt: '2023-02-23T13:24:42.000Z',
   },
+  createdAt: '2023-02-23T13:30:42.000Z',
   delegatedFlowBalance: '123456.0',
   rewardTokenBalance: '4747',
 }

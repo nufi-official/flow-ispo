@@ -5,7 +5,7 @@ import FlowIDTableStaking from "../../contracts/standard/FlowIDTableStaking.cdc"
 import FlowStakingCollection from "../../contracts/standard/FlowStakingCollection.cdc"
 import LockedTokens from "../../contracts/standard/LockedTokens.cdc"
 
-transaction() {
+transaction(ispoClientId: UInt64) {
 
   prepare(acct: AuthAccount) {
 
@@ -32,10 +32,8 @@ transaction() {
     let stakingCollectionRef = acct.borrow<&FlowStakingCollection.StakingCollection>(from: FlowStakingCollection.StakingCollectionStoragePath)
       ?? panic("Could not borrow ref to StakingCollection")
 
-    let ispoClientRef: &ISPOManager.ISPOClient? = acct.borrow<&ISPOManager.ISPOClient>(from: ISPOManager.ispoClientStoragePath)
-    if (ispoClientRef == nil) {
-      panic("ISPO client does not exist")
-    }
+    let ispoClientsRef: &{UInt64: ISPOManager.ISPOClient} = acct.borrow<&{UInt64: ISPOManager.ISPOClient}>(from: ISPOManager.ispoClientStoragePath)!
+    let ispoClientRef = &ispoClientsRef[ispoClientId] as &ISPOManager.ISPOClient?
     let delegator: @FlowIDTableStaking.NodeDelegator <- ispoClientRef!.withdrawNodeDelegator()
 
     stakingCollectionRef.addDelegatorObject(<- delegator)
@@ -43,4 +41,3 @@ transaction() {
 
   execute {}
 }
- 
