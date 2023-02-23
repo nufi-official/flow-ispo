@@ -9,6 +9,7 @@ import useCurrentUser from '../../hooks/useCurrentUser'
 
 export default function ParticipateIspoPage() {
   const {addr} = useCurrentUser()
+  const res = useAccountIspos(addr)
 
   const ispos = useIspos()
   const [form, setForm] = useState({})

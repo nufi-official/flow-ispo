@@ -4,7 +4,7 @@ import FungibleToken from "../../contracts/standard/FungibleToken.cdc"
 transaction(ispoId: UInt64, amount: UFix64) {
 
   prepare(acct: AuthAccount) {
-    if acct.borrow<&ISPOManager.ISPOClient>(from: ISPOManager.ispoClientStoragePath) == nil {
+    if acct.borrow<&{UInt64: ISPOManager.ISPOClient}>(from: ISPOManager.ispoClientStoragePath) == nil  {
       let ispoClientsRes: @{UInt64: ISPOManager.ISPOClient} <- {}
       acct.save(
         <-ispoClientsRes,

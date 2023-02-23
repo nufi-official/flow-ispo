@@ -61,8 +61,9 @@ pub contract ISPOManager {
             if (self.epochFlowCommitments.containsKey(currentEpoch)) {
                 let currentEpochCommitment: UFix64 = self.epochFlowCommitments[currentEpoch]!
                 self.epochFlowCommitments[currentEpoch] = currentEpochCommitment + amount
+            } else {
+                self.epochFlowCommitments[currentEpoch] = amount
             }
-            self.epochFlowCommitments[currentEpoch]
         }
 
         access(self) fun borrowNodeDelegator(): &FlowIDTableStaking.NodeDelegator {
