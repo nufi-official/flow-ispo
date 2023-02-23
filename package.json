@@ -19,6 +19,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@hookform/resolvers": "^2.9.11",
     "@mui/icons-material": "^5.11.9",
     "@mui/material": "^5.11.10",
     "@onflow/fcl": "^1.4.0-alpha.1",
@@ -27,7 +28,9 @@
     "next": "13.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "swr": "^2.0.0"
+    "react-hook-form": "^7.43.2",
+    "swr": "^2.0.0",
+    "yup": "^1.0.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",

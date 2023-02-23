@@ -1,13 +1,16 @@
-import * as fcl from "@onflow/fcl";
-import Sidebar from "../components/Sidebar";
-import { AppBar, Box, Button, Toolbar } from "@mui/material";
-import useCurrentUser from "../hooks/useCurrentUser";
+import * as fcl from '@onflow/fcl'
+import Sidebar from '../components/Sidebar'
+import {AppBar, Box, Button, Card, Toolbar, Typography} from '@mui/material'
+import useCurrentUser from '../hooks/useCurrentUser'
+import useConfig from '../hooks/useConfig'
+import {useCurrentEpoch} from '../hooks/epochs'
 
-const appTopBar = 64;
-const sideBarWidth = 300;
+const appTopBar = 64
+const sideBarWidth = 300
 
-export default function DefaultLayout({ children }) {
-  const user = useCurrentUser();
+export default function DefaultLayout({children}) {
+  const user = useCurrentUser()
+
   return (
     <Box display="flex" minHeight="100vh">
       <Sidebar width={sideBarWidth} />
@@ -15,16 +18,16 @@ export default function DefaultLayout({ children }) {
         component="main"
         sx={{
           flexGrow: 1,
-          bgcolor: "grey.100",
+          bgcolor: 'grey.100',
           p: 3,
           pt: `${appTopBar}px`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
-        <AppBar color="transparent" sx={{ boxShadow: "none" }}>
-          <Toolbar sx={{ justifyContent: "flex-end", height: appTopBar }}>
+        <AppBar color="transparent" sx={{boxShadow: 'none'}}>
+          <Toolbar sx={{justifyContent: 'flex-end', height: appTopBar}}>
             {!user.loggedIn && (
               <Button variant="contained" onClick={fcl.authenticate}>
                 Log In With Wallet
@@ -37,8 +40,38 @@ export default function DefaultLayout({ children }) {
             )}
           </Toolbar>
         </AppBar>
+        <Info />
         {children}
       </Box>
     </Box>
-  );
+  )
+}
+
+function Info() {
+  const config = useConfig()
+  const user = useCurrentUser()
+  const currentEpoch = useCurrentEpoch()
+
+  return (
+    <Box sx={{position: 'fixed', right: 25, top: 60}}>
+      <Box sx={{display: 'flex', flexDirection: 'column', minWidth: 180}}>
+        {user.addr != null && <InfoItem label="Address" value={user.addr} />}
+        {config.network && <InfoItem label="Network" value={config.network} />}
+        {currentEpoch != null && (
+          <InfoItem label="Current epoch" value={currentEpoch} />
+        )}
+      </Box>
+    </Box>
+  )
+}
+
+function InfoItem({label, value}) {
+  return (
+    <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+      <Typography variant="overline" fontWeight="bold" mr={2}>
+        {label}:
+      </Typography>
+      <Typography variant="overline">{value}</Typography>
+    </Box>
+  )
 }
