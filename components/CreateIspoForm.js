@@ -16,6 +16,9 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  Backdrop,
+  CircularProgress,
+  Portal,
 } from '@mui/material'
 import InfoIcon from '@mui/icons-material/InfoOutlined'
 import {
@@ -207,7 +210,10 @@ const createRegisterSchema = ({currentEpoch}) => {
         : yup
             .number()
             .required(FIELD_REQUIRED_ERROR)
-            .min(Number(currentEpoch)+ 1, `Min allowed epoch is ${Number(currentEpoch) + 1}.`)
+            .min(
+              Number(currentEpoch) + 1,
+              `Min allowed epoch is ${Number(currentEpoch) + 1}.`,
+            )
             .max(
               MAX_ALLOWED_EPOCH - 1,
               `Max allowed epoch is ${MAX_ALLOWED_EPOCH - 1}.`,
@@ -333,88 +339,97 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
   }
 
   return (
-    <Card title="Create new ISPO">
-      <FormProvider {...form}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              '& > *:not(:first-child)': {mt: 2},
-            }}
-          >
-            <FormInput name="ispoName" label="Name" />
-            <FormInput
-              name="startEpoch"
-              label="Start epoch"
-              type="number"
-              defaultValue={Number(currentEpoch) + 1}
-            />
-            <FormInput name="endEpoch" label="End epoch" type="number" />
-            <SelectTokenField />
-            <FormInput
-              name="totalRewardTokensAmount"
-              label="Amount of tokens to distribute"
-              type="number"
-              InputProps={{
-                startAdornment: (
-                  <Tooltip title="The total supply of token that will be distributed among ISPO delegators. For demo purposes just a dummy token with the amount specified will be minted and distributed. In a real ISPO the creator would supply their own token.">
-                    <Box mr={1}>
-                      <InfoIcon fontSize="small" />
-                    </Box>
-                  </Tooltip>
-                ),
+    <>
+      <Card title="Create new ISPO">
+        <FormProvider {...form}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                '& > *:not(:first-child)': {mt: 2},
               }}
-            />
-          </Box>
-
-          <Typography
-            variant="subtitle1"
-            mt={5}
-            align="center"
-            fontWeight="bold"
-          >
-            Optional fields
-          </Typography>
-
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              '& > *:not(:first-child)': {mt: 2},
-            }}
-          >
-            <FormInput name="projectUrl" label="Project URL" />
-            <FormInput name="logoUrl" label="Logo URL" />
-            <FormInput
-              name="projectDescription"
-              label="Project Description"
-              multiline
-              minRows={2}
-              maxRows={5}
-            />
-          </Box>
-
-          <Box display="flex" flexDirection="column">
-            <Button
-              variant="gradient"
-              disabled={isSubmitting}
-              type="submit"
-              sx={{width: 'fit-content', alignSelf: 'center', mt: 2}}
             >
-              Submit
-            </Button>
-          </Box>
-          {alertMsg && (
-            <Box mt={2}>
-              <Alert severity="error" onClose={() => setAlert(null)}>
-                {alertMsg}
-              </Alert>
+              <FormInput name="ispoName" label="Name" />
+              <FormInput
+                name="startEpoch"
+                label="Start epoch"
+                type="number"
+                defaultValue={Number(currentEpoch) + 1}
+              />
+              <FormInput name="endEpoch" label="End epoch" type="number" />
+              <SelectTokenField />
+              <FormInput
+                name="totalRewardTokensAmount"
+                label="Amount of tokens to distribute"
+                type="number"
+                InputProps={{
+                  startAdornment: (
+                    <Tooltip title="The total supply of token that will be distributed among ISPO delegators. For demo purposes just a dummy token with the amount specified will be minted and distributed. In a real ISPO the creator would supply their own token.">
+                      <Box mr={1}>
+                        <InfoIcon fontSize="small" />
+                      </Box>
+                    </Tooltip>
+                  ),
+                }}
+              />
             </Box>
-          )}
-        </form>
-      </FormProvider>
-    </Card>
+
+            <Typography
+              variant="subtitle1"
+              mt={5}
+              align="center"
+              fontWeight="bold"
+            >
+              Optional fields
+            </Typography>
+
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                '& > *:not(:first-child)': {mt: 2},
+              }}
+            >
+              <FormInput name="projectUrl" label="Project URL" />
+              <FormInput name="logoUrl" label="Logo URL" />
+              <FormInput
+                name="projectDescription"
+                label="Project Description"
+                multiline
+                minRows={2}
+                maxRows={5}
+              />
+            </Box>
+
+            <Box display="flex" flexDirection="column">
+              <Button
+                variant="gradient"
+                disabled={isSubmitting}
+                type="submit"
+                sx={{width: 'fit-content', alignSelf: 'center', mt: 2}}
+              >
+                Submit
+              </Button>
+            </Box>
+            {alertMsg && (
+              <Box mt={2}>
+                <Alert severity="error" onClose={() => setAlert(null)}>
+                  {alertMsg}
+                </Alert>
+              </Box>
+            )}
+          </form>
+        </FormProvider>
+      </Card>
+      <Portal>
+        <Backdrop
+          sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}}
+          open={isSubmitting}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </Portal>
+    </>
   )
 }
- 

@@ -1,18 +1,19 @@
-import {Box, Button, Tooltip} from '@mui/material'
+import Link from 'next/link'
+import {Box, Button, Tooltip, Typography} from '@mui/material'
 import ISPOCard, {IspoDetail} from '../../components/ISPOCard'
 import {useAccountAdminIspos} from '../../hooks/ispo'
 import useCurrentUser from '../../hooks/useCurrentUser'
 import {formatCompactAmount} from '../../helpers/utils'
+import CardGrid from '../../layouts/CardGrid'
 
 export default function MyIspos() {
   const {addr} = useCurrentUser()
   const accountIspos = useAccountAdminIspos(addr)
   return (
-    <>
+    <CardGrid>
       {accountIspos?.map((ispo) => (
         <ISPOCard
           {...ispo}
-          projectWebsite="https:nu.fi"
           body={
             <Box
               display="flex"
@@ -50,6 +51,24 @@ export default function MyIspos() {
           }
         />
       ))}
-    </>
+      {accountIspos?.length === 0 && (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Typography variant="h5" sx={{fontWeight: 'bold'}}>
+            No active ISPOs found.
+          </Typography>
+          <Button variant="gradient" component={Link} href="/create">
+            Create ISPO{' '}
+          </Button>
+        </Box>
+      )}
+    </CardGrid>
   )
 }

@@ -14,3 +14,21 @@ a {
 * {
   box-sizing: border-box;
 }
+
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+   
+::-webkit-scrollbar-thumb {
+  background: #9e9e9e;
+  border-radius: 14px;
+
+  background-clip: padding-box;
+  border: 4px solid rgba(0, 0, 0, 0);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #757575;
+  background-clip: padding-box;
+  border: 4px solid rgba(0, 0, 0, 0);
+}

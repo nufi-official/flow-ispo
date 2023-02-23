@@ -7,7 +7,7 @@ import {
   RocketLaunch as Placeholder,
 } from '@mui/icons-material'
 import {formatCompactAmount} from '../helpers/utils'
-import { useEpochToDate } from '../hooks/epochs'
+import {useEpochToDate} from '../hooks/epochs'
 
 export default function ISPOCard(props) {
   // mock dates
@@ -20,9 +20,9 @@ export default function ISPOCard(props) {
     <Card sx={{width: '400px', py: 2}}>
       {props.name && (
         <Box sx={{display: 'flex'}}>
-          {props.imgSrc ? (
+          {props.logoUrl ? (
             <img
-              src={props.imgSrc}
+              src={props.logoUrl}
               alt={props.name}
               width={60}
               height={60}
@@ -35,13 +35,13 @@ export default function ISPOCard(props) {
             <Typography variant="h6" fontWeight="bold">
               {props.name}
             </Typography>
-            {props.projectWebsite && (
+            {props.projectUrl && (
               <Link
-                href={props.projectWebsite}
+                href={props.projectUrl}
                 target="_blank"
                 sx={{display: 'inline-flex', gap: 1, alignItems: 'center'}}
               >
-                {props.projectWebsite}
+                {props.projectUrl}
                 <ExternalIcon fontSize="inherit" color="inherit" />
               </Link>
             )}
@@ -69,8 +69,13 @@ export default function ISPOCard(props) {
           >
             <CalendarIcon color="inherit" fontSize="small" />
             <div>
-              {getDateFromEpoch(props.epochStart)?.toLocaleDateString().padStart(10, '0')} -{' '}
-              {getDateFromEpoch(props.epochEnd)?.toLocaleDateString().padStart(10, '0')}
+              {getDateFromEpoch(props.epochStart)
+                ?.toLocaleDateString()
+                .padStart(10, '0')}{' '}
+              -{' '}
+              {getDateFromEpoch(props.epochEnd)
+                ?.toLocaleDateString()
+                .padStart(10, '0')}
             </div>
           </Box>
         )}
@@ -161,4 +166,3 @@ function stringToColor(string) {
 
   return color
 }
- 

@@ -1,35 +1,57 @@
 import Head from 'next/head'
-import {Button, Box} from '@mui/material'
+import {Button, Box, Typography} from '@mui/material'
 import Link from 'next/link'
 
 export default function Home() {
   return (
-    <Box textAlign="center">
-      <Head>
-        <title>Flow ISPO</title>
-        <meta
-          name="description"
-          content="Suppport projects by delegating for them."
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <Box
+      sx={{
+        minHeight: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+      textAlign="center"
+    >
+      <div>
+        <Head>
+          <title>Veles</title>
+          <meta
+            name="description"
+            content="Suppport projects by delegating for them."
+          />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
 
-      <h1>Flow ISPO</h1>
+        <Typography
+          sx={{
+            justifyContent: 'center',
+            fontSize: 30,
+            textTransform: 'uppercase',
+            letterSpacing: 6,
+            fontWeight: 'bold',
+            mb: 0,
+            lineHeight: 1,
+          }}
+        >
+          <b>Veles</b>
+        </Typography>
 
-      <p>Suppport projects by delegating for them. It`s a win-win!</p>
+        <p>Suppport projects by delegating for them. It`s a win-win!</p>
 
-      <Button variant="outlined" component={Link} href="create">
-        Create ISPO
-      </Button>
-      <br />
-      <Button
-        variant="outlined"
-        component={Link}
-        href="/participate"
-        sx={{mt: 1}}
-      >
-        Participate
-      </Button>
+        <Button variant="gradient" component={Link} href="create">
+          Create ISPO
+        </Button>
+        <br />
+        <Button
+          variant="gradient"
+          component={Link}
+          href="/participate"
+          sx={{mt: 1}}
+        >
+          Participate
+        </Button>
+      </div>
     </Box>
   )
 }
