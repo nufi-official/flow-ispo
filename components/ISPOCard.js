@@ -9,6 +9,9 @@ import {
 import {formatCompactAmount} from '../helpers/utils'
 import {useEpochToDate} from '../hooks/epochs'
 
+const imageSize = 60
+const imageRightSpace = 8
+
 export default function ISPOCard(props) {
   // mock dates
   const getDateFromEpoch = useEpochToDate()
@@ -24,24 +27,44 @@ export default function ISPOCard(props) {
             <img
               src={props.logoUrl}
               alt={props.name}
-              width={60}
-              height={60}
+              width={imageSize}
+              height={imageSize}
               style={{objectFit: 'cover', borderRadius: 8}}
             />
           ) : (
             <PlaceholderIcon name={props.name} />
           )}
-          <Box ml={2}>
-            <Typography variant="h6" fontWeight="bold">
+          <Box
+            ml={`${imageRightSpace}px`}
+            width={`calc(100% - ${imageSize + imageRightSpace}px)`}
+          >
+            <Typography
+              variant="h6"
+              fontWeight="bold"
+              noWrap
+              title={props.name}
+            >
               {props.name}
             </Typography>
-            {props.projectUrl && (
+            {props.name && (
               <Link
-                href={props.projectUrl}
+                href={props.name}
                 target="_blank"
-                sx={{display: 'inline-flex', gap: 1, alignItems: 'center'}}
+                sx={{
+                  display: 'inline-flex',
+                  gap: 1,
+                  alignItems: 'center',
+                  maxWidth: '100%',
+                }}
               >
-                {props.projectUrl}
+                <Typography
+                  noWrap
+                  variant="caption"
+                  component="span"
+                  maxWidth="calc(100% - 1em)"
+                >
+                  {props.name}
+                </Typography>
                 <ExternalIcon fontSize="inherit" color="inherit" />
               </Link>
             )}

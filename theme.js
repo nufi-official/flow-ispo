@@ -6,11 +6,6 @@ const generateGradient = (alphaLeft, alphaRight) =>
 // Create a theme instance.
 const theme = createTheme({
   components: {
-    MuiLink: {
-      defaultProps: {
-        underline: 'hover',
-      },
-    },
     MuiChip: {
       variants: [
         {
@@ -55,7 +50,7 @@ const theme = createTheme({
               borderColor: 'rgba(159, 238, 255, 0.6)',
               '&:after': {
                 content: "''",
-                 // brings pseudo element to the button viewport
+                // brings pseudo element to the button viewport
                 left: '-10%',
                 transform: 'skewX(-30deg)',
                 width: '120%',
