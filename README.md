@@ -34,7 +34,7 @@ git clone https://github.com/onflow/scaffold-flow.git
 
 ```bash
 cd scaffold-flow
-npm install
+yarn
 ```
 
 ## Running your App
@@ -73,7 +73,7 @@ flow dev
 4. In a different terminal (Last one, promise!), use this command to deploy your contract(s) and initialize the App:
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 5. You're done! Checkout the App at http://localhost:3000
