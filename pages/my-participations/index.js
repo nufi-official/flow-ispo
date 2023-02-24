@@ -62,26 +62,28 @@ function MyParticipationCard({
   delegatedFlowBalance,
   rewardTokenBalance,
   createdAt,
+  ispoClientId,
+  hasDelegation: _hasDelegation,
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [alertMsg, setAlert] = useState(null)
   const [successMsg, setSuccess] = useState(null)
+  const [hasDelegation, setHasDelegation] = useState(_hasDelegation)
 
   const onWithdrawFlow = async () => {
     setAlert(null)
     setIsSubmitting(true)
     try {
-      // mock
-      await new Promise((res) => setTimeout(res, 5000))
       const delegateToIspoTxId = await fcl.mutate({
         cadence: withdrawFlowFromIspo,
         args: (arg, t) => [
-          // arg(ispoClientId, t.UInt64),
+          arg(ispoClientId, t.UInt64),
         ],
         limit: 9999,
       })
       await fcl.tx(delegateToIspoTxId).onceSealed()
       setSuccess('Transaction successfully submitted!')
+      setHasDelegation(true) // dirty hack to reflect the change without cache invalidation which we don't have
     } catch (e) {
       setAlert(e.toString())
     }
@@ -110,7 +112,7 @@ function MyParticipationCard({
           />
           <IspoDetail
             label="Delegated"
-            value={`${formatCompactAmount(delegatedFlowBalance)} $FLOW`}
+            value={`${formatCompactAmount(hasDelegation ? delegatedFlowBalance : '0.0')} $FLOW`}
           />
         </Box>
       }
@@ -124,7 +126,7 @@ function MyParticipationCard({
                 </Button>
               </div>
             </Tooltip>
-            <Button variant="gradient" onClick={onWithdrawFlow}>
+            <Button variant="gradient" disabled={!hasDelegation} onClick={onWithdrawFlow}>
               withdraw flow
             </Button>
           </Box>

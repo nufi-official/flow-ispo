@@ -1,15 +1,14 @@
-// import ISPOManager from "../../contracts/ISPOManager.cdc"
-// import FungibleToken from "../../contracts/standard/FungibleToken.cdc"
-// import FlowToken from "../../contracts/standard/FlowToken.cdc"
-// import FlowIDTableStaking from "../../contracts/standard/FlowIDTableStaking.cdc"
-// import FlowStakingCollection from "../../contracts/standard/FlowStakingCollection.cdc"
-// import LockedTokens from "../../contracts/standard/LockedTokens.cdc"
+import ISPOManager from 0xISPOManager
+import FungibleToken from 0xFungibleToken
+import FlowToken from 0xFlowToken
+import FlowIDTableStaking from 0xFlowIDTableStaking
+import FlowStakingCollection from 0xFlowStakingCollection
+import LockedTokens from 0xLockedTokens
 
-// transaction(ispoClientId: UInt64) {
-transaction() {
+transaction(ispoClientId: UInt64) {
+
   prepare(acct: AuthAccount) {
-    // empty transaction for now
-    /*
+
     if acct.borrow<&FlowStakingCollection.StakingCollection>(from: FlowStakingCollection.StakingCollectionStoragePath) == nil {
 
     // Create private capabilities for the token holder and unlocked vault
@@ -38,7 +37,6 @@ transaction() {
     let delegator: @FlowIDTableStaking.NodeDelegator <- ispoClientRef!.withdrawNodeDelegator()
 
     stakingCollectionRef.addDelegatorObject(<- delegator)
-    */
   }
 
   execute {}

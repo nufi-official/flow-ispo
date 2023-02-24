@@ -89,6 +89,7 @@ export function useAccountIspos(address) {
         id: key,
         ispo: allIspos.find((ispo) => ispo.id === value.ispoId),
         ...value,
+        hasDelegation: JSON.parse(value.hasDelegation),
         createdAt: new Date(Number(value.createdAt) * 1000),
       }))
     } catch (e) {
