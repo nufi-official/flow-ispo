@@ -63,7 +63,6 @@ const theme = createTheme({
           style: {
             overflow: 'hidden',
             color: '#191919',
-            border: '1px solid #191919',
             backgroundImage: generateGradient(0.6, 0.6),
             '&:after': {
               backgroundImage: generateGradient(0.6, 0.6),

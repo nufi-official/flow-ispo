@@ -277,7 +277,7 @@ export function CreateIspoForm() {
         <Typography variant="h4" mb={1}>
           ISPO successfully created!
         </Typography>
-        <Button onClick={onSuccess} variant="contained">
+        <Button onClick={onSuccess} variant="gradient" sx={{mt: 1}}>
           Continue
         </Button>
       </Box>

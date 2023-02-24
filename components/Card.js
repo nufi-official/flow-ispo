@@ -8,7 +8,7 @@ export default function Card(props) {
         borderRadius: '20px',
         py: 2.5,
         px: 4,
-        background: 'rgba(255,255,255,0.3)',
+        background: 'rgba(255,255,255,0.6)',
         backdropFilter: 'blur(5px)',
         boxShadow: ({shadows}) => shadows[4],
         ...props.sx,
