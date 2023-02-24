@@ -30,21 +30,19 @@ export default function Home() {
             textTransform: 'uppercase',
             letterSpacing: 6,
             fontWeight: 'bold',
-            mb: 0,
+            mb: 1,
             lineHeight: 1,
           }}
         >
           <b>Veles</b>
         </Typography>
 
-        <p>
-          <Typography variant="h6">
-            Suppport projects by delegating your <b>FLOW tokens</b> & earn{' '}
-            <b>ISPO rewards</b>.
-            <br />
-            It&#39;s a <b>win-win</b> kind of delegation!
-          </Typography>
-        </p>
+        <Typography variant="h6">
+          Suppport projects by delegating your <b>FLOW tokens</b> & earn{' '}
+          <b>ISPO rewards</b>.
+          <br />
+          It&#39;s a <b>win-win</b> kind of delegation!
+        </Typography>
 
         <Button
           variant="gradient-solid"
