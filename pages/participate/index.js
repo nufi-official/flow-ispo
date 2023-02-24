@@ -60,7 +60,7 @@ function ParticipateCard({ispoData}) {
           arg(ispoId, t.UInt64),
           arg(toUFixString(form?.lockedFlowAmount), t.UFix64),
         ],
-        limit: 10000,
+        limit: 9999,
       })
       await fcl.tx(delegateToIspoTxId).onceSealed()
 
