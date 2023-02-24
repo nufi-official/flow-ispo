@@ -322,6 +322,7 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
           arg('ispoExampleRewardTokenBalance', t.String),
           arg(toUFixString(data.totalRewardTokensAmount.toString()), t.UFix64),
         ],
+        limit: 10000,
       })
       await fcl.tx(createIspoTxId).onceSealed()
 

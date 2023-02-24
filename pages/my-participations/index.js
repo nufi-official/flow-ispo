@@ -78,7 +78,7 @@ function MyParticipationCard({
         args: (arg, t) => [
           // arg(ispoClientId, t.UInt64),
         ],
-        limit: 1000,
+        limit: 10000,
       })
       await fcl.tx(delegateToIspoTxId).onceSealed()
       setSuccess('Transaction successfully submitted!')
