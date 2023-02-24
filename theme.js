@@ -58,6 +58,37 @@ const theme = createTheme({
             },
           },
         },
+        {
+          props: {variant: 'gradient-solid'},
+          style: {
+            overflow: 'hidden',
+            color: '#191919',
+            backgroundImage: generateGradient(0.6, 0.6),
+            '&:after': {
+              backgroundImage: generateGradient(0.6, 0.6),
+              height: '200%',
+              // positions button outside of the viewport
+              left: '-121%',
+              position: 'absolute',
+              top: '-50%',
+              transform: 'skewX(0deg)',
+              transition: 'all .35s',
+              width: 0,
+              zIndex: -1,
+              content: "''",
+            },
+            '&:hover': {
+              borderColor: 'rgba(159, 238, 255, 0.6)',
+              '&:after': {
+                content: "''",
+                // brings pseudo element to the button viewport
+                left: '-10%',
+                transform: 'skewX(-30deg)',
+                width: '120%',
+              },
+            },
+          },
+        },
       ],
     },
     MuiListItemButton: {

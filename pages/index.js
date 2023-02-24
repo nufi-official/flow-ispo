@@ -15,7 +15,7 @@ export default function Home() {
     >
       <div>
         <Head>
-          <title>Veles</title>
+          <title>VELES</title>
           <meta
             name="description"
             content="Suppport projects by delegating for them."
@@ -26,30 +26,40 @@ export default function Home() {
         <Typography
           sx={{
             justifyContent: 'center',
-            fontSize: 30,
+            fontSize: 50,
             textTransform: 'uppercase',
             letterSpacing: 6,
             fontWeight: 'bold',
-            mb: 0,
+            mb: 1,
             lineHeight: 1,
           }}
         >
           <b>Veles</b>
         </Typography>
 
-        <p>Suppport projects by delegating for them. It`s a win-win!</p>
+        <Typography variant="h6">
+          Suppport projects by delegating your <b>FLOW tokens</b> & earn{' '}
+          <b>ISPO rewards</b>.
+          <br />
+          It&#39;s a <b>win-win</b> kind of delegation!
+        </Typography>
 
-        <Button variant="gradient" component={Link} href="create">
-          Create ISPO
+        <Button
+          variant="gradient-solid"
+          component={Link}
+          href="/participate"
+          sx={{width: 200, height: 60, fontSize: 18, mt: 2}}
+        >
+          Participate
         </Button>
         <br />
         <Button
           variant="gradient"
           component={Link}
-          href="/participate"
-          sx={{mt: 1}}
+          href="create"
+          sx={{width: 200, height: 60, fontSize: 18, mt: 1.5}}
         >
-          Participate
+          Create ISPO
         </Button>
       </div>
     </Box>
