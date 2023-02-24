@@ -207,7 +207,7 @@ const createRegisterSchema = ({currentEpoch}) => {
         : yup
             .number()
             .required(FIELD_REQUIRED_ERROR)
-            .min(currentEpoch, `Min allowed epoch is ${currentEpoch}.`)
+            .min(currentEpoch + 1, `Min allowed epoch is ${currentEpoch + 1}.`)
             .max(
               MAX_ALLOWED_EPOCH - 1,
               `Max allowed epoch is ${MAX_ALLOWED_EPOCH - 1}.`,
@@ -348,7 +348,7 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
               name="startEpoch"
               label="Start epoch"
               type="number"
-              defaultValue={currentEpoch}
+              defaultValue={currentEpoch + 1}
             />
             <FormInput name="endEpoch" label="End epoch" type="number" />
             <SelectTokenField />
