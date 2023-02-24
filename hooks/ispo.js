@@ -39,41 +39,41 @@ export function useIspos() {
 }
 
 const mockIspo = {
-    "id": "133359407",
-    "ispo": {
-        "id": "133359190",
-        "name": "Test ISPO",
-        "rewardTokenBalance": "10000.00000000",
-        "rewardTokenMetadata": {
-            "rewardTokenVaultStoragePath": {
-                "domain": "storage",
-                "identifier": "ispoExampleRewardTokenVault"
-            },
-            "rewardTokenReceiverPublicPath": {
-                "domain": "public",
-                "identifier": "ispoExampleRewardTokenReceiver"
-            },
-            "rewardTokenBalancePublicPath": {
-                "domain": "public",
-                "identifier": "ispoExampleRewardTokenBalance"
-            },
-            "totalRewardTokenAmount": "10000.00000000"
-        },
-        "epochStart": "477",
-        "epochEnd": "2000",
-        "delegationsCount": "1",
-        "delegatedFlowBalance": "0.00000000",
-        "flowRewardsBalance": "0.00000000",
-        "createdAt": "2023-02-23T22:25:24.000Z"
+  id: '133359407',
+  ispo: {
+    id: '133359190',
+    name: 'Test ISPO',
+    rewardTokenBalance: '10000.00000000',
+    rewardTokenMetadata: {
+      rewardTokenVaultStoragePath: {
+        domain: 'storage',
+        identifier: 'ispoExampleRewardTokenVault',
+      },
+      rewardTokenReceiverPublicPath: {
+        domain: 'public',
+        identifier: 'ispoExampleRewardTokenReceiver',
+      },
+      rewardTokenBalancePublicPath: {
+        domain: 'public',
+        identifier: 'ispoExampleRewardTokenBalance',
+      },
+      totalRewardTokenAmount: '10000.00000000',
     },
-    "ispoId": "133359190",
-    "delegatedFlowBalance": "0.00000000",
-    "rewardTokenBalance": "10000.00000000",
-    "createdAt": "2023-02-23T22:29:04.000Z"
+    epochStart: '477',
+    epochEnd: '2000',
+    delegationsCount: '1',
+    delegatedFlowBalance: '0.00000000',
+    flowRewardsBalance: '0.00000000',
+    createdAt: '2023-02-23T22:25:24.000Z',
+  },
+  ispoId: '133359190',
+  delegatedFlowBalance: '0.00000000',
+  rewardTokenBalance: '10000.00000000',
+  createdAt: '2023-02-23T22:29:04.000Z',
 }
 
 export function useAccountIspos(address) {
-  const [ispos, setIspos] = useState(null)
+  const [ispos, setIspos] = useState(undefined)
 
   const fetchAccountIspos = async () => {
     let res
@@ -85,14 +85,12 @@ export function useAccountIspos(address) {
             args: (arg, t) => [arg(address, t.Address)],
           })
         : {}
-      res = Object.entries(rawIspos).map(([key, value]) => (
-        {
-          id: key,
-          ispo: allIspos.find((ispo) => ispo.id === value.ispoId),
-          ...value,
-          createdAt: new Date(Number(value.createdAt) * 1000),
-        }
-      ))
+      res = Object.entries(rawIspos).map(([key, value]) => ({
+        id: key,
+        ispo: allIspos.find((ispo) => ispo.id === value.ispoId),
+        ...value,
+        createdAt: new Date(Number(value.createdAt) * 1000),
+      }))
     } catch (e) {
       // Likely need to mint first to create capability if this fails
       res = []
@@ -104,7 +102,9 @@ export function useAccountIspos(address) {
   }
 
   useEffect(() => {
-    fetchAccountIspos()
+    if (address) {
+      fetchAccountIspos()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address])
 
@@ -130,7 +130,9 @@ export function useAccountAdminIspos(address) {
   }
 
   useEffect(() => {
-    fetchAccountAdminIspos()
+    if (address) {
+      fetchAccountAdminIspos()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address])
 

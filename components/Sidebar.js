@@ -27,7 +27,7 @@ const navList = [
     category: 'General',
     links: [
       {
-        label: 'My Overview',
+        label: 'Home',
         href: '/',
         Icon: OverviewIcon,
       },
@@ -85,7 +85,16 @@ export default function Sidebar(props) {
       variant="permanent"
       anchor="left"
     >
-      <Toolbar sx={{justifyContent: 'center', px: {md: 2}, fontSize: 20, textTransform: 'uppercase', letterSpacing: 6}}>
+      <Toolbar
+        sx={{
+          justifyContent: 'center',
+          px: {md: 2},
+          fontSize: 30,
+          textTransform: 'uppercase',
+          letterSpacing: 6,
+          fontWeight: 'bold',
+        }}
+      >
         <b>Veles</b>
       </Toolbar>
 
