@@ -5,8 +5,8 @@
 // import FlowStakingCollection from "../../contracts/standard/FlowStakingCollection.cdc"
 // import LockedTokens from "../../contracts/standard/LockedTokens.cdc"
 
-transaction(ispoClientId: UInt64) {
-
+// transaction(ispoClientId: UInt64) {
+transaction() {
   prepare(acct: AuthAccount) {
     // empty transaction for now
     /*

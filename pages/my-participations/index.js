@@ -59,7 +59,6 @@ export default function MyParticipations() {
 
 function MyParticipationCard({
   ispo,
-  ispoClientId,
   delegatedFlowBalance,
   rewardTokenBalance,
   createdAt,
@@ -77,7 +76,7 @@ function MyParticipationCard({
       const delegateToIspoTxId = await fcl.mutate({
         cadence: withdrawFlowFromIspo,
         args: (arg, t) => [
-          arg(ispoClientId, t.UInt64),
+          // arg(ispoClientId, t.UInt64),
         ],
         limit: 1000,
       })
