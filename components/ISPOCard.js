@@ -16,11 +16,8 @@ export default function ISPOCard(props) {
   // mock dates
   const getDateFromEpoch = useEpochToDate()
 
-  const getRewardPerEpoch = (totalRewardBalance, epochStart, epochEnd) =>
-    totalRewardBalance / (epochEnd - epochStart)
-
   return (
-    <Card sx={{width: '400px', py: 2}}>
+    <Card sx={{width: '400px', py: 2.5, px: 3.5}}>
       {props.name && (
         <Box sx={{display: 'flex'}}>
           {props.logoUrl ? (
@@ -38,92 +35,59 @@ export default function ISPOCard(props) {
             ml={`${imageRightSpace}px`}
             width={`calc(100% - ${imageSize + imageRightSpace}px)`}
           >
-            <Typography
-              variant="h6"
-              fontWeight="bold"
-              noWrap
-              title={props.name}
+            <Link
+              href={props.name}
+              target="_blank"
+              sx={{
+                display: 'inline-flex',
+                gap: 0.5,
+                alignItems: 'center',
+                maxWidth: '100%',
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
             >
-              {props.name}
-            </Typography>
-            {props.name && (
-              <Link
-                href={props.name}
-                target="_blank"
-                sx={{
+              <Typography
+                variant="h6"
+                fontWeight="bold"
+                noWrap
+                title={props.name}
+              >
+                {props.name}
+              </Typography>
+              <ExternalIcon fontSize="medium" color="inherit" />
+            </Link>
+            {props.epochStart && props.epochEnd && (
+              <Box
+                sx={({typography}) => ({
                   display: 'inline-flex',
                   gap: 1,
                   alignItems: 'center',
-                  maxWidth: '100%',
-                }}
+                  color: 'grey.700',
+                  ...typography.caption,
+                })}
               >
-                <Typography
-                  noWrap
-                  variant="caption"
-                  component="span"
-                  maxWidth="calc(100% - 1em)"
-                >
-                  {props.name}
-                </Typography>
-                <ExternalIcon fontSize="inherit" color="inherit" />
-              </Link>
+                <CalendarIcon color="inherit" fontSize="small" />
+                <div>
+                  {getDateFromEpoch(props.epochStart)
+                    ?.toLocaleDateString()
+                    .padStart(10, '0')}{' '}
+                  -{' '}
+                  {getDateFromEpoch(props.epochEnd)
+                    ?.toLocaleDateString()
+                    .padStart(10, '0')}
+                </div>
+              </Box>
             )}
           </Box>
         </Box>
       )}
-      <Box
-        sx={({typography}) => ({
-          display: 'flex',
-          gap: 4,
-          justifyContent: 'space-between',
-          color: 'grey.700',
-          my: 1,
-          ...typography.caption,
-          fontWeight: 'bold',
-        })}
-      >
-        {props.epochStart && props.epochEnd && (
-          <Box
-            sx={{
-              display: 'inline-flex',
-              gap: 1,
-              alignItems: 'center',
-            }}
-          >
-            <CalendarIcon color="inherit" fontSize="small" />
-            <div>
-              {getDateFromEpoch(props.epochStart)
-                ?.toLocaleDateString()
-                .padStart(10, '0')}{' '}
-              -{' '}
-              {getDateFromEpoch(props.epochEnd)
-                ?.toLocaleDateString()
-                .padStart(10, '0')}
-            </div>
-          </Box>
-        )}
-        {props.rewardTokenBalance && props.epochStart && props.epochEnd && (
-          <Chip
-            size="small"
-            label={
-              <Typography
-                variant="caption"
-                fontWeight="bold"
-              >{`${formatCompactAmount(
-                getRewardPerEpoch(
-                  parseInt(props.rewardTokenBalance),
-                  props.epochStart,
-                  props.epochEnd,
-                ),
-              )} tokens / epoch`}</Typography>
-            }
-          />
-        )}
-      </Box>
       {props.body && props.body}
       {props.footerContent && (
         <>
-          <Divider sx={{my: 1}} />
+          <Divider sx={{mt: 2, mb: 1, width: '200%', translate: -100}} />
           {props.footerContent}
         </>
       )}
@@ -134,21 +98,20 @@ export default function ISPOCard(props) {
 export function IspoDetail(props) {
   return (
     <Box
-      sx={({typography}) => ({
-        ...typography.caption,
+      sx={{
         fontWeight: 'bold',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
         mb: 1,
-      })}
+      }}
     >
-      {props.label}
-      <Chip
-        label={props.value}
-        variant={props.highlight ? 'gradient' : 'outlined'}
-        size={props.highlight ? 'medium' : 'small'}
-      />
+      <Typography variant="caption">{props.label}</Typography>
+      <Typography variant="body1" fontWeight="bold">
+        {props.value}{' '}
+        <Typography variant="caption">
+          {props.extraValue ? `(${props.extraValue})` : null}
+        </Typography>
+      </Typography>
     </Box>
   )
 }

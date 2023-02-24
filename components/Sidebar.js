@@ -107,6 +107,7 @@ export default function Sidebar(props) {
                 color: 'text.disabled',
                 fontWeight: 'bold',
                 pb: 1,
+                ml: 1,
               }}
             >
               {category}

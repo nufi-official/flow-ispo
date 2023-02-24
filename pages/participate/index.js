@@ -9,6 +9,7 @@ import {
   Portal,
   Backdrop,
   CircularProgress,
+  Chip,
 } from '@mui/material'
 import ISPOCard, {IspoDetail} from '../../components/ISPOCard'
 import * as fcl from '@onflow/fcl'
@@ -42,6 +43,9 @@ function ParticipateCard({ispoData}) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [alertMsg, setAlert] = useState(null)
   const [successMsg, setSuccess] = useState(null)
+
+  const getRewardPerEpoch = (totalRewardBalance, epochStart, epochEnd) =>
+    totalRewardBalance / (epochEnd - epochStart)
 
   const handleChange = (e) => {
     setForm({...form, [e.target.name]: e.target.value})
@@ -80,7 +84,9 @@ function ParticipateCard({ispoData}) {
               display: 'flex',
               gap: 1,
               alignItems: 'center',
-              justifyContent: 'space-around',
+              justifyContent: 'space-between',
+              mt: 1,
+              mb: 1,
             }}
           >
             <IspoDetail
@@ -95,7 +101,19 @@ function ParticipateCard({ispoData}) {
             />
             <IspoDetail
               label="Token supply"
-              value={`${formatCompactAmount(ispoData.rewardTokenBalance)}`}
+              value={formatCompactAmount(ispoData.rewardTokenBalance)}
+              extraValue={
+                ispoData.rewardTokenBalance &&
+                ispoData.epochStart &&
+                ispoData.epochEnd &&
+                `${formatCompactAmount(
+                  getRewardPerEpoch(
+                    parseInt(ispoData.rewardTokenBalance),
+                    ispoData.epochStart,
+                    ispoData.epochEnd,
+                  ),
+                )}/epoch`
+              }
             />
           </Box>
           {ispoData.projectDescription && (
@@ -129,7 +147,7 @@ function ParticipateCard({ispoData}) {
             <TextField
               variant="standard"
               name="lockedFlowAmount"
-              label="Locked $FLOW amount"
+              label="Amount $FLOW"
               value={form.lockedFlowAmount || ''}
               onChange={handleChange}
             />

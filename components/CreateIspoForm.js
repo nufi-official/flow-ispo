@@ -167,7 +167,7 @@ function SelectTokenField() {
               defaultValue="/public/ispoExampleRewardTokenReceiver"
             />
           </Box>
-          <Box sx={{display: 'flex', justifyContent: 'flex-end', marginTop: 2}}>
+          <Box sx={{display: 'flex', justifyContent: 'flex-end', mt: 2}}>
             <Box mr={2}>
               <Button variant="outlined" onClick={onClose}>
                 Close
@@ -408,7 +408,7 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
                 variant="gradient"
                 disabled={isSubmitting}
                 type="submit"
-                sx={{width: 'fit-content', alignSelf: 'center', mt: 2}}
+                sx={{width: 'fit-content', alignSelf: 'center', mt: 3}}
               >
                 Submit
               </Button>

@@ -125,7 +125,8 @@ export default function DefaultLayout({children}) {
             height: '100%',
             width: '100%',
             overflow: 'auto',
-            pb: 4,
+            pb: 3,
+            pt: 1,
           }}
         >
           {children}
