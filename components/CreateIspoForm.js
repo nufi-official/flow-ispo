@@ -325,7 +325,7 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
       console.log('e', e.toString())
 
       const message = e.toString().includes('Code: 1101')
-        ? 'Only one ISPO per account can be registered'
+        ? 'Currently, only one ISPO per account can be registered'
         : e.toString()
 
       setAlert(message)
