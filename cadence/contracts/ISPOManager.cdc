@@ -9,6 +9,9 @@ pub contract ISPOManager {
     pub struct ISPOInfo {
         access(self) let id: UInt64
         access(self) let name: String
+        access(self) let projectUrl: String
+        access(self) let projectDescription: String
+        access(self) let logoUrl: String
         access(self) let rewardTokenBalance: UFix64
         access(self) let rewardTokenMetadata: ISPOManager.RewardTokenMetadata
         access(self) let epochStart: UInt64
@@ -21,6 +24,9 @@ pub contract ISPOManager {
         init(
             id: UInt64,
             name: String,
+            projectUrl: String,
+            projectDescription: String,
+            logoUrl: String,
             rewardTokenBalance: UFix64,
             rewardTokenMetadata: ISPOManager.RewardTokenMetadata,
             epochStart: UInt64,
@@ -32,6 +38,9 @@ pub contract ISPOManager {
         ) {
             self.id = id
             self.name = name
+            self.projectUrl = projectUrl
+            self.projectDescription = projectDescription
+            self.logoUrl = logoUrl
             self.rewardTokenBalance = rewardTokenBalance
             self.rewardTokenMetadata = rewardTokenMetadata
             self.epochStart = epochStart
@@ -164,6 +173,9 @@ pub contract ISPOManager {
             return ISPOInfo(
                 id: self.id,
                 name: self.name,
+                projectUrl: self.projectUrl,
+                projectDescription: self.projectDescription,
+                logoUrl: self.logoUrl,
                 rewardTokenBalance: self.rewardTokenVault.balance,
                 rewardTokenMetadata: self.rewardTokenMetadata,
                 epochStart: self.epochStart,
