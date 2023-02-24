@@ -116,7 +116,7 @@ function MyParticipationCard({
       }
       footerContent={
         <>
-          <Box sx={{display: 'flex', gap: 2, '& > *': {width: '50%'}, mb: 1}}>
+          <Box sx={{display: 'flex', gap: 2, '& > *': {width: '50%', mt: 1}, mb: 1}}>
             <Tooltip title="You can withdraw rewards after the last ISPO epoch">
               <div>
                 <Button variant="outlined" disabled>

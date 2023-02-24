@@ -51,7 +51,7 @@ export default function MyIspos() {
           footerContent={
             <Tooltip title="You can withdraw rewards after the last ISPO epoch">
               <div>
-                <Button variant="outlined" sx={{width: '100%'}} disabled>
+                <Button variant="outlined" sx={{width: '100%', mt: 1}} disabled>
                   Withdraw rewards
                 </Button>
               </div>
