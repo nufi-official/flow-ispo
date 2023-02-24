@@ -15,7 +15,7 @@ const fetchIspos = async () => {
     ).map((ispo) => ({
       ...ispo,
       createdAt: new Date(Number(ispo.createdAt) * 1000),
-    }))
+    })).filter((ispo) => ispo.name !== 'xxx')
   } catch (e) {
     // Likely need to mint first to create capability if this fails
     res = []
