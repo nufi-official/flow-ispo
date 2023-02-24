@@ -9,7 +9,7 @@ export default function MyParticipations() {
   const accountIspos = useAccountIspos(addr)
   return (
     <>
-      {accountIspos?.map(({ispo, delegatedFlowBalance, createdAt}) => (
+      {accountIspos?.map(({ispo, delegatedFlowBalance, rewardTokenBalance, createdAt}) => (
         <ISPOCard
           {...ispo}
           projectWebsite="https:nu.fi"
@@ -28,7 +28,7 @@ export default function MyParticipations() {
               <IspoDetail
                 label="Earned rewards"
                 highlight
-                value={`${formatCompactAmount(ispo.rewardTokenBalance)} tokens`}
+                value={`${formatCompactAmount(rewardTokenBalance)} tokens`}
               />
               <IspoDetail
                 label="Delegated"
