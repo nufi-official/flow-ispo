@@ -84,8 +84,7 @@ function SelectTokenField() {
     const couldNotLoadAddressText = 'Could not load address'
     const fn = async () => {
       try {
-        // TODO: this returns `undefined` (FIXME)
-        const res = await fcl.config.get('flow.0xISPOExampleRewardToken')
+        const res = await fcl.config.get('0xISPOExampleRewardToken')
         setContactAddress(res || couldNotLoadAddressText)
       } catch (err) {
         setContactAddress(couldNotLoadAddressText)
