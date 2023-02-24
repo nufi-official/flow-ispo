@@ -7,13 +7,11 @@ import {
   RocketLaunch as Placeholder,
 } from '@mui/icons-material'
 import {formatCompactAmount} from '../helpers/utils'
+import { useEpochToDate } from '../hooks/epochs'
 
 export default function ISPOCard(props) {
   // mock dates
-  const getDateFromEpoch = (epoch) =>
-    epoch === props.epochStart
-      ? `1${epoch.toString()[0]}/2/2023`
-      : `1${epoch.toString()[0]}/9/2026`
+  const getDateFromEpoch = useEpochToDate()
 
   const getRewardPerEpoch = (totalRewardBalance, epochStart, epochEnd) =>
     totalRewardBalance / (epochEnd - epochStart)
@@ -71,8 +69,8 @@ export default function ISPOCard(props) {
           >
             <CalendarIcon color="inherit" fontSize="small" />
             <div>
-              {getDateFromEpoch(props.epochStart)} -{' '}
-              {getDateFromEpoch(props.epochEnd)}
+              {getDateFromEpoch(props.epochStart)?.toLocaleDateString().padStart(10, '0')} -{' '}
+              {getDateFromEpoch(props.epochEnd)?.toLocaleDateString().padStart(10, '0')}
             </div>
           </Box>
         )}
@@ -163,3 +161,4 @@ function stringToColor(string) {
 
   return color
 }
+ 

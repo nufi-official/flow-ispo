@@ -28,6 +28,7 @@ export function useCurrentEpoch() {
 }
 
 export function useEpochToDate() {
+  /* testnet explorer statking history is broken, discarding
   const [epochSchedule, setEpochSchedule] = useState(null)
   const defaultApiUrl =
     'https://query.testnet.flowgraph.co/?token=06c16d570831aa35211075aba17cf165f7d53dfa'
@@ -56,15 +57,16 @@ export function useEpochToDate() {
   useEffect(() => {
     fetchEpochSchedule()
   }, [])
+  */
+  const currentEpoch = useCurrentEpoch()
 
   return (epoch) => {
-    if (!epochSchedule) {
+    if (!currentEpoch) {
       return null
     }
-    const startTs = epochSchedule.data.stakeEpochs.find(
-      (item) => item.index === epoch,
-    )?.start
+    const days = Number(epoch) - Number(currentEpoch)
 
-    return startTs ? new Date(startTs) : null
+    // hack - for testnet 1 epoch is roughly one day
+    return new Date(new Date().getTime() + days * 86400000)
   }
 }
