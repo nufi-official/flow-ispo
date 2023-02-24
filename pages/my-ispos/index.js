@@ -14,7 +14,7 @@ export default function MyIspos() {
       {!addr && (
         <Box>
           <Typography variant="h5" sx={{fontWeight: 'bold'}}>
-            You are not logged in.
+            You are not logged in
           </Typography>
         </Box>
       )}
