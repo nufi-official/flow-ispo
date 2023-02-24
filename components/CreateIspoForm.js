@@ -1,8 +1,22 @@
 import * as fcl from '@onflow/fcl'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import * as yup from 'yup'
-import {Button, Alert, TextField, Box, Typography, Tooltip} from '@mui/material'
+import {
+  Button,
+  Alert,
+  TextField,
+  Box,
+  Typography,
+  Tooltip,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+} from '@mui/material'
 import InfoIcon from '@mui/icons-material/InfoOutlined'
 import {
   Controller,
@@ -13,7 +27,6 @@ import {
 import {yupResolver} from '@hookform/resolvers/yup'
 import Card from './Card'
 import createISPO from '../cadence/web/transactions/admin/createISPO.cdc'
-import mintRewardToken from '../cadence/web/transactions/admin/mintRewardToken.cdc'
 import {toUFixString} from '../helpers/utils'
 import {useCurrentEpoch} from '../hooks/epochs'
 
@@ -58,6 +71,113 @@ const FormInput = ({name, defaultValue, ...otherProps}) => {
         )
       }}
     />
+  )
+}
+
+function SelectTokenField() {
+  const [isOpen, setOpen] = useState(false)
+  const onClose = () => setOpen(false)
+  const onOpen = () => setOpen(true)
+
+  const [contactAddress, setContactAddress] = useState('Loading ...')
+  useEffect(() => {
+    const couldNotLoadAddressText = 'Could not load address'
+    const fn = async () => {
+      try {
+        // TODO: this returns `undefined` (FIXME)
+        const res = await fcl.config.get('flow.0xISPOExampleRewardToken')
+        setContactAddress(res || couldNotLoadAddressText)
+      } catch (err) {
+        setContactAddress(couldNotLoadAddressText)
+      }
+    }
+    fn()
+  }, [])
+
+  return (
+    <>
+      <FormControl>
+        <InputLabel variant="standard">Token</InputLabel>
+        <Select
+          variant="standard"
+          value="dummy"
+          label="Token"
+          open={false}
+          onClick={(e) => {
+            onOpen()
+          }}
+          InputProps={{
+            startAdornment: <InfoIcon fontSize="small" />,
+          }}
+        >
+          <MenuItem value="dummy">Dummy token</MenuItem>
+        </Select>
+      </FormControl>
+      <Dialog onClose={onClose} open={isOpen}>
+        <DialogTitle>Choose token</DialogTitle>
+        <DialogContent>
+          <Alert severity="info">
+            We do not yet support choosing your own token. For the demo purposes
+            we instead mint a dummy testing token whose info is shown below.
+          </Alert>
+
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              '& > *': {mt: 2},
+            }}
+          >
+            <FormInput
+              name="contractAddress"
+              label="Contract address"
+              disabled
+              defaultValue={contactAddress}
+            />
+            <FormInput
+              name="contractName"
+              label="Contract name"
+              disabled
+              defaultValue="ISPOExampleRewardToken"
+            />
+            <FormInput
+              name="symbol"
+              label="Symbol"
+              disabled
+              defaultValue="ISPO-TEST"
+            />
+            <FormInput
+              name="valuePath"
+              label="Value path"
+              disabled
+              defaultValue="/storage/ispoExampleRewardTokenVault"
+            />
+            <FormInput
+              name="balancePath"
+              label="Balance path"
+              disabled
+              defaultValue="/public/ispoExampleRewardTokenBalance"
+            />
+            <FormInput
+              name="receiverPath"
+              label="Receiver path"
+              disabled
+              defaultValue="/public/ispoExampleRewardTokenReceiver"
+            />
+          </Box>
+          <Box sx={{display: 'flex', justifyContent: 'flex-end', marginTop: 2}}>
+            <Box mr={2}>
+              <Button variant="outlined" onClick={onClose}>
+                Close
+              </Button>
+            </Box>
+            <Button variant="contained" onClick={onClose}>
+              Confirm
+            </Button>
+          </Box>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
@@ -232,6 +352,7 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
               defaultValue={currentEpoch}
             />
             <FormInput name="endEpoch" label="End epoch" type="number" />
+            <SelectTokenField />
             <FormInput
               name="totalRewardTokensAmount"
               label="Amount of tokens to distribute"
