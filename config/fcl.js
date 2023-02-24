@@ -11,7 +11,7 @@ config({
   'accessNode.api': ACCESS_NODE_URLS[flowNetwork],
   'discovery.wallet': `https://fcl-discovery.onflow.org/${flowNetwork}/authn`,
   'app.detail.icon': 'https://avatars.githubusercontent.com/u/62387156?v=4',
-  'app.detail.title': 'FCL Next Scaffold',
+  'app.detail.title': 'Veles',
   // path to address mappings
   '0xISPOManager':
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '0xf8d6e0586b0a20c7',
