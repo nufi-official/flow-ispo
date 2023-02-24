@@ -514,6 +514,10 @@ pub contract ISPOManager {
             return <- ISPOManager.borrowISPORecord(id: self.uuid).withdrawAdminFlowRewards()
         }
 
+        pub fun getIspoInfos(): [ISPOInfo] {
+            return [ISPOManager.borrowISPORecord(id: self.uuid).getInfo()]
+        }
+
         destroy() {
             ISPOManager.removeISPORecord(id: self.uuid)
         }

@@ -1,15 +1,15 @@
 import {Box, Button, Tooltip} from '@mui/material'
 import ISPOCard, {IspoDetail} from '../../components/ISPOCard'
-import {useAccountIspos} from '../../hooks/ispo'
+import {useAccountAdminIspos} from '../../hooks/ispo'
 import useCurrentUser from '../../hooks/useCurrentUser'
 import {formatCompactAmount} from '../../helpers/utils'
 
 export default function MyIspos() {
   const {addr} = useCurrentUser()
-  const accountIspos = useAccountIspos(addr)
+  const accountIspos = useAccountAdminIspos(addr)
   return (
     <>
-      {accountIspos?.map(({ispo}) => (
+      {accountIspos?.map((ispo) => (
         <ISPOCard
           {...ispo}
           projectWebsite="https:nu.fi"

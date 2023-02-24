@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react'
 import getIspoInfos from '../cadence/web/scripts/getISPOInfos.cdc'
 import getAccountISPOs from '../cadence/web/scripts/getAccountISPOs.cdc'
+import getIspoAdminInfos from '../cadence/web/scripts/getIspoAdminInfos.cdc'
 import * as fcl from '@onflow/fcl'
 
 const fetchIspos = async () => {
@@ -104,6 +105,32 @@ export function useAccountIspos(address) {
 
   useEffect(() => {
     fetchAccountIspos()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address])
+
+  return ispos
+}
+
+export function useAccountAdminIspos(address) {
+  const [ispos, setIspos] = useState(null)
+
+  const fetchAccountAdminIspos = async () => {
+    let res
+    try {
+      res = await fcl.query({
+        cadence: getIspoAdminInfos,
+        args: (arg, t) => [arg(address, t.Address)],
+      })
+    } catch (e) {
+      // Likely need to mint first to create capability if this fails
+      res = []
+    } finally {
+      setIspos(res)
+    }
+  }
+
+  useEffect(() => {
+    fetchAccountAdminIspos()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address])
 
