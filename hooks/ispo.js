@@ -96,7 +96,8 @@ export function useAccountIspos(address) {
       // Likely need to mint first to create capability if this fails
       res = []
     } finally {
-      res = !res?.length ? [mockIspo] : res
+      const network = await fcl.config.get('flow.network')
+      res = !res.length && network === 'local' ? [mockIspo] : res
       setIspos(res)
     }
   }
