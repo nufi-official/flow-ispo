@@ -15,6 +15,8 @@ import {useAccountIspos} from '../../hooks/ispo'
 import useCurrentUser from '../../hooks/useCurrentUser'
 import {formatCompactAmount} from '../../helpers/utils'
 import CardGrid from '../../layouts/CardGrid'
+import withdrawFlowFromIspo from '../../cadence/web/transactions/client/withdrawNodeDelegator.cdc'
+import * as fcl from '@onflow/fcl'
 
 export default function MyParticipations() {
   const {addr} = useCurrentUser()
@@ -57,12 +59,14 @@ export default function MyParticipations() {
 
 function MyParticipationCard({
   ispo,
+  ispoClientId,
   delegatedFlowBalance,
   rewardTokenBalance,
   createdAt,
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [alertMsg, setAlert] = useState(null)
+  const [successMsg, setSuccess] = useState(null)
 
   const onWithdrawFlow = async () => {
     setAlert(null)
@@ -70,6 +74,15 @@ function MyParticipationCard({
     try {
       // mock
       await new Promise((res) => setTimeout(res, 5000))
+      const delegateToIspoTxId = await fcl.mutate({
+        cadence: withdrawFlowFromIspo,
+        args: (arg, t) => [
+          arg(ispoClientId, t.UInt64),
+        ],
+        limit: 1000,
+      })
+      await fcl.tx(delegateToIspoTxId).onceSealed()
+      setSuccess('Transaction successfully submitted!')
     } catch (e) {
       setAlert(e.toString())
     }
@@ -116,6 +129,7 @@ function MyParticipationCard({
               withdraw flow
             </Button>
           </Box>
+          {successMsg && <Alert severity="success" onClose={() => setSuccess(null)}>{successMsg}</Alert>}
           {alertMsg && <Alert severity="error">{alertMsg}</Alert>}
           <Portal>
             <Backdrop

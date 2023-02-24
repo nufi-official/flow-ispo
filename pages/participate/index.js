@@ -41,6 +41,7 @@ function ParticipateCard({ispoData}) {
   const [form, setForm] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [alertMsg, setAlert] = useState(null)
+  const [successMsg, setSuccess] = useState(null)
 
   const handleChange = (e) => {
     setForm({...form, [e.target.name]: e.target.value})
@@ -60,6 +61,7 @@ function ParticipateCard({ispoData}) {
       await fcl.tx(delegateToIspoTxId).onceSealed()
 
       setAlert(null)
+      setSuccess('Transaction successfully submitted!')
     } catch (e) {
       setAlert(e.toString())
     }
@@ -139,7 +141,8 @@ function ParticipateCard({ispoData}) {
               Join ISPO
             </Button>
           </Box>
-          {alertMsg && <Alert severity="error">{alertMsg}</Alert>}
+          {successMsg && <Alert severity="success" onClose={() => setSuccess(null)}>{successMsg}</Alert>}
+          {alertMsg && <Alert severity="error" onClose={() => setAlert(null)}>{alertMsg}</Alert>}
           <Portal>
             <Backdrop
               sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}}
