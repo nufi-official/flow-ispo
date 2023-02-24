@@ -27,8 +27,8 @@ export default function MyIspos() {
               />
               <IspoDetail
                 highlight
-                label="Earned rewards:"
-                value={`${formatCompactAmount(ispo.rewardTokenBalance)} $FLOW`}
+                label="Reward tokens"
+                value={`${formatCompactAmount(ispo.rewardTokenBalance)} tokens`}
               />
               <IspoDetail
                 label="Total locked"
