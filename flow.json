@@ -17,7 +17,7 @@
   },
   "contracts": {
     "ISPOManager": "./cadence/contracts/ISPOManager.cdc",
-    "ISPOExampleRewardToken": "cadence/contracts/ISPOExampleRewardToken.cdc",
+    "ISPOExampleRewardToken": "./cadence/contracts/ISPOExampleRewardToken.cdc",
     "FungibleToken": {
       "source": "./cadence/contracts/standard/FungibleToken.cdc",
       "aliases": {
@@ -95,7 +95,8 @@
         "FlowStakingCollection",
         "FlowEpochProxy"
       ],
-      "emulator-account": ["ISPOManager"]
+      "emulator-account": ["ISPOManager", "ISPOExampleRewardToken"]
     }
   }
 }
+ 
