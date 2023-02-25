@@ -15,7 +15,6 @@ export default function Home() {
     >
       <div>
         <Head>
-          <title>VELES</title>
           <meta
             name="description"
             content="Suppport projects by delegating for them."
