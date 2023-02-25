@@ -8,13 +8,19 @@ const CardGrid = ({children}) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: '10px',
         minHeight: '100%',
-        pb: 4,
       }}
     >
-      {children}
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '10px',
+          pb: 4,
+        }}
+      >
+        {children}
+      </Box>
     </Box>
   )
 }

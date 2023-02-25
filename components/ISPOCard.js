@@ -17,7 +17,15 @@ export default function ISPOCard(props) {
   const getDateFromEpoch = useEpochToDate()
 
   return (
-    <Card sx={{width: '400px', py: 2.5, px: 3.5}}>
+    <Card
+      sx={{
+        width: '400px',
+        py: 2.5,
+        px: 3.5,
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       {props.name && (
         <Box sx={{display: 'flex'}}>
           {props.logoUrl ? (
@@ -45,10 +53,12 @@ export default function ISPOCard(props) {
                 alignItems: 'center',
                 maxWidth: '100%',
                 textDecoration: 'none',
-                ...(!props.projectUrl ? {
-                  pointerEvents: 'none',
-                  cursor: 'default'
-                } : {}),
+                ...(!props.projectUrl
+                  ? {
+                      pointerEvents: 'none',
+                      cursor: 'default',
+                    }
+                  : {}),
                 '&:hover': {
                   textDecoration: 'underline',
                 },
@@ -62,12 +72,16 @@ export default function ISPOCard(props) {
               >
                 {props.name}
               </Typography>
-              {props.projectUrl ? <ExternalIcon fontSize="medium" color="inherit" /> : <Box mr={1}/>}
+              {props.projectUrl ? (
+                <ExternalIcon fontSize="medium" color="inherit" />
+              ) : (
+                <Box mr={1} />
+              )}
             </Link>
             {props.epochStart && props.epochEnd && (
               <Box
                 sx={({typography}) => ({
-                  display: 'inline-flex',
+                  display: 'flex',
                   gap: 1,
                   alignItems: 'center',
                   color: 'grey.700',
@@ -76,11 +90,8 @@ export default function ISPOCard(props) {
               >
                 <CalendarIcon color="inherit" fontSize="small" />
                 <div>
-                  {getDateFromEpoch(props.epochStart)
-                    ?.toLocaleDateString()}{' '}
-                  -{' '}
-                  {getDateFromEpoch(props.epochEnd)
-                    ?.toLocaleDateString()}
+                  {getDateFromEpoch(props.epochStart)?.toLocaleDateString()} -{' '}
+                  {getDateFromEpoch(props.epochEnd)?.toLocaleDateString()}
                 </div>
               </Box>
             )}
@@ -89,10 +100,10 @@ export default function ISPOCard(props) {
       )}
       {props.body && props.body}
       {props.footerContent && (
-        <>
+        <Box sx={{marginTop: 'auto'}}>
           <Divider sx={{mt: 2, mb: 1, width: '200%', translate: -100}} />
           {props.footerContent}
-        </>
+        </Box>
       )}
     </Card>
   )
