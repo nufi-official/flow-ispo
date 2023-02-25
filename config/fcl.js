@@ -19,8 +19,8 @@ config({
     process.env.NEXT_PUBLIC_FUNGIBLE_TOKEN_ADDRESS || '0xee82856bf20e2aa6',
   '0xISPOExampleRewardToken':
     process.env.NEXT_PUBLIC_REWARD_TOKEN_ADDRESS || '0xf8d6e0586b0a20c7',
-  '0xFlowEpoch':
-    process.env.NEXT_PUBLIC_FLOW_EPOCH_ADDRESS || '0xf8d6e0586b0a20c7',
+  '0xFlowEpochProxy':
+    process.env.NEXT_PUBLIC_FLOW_EPOCH_PROXY_ADDRESS || '0xf8d6e0586b0a20c7',
   '0xFlowToken':
     process.env.NEXT_PUBLIC_FLOW_TOKEN_ADDRESS || '0x0ae53cb6e3f42a79',
   '0xFlowIDTableStaking':

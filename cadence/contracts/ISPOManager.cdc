@@ -2,6 +2,7 @@ import FungibleToken from "./standard/FungibleToken.cdc"
 import FlowIDTableStaking from "./standard/FlowIDTableStaking.cdc"
 import FlowEpoch from "./standard/FlowEpoch.cdc"
 import FlowToken from "./standard/FlowToken.cdc"
+import FlowEpochProxy from "FlowEpochProxy.cdc"
 
 pub contract ISPOManager {
 
@@ -67,7 +68,7 @@ pub contract ISPOManager {
         }
 
         access(self) fun updateCurrentEpochFlowCommitment(amount: UFix64) {
-            let currentEpoch: UInt64 = FlowEpoch.currentEpochCounter
+            let currentEpoch: UInt64 = FlowEpochProxy.getCurrentEpoch()
             if (self.epochFlowCommitments.containsKey(currentEpoch)) {
                 let currentEpochCommitment: UFix64 = self.epochFlowCommitments[currentEpoch]!
                 self.epochFlowCommitments[currentEpoch] = currentEpochCommitment + amount
@@ -176,7 +177,7 @@ pub contract ISPOManager {
         }
 
         access(self) fun isISPOActive(): Bool {
-            let currentEpoch: UInt64 = FlowEpoch.currentEpochCounter
+            let currentEpoch: UInt64 = FlowEpochProxy.getCurrentEpoch()
             // TODO we should probably check for epochStart as well, but the check was removed
             // to be able to delegate before ISPO start
             return currentEpoch < self.epochEnd
@@ -560,17 +561,20 @@ pub contract ISPOManager {
 
     pub struct ISPOClientInfo {
         access(self) let ispoId: UInt64
+        access(self) let ispoClientId: UInt64
         access(self) let delegatedFlowBalance: UFix64
         access(self) let rewardTokenBalance: UFix64
         access(self) let createdAt: UFix64
 
         init(
             ispoId: UInt64,
+            ispoClientId: UInt64,
             delegatedFlowBalance: UFix64,
             rewardTokenBalance: UFix64,
             createdAt: UFix64,
         ) {
             self.ispoId = ispoId
+            self.ispoClientId = ispoClientId
             self.delegatedFlowBalance = delegatedFlowBalance
             self.rewardTokenBalance = rewardTokenBalance
             self.createdAt = createdAt
@@ -616,8 +620,9 @@ pub contract ISPOManager {
         pub fun getInfo(): ISPOClientInfo {
             return ISPOClientInfo(
                 ispoId: self.ispoId,
+                ispoClientId: self.uuid,
                 delegatedFlowBalance: self.getDelegatedFlowBalance(),
-                rewardTokenBalance: self.getRewardTokenBalance(epoch: FlowEpoch.currentEpochCounter),
+                rewardTokenBalance: self.getRewardTokenBalance(epoch: FlowEpochProxy.getCurrentEpoch()),
                 createdAt: self.createdAt,
             )
         }

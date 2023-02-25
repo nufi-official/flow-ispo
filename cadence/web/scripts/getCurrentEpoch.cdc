@@ -1,5 +1,5 @@
-import FlowEpoch from 0xFlowEpoch
+import FlowEpochProxy from 0xFlowEpochProxy
 
 pub fun main(): UInt64 {
-  return FlowEpoch.currentEpochCounter
+  return FlowEpochProxy.getCurrentEpoch()
 }
