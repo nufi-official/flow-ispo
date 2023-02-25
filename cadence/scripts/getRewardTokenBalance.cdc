@@ -5,7 +5,7 @@ pub fun main(address: Address): UFix64 {
     let account = getAccount(address)
     let vaultRef = account.getCapability<&ISPOExampleRewardToken.Vault{FungibleToken.Balance}>(/public/ispoExampleRewardTokenBalance)
 
-    if (!vaultRef.check()) {
+    if (vaultRef == nil || !vaultRef.check()) {
       0.0
     }
 
