@@ -15,7 +15,7 @@ contract which consists of several resources:
   project's account and a `ISPO` resource is stored in the `ISPOManager` contract, containing the token vault and ISPO data (name, epoch range, etc.)
 - `IspoClient` - this is the resource through which users can delegate to the ISPO of their choice. A user provides there a vault resource with the $FLOW
 they are willing to lock and it gets directly transformed into a delegation to the Flow staking node (specified in the `ISPO` resource, therefore all `$FLOW` for an ISPO is delegated to the same node).
-  Once the ISPO is closed, the user can through this resource claim the reward token and get the FLOW released. Since "undelegating" is a multi-step proces, the contract
+  Once the ISPO is closed, the user can through this resource claim the reward token and get the FLOW released. Since "undelegating" is a multi-step process, the contract
   transfers instead the full delegation resource to user's account, allowing them to unstake or re-stake their Flow from their wallet of choice.
 
 ## Features Provided
