@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react'
 import getIspoInfos from '../cadence/web/scripts/getISPOInfos.cdc'
 import getAccountISPOs from '../cadence/web/scripts/getAccountISPOs.cdc'
 import getIspoAdminInfos from '../cadence/web/scripts/getIspoAdminInfos.cdc'
+import getRewardTokenBalance from '../cadence/web/scripts/getRewardTokenBalance.cdc'
 import * as fcl from '@onflow/fcl'
 
 const fetchIspos = async () => {
@@ -107,7 +108,7 @@ export function useAccountIspos(address) {
       fetchAccountIspos()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address])
+  }, [address, process.lastRefresh])
 
   return ispos
 }
@@ -135,7 +136,38 @@ export function useAccountAdminIspos(address) {
       fetchAccountAdminIspos()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address])
+  }, [address, process.lastRefresh])
 
   return ispos
+}
+
+export function useAccountBalances(address) {
+  const [balance, setBalance] = useState(null)
+
+  const fetchRewardTokenBalance = async () => {
+    let res
+    try {
+      res = [
+        await fcl.query({
+          cadence: getRewardTokenBalance,
+          args: (arg, t) => [arg(address, t.Address)],
+        }),
+        (Number((await fcl.account(address)).balance) / 100000000).toString()
+      ]
+    } catch (e) {
+      // Likely need to mint first to create capability if this fails
+      res = null
+    } finally {
+      setBalance(res)
+    }
+  }
+
+  useEffect(() => {
+    if (address) {
+      fetchRewardTokenBalance()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, process.lastRefresh])
+
+  return {rewards: balance?.[0], flow: balance?.[1]}
 }

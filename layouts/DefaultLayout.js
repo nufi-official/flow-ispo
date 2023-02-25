@@ -15,6 +15,8 @@ import {
 import useCurrentUser from '../hooks/useCurrentUser'
 import useConfig from '../hooks/useConfig'
 import {useCurrentEpoch} from '../hooks/epochs'
+import {useAccountBalances} from '../hooks/ispo'
+import {formatCompactAmount} from '../helpers/utils'
 
 const appTopBar = 64
 const sideBarWidth = 260
@@ -23,6 +25,7 @@ export default function DefaultLayout({children}) {
   const user = useCurrentUser()
   const config = useConfig()
   const currentEpoch = useCurrentEpoch()
+  const {rewards: rewardTokenBalance, flow: flowBalance} = useAccountBalances(user.addr)
 
   return (
     <Box
@@ -65,28 +68,32 @@ export default function DefaultLayout({children}) {
         <Toolbar sx={{justifyContent: 'flex-end', height: appTopBar}}>
           <Box display="flex" gap={2} alignItems="center" mr={2}>
             {user.addr != null && (
-              <InfoItem
-                label="Address"
-                value={
-                  <MuiLink
-                    target="_blank"
-                    sx={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 1,
-                      textDecoration: 'underline',
-                      color: ({palette}) => palette.info.main,
-                      '&:hover': {
-                        color: ({palette}) => palette.info.dark,
-                      },
-                    }}
-                    href={getFlowAddressExplorerLink(user.addr)}
-                  >
-                    {user.addr}
-                    <ExternalIcon fontSize="inherit" />
-                  </MuiLink>
-                }
-              />
+              <>
+                <InfoItem
+                  label="Address"
+                  value={
+                    <MuiLink
+                      target="_blank"
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        textDecoration: 'underline',
+                        color: ({palette}) => palette.info.main,
+                        '&:hover': {
+                          color: ({palette}) => palette.info.dark,
+                        },
+                      }}
+                      href={getFlowAddressExplorerLink(user.addr)}
+                    >
+                      {user.addr}
+                      <ExternalIcon fontSize="inherit" />
+                    </MuiLink>
+                  }
+                />
+                <InfoItem label="Balance" value={`${formatCompactAmount(flowBalance)} $FLOW`} />
+                <InfoItem label="Rewards balance" value={`${formatCompactAmount(rewardTokenBalance)} tokens`} />
+              </>
             )}
             {config.network && (
               <InfoItem label="Network" value={config.network} />

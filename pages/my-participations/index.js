@@ -73,6 +73,7 @@ function MyParticipationCard({
   const [successMsg, setSuccess] = useState(null)
   const [hasDelegation, setHasDelegation] = useState(_hasDelegation)
 
+  const noRewards = Number(rewardTokenBalance) === 0
   const canWithdrawTokenRewards = currentEpoch != null && ispo != null && Number(currentEpoch) >= Number(ispo.epochEnd)
 
   const onWithdrawTokenRewards = async () => {
@@ -87,6 +88,7 @@ function MyParticipationCard({
         limit: 9999,
       })
       await fcl.tx(txId).onceSealed()
+      process.lastRefresh = new Date()
       setSuccess('Transaction successfully submitted!')
       setHasDelegation(true) // dirty hack to reflect the change without cache invalidation which we don't have
     } catch (e) {
@@ -107,6 +109,7 @@ function MyParticipationCard({
         limit: 9999,
       })
       await fcl.tx(txId).onceSealed()
+      process.lastRefresh = new Date()
       setSuccess('Transaction successfully submitted!')
       setHasDelegation(false) // dirty hack to reflect the change without cache invalidation which we don't have
     } catch (e) {
@@ -131,7 +134,7 @@ function MyParticipationCard({
             value={new Date(createdAt).toLocaleDateString()}
           />
           <IspoDetail
-            label="Earned rewards"
+            label="Current rewards"
             highlight
             value={`${formatCompactAmount(rewardTokenBalance)} tokens`}
           />
@@ -144,9 +147,9 @@ function MyParticipationCard({
       footerContent={
         <>
           <Box sx={{display: 'flex', gap: 2, '& > *': {width: '50%', mt: 1}, mb: 1}}>
-            <Tooltip title={!canWithdrawTokenRewards ? "You can withdraw rewards after the last ISPO epoch" : ""}>
+            <Tooltip title={!canWithdrawTokenRewards ? "You can withdraw rewards after the last ISPO epoch" : (noRewards ? "No rewards to claim" : '')}>
               <div>
-                <Button variant="gradient" disabled={!canWithdrawTokenRewards} onClick={onWithdrawTokenRewards}>
+                <Button variant="gradient" disabled={!canWithdrawTokenRewards || noRewards} onClick={onWithdrawTokenRewards}>
                   Claim rewards
                 </Button>
               </div>

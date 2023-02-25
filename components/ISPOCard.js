@@ -77,12 +77,10 @@ export default function ISPOCard(props) {
                 <CalendarIcon color="inherit" fontSize="small" />
                 <div>
                   {getDateFromEpoch(props.epochStart)
-                    ?.toLocaleDateString()
-                    .padStart(10, '0')}{' '}
+                    ?.toLocaleDateString()}{' '}
                   -{' '}
                   {getDateFromEpoch(props.epochEnd)
-                    ?.toLocaleDateString()
-                    .padStart(10, '0')}
+                    ?.toLocaleDateString()}
                 </div>
               </Box>
             )}

@@ -10,6 +10,7 @@ import {
   Backdrop,
   CircularProgress,
   Chip,
+  Tooltip,
 } from '@mui/material'
 import ISPOCard, {IspoDetail} from '../../components/ISPOCard'
 import * as fcl from '@onflow/fcl'
@@ -17,6 +18,7 @@ import delegateToISPO from '../../cadence/web/transactions/client/delegateToISPO
 import {toUFixString, formatCompactAmount} from '../../helpers/utils'
 import useCurrentUser from '../../hooks/useCurrentUser'
 import CardGrid from '../../layouts/CardGrid'
+import { useCurrentEpoch } from '../../hooks/epochs'
 
 export default function ParticipateIspoPage() {
   const {addr} = useCurrentUser()
@@ -43,6 +45,9 @@ function ParticipateCard({ispoData}) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [alertMsg, setAlert] = useState(null)
   const [successMsg, setSuccess] = useState(null)
+  const currentEpoch = useCurrentEpoch()
+
+  const canJoin = Number(currentEpoch) < Number(ispoData.epochEnd)
 
   const getRewardPerEpoch = (totalRewardBalance, epochStart, epochEnd) =>
     totalRewardBalance / (epochEnd - epochStart)
@@ -151,13 +156,18 @@ function ParticipateCard({ispoData}) {
               value={form.lockedFlowAmount || ''}
               onChange={handleChange}
             />
-            <Button
-              variant="gradient"
-              onClick={getOnSubmit(ispoData.id)}
-              sx={{width: 'fit-content'}}
-            >
-              Join ISPO
-            </Button>
+            <Tooltip title={!canJoin ? "ISPO is not active" :  ''}>
+              <div>
+                <Button
+                  variant="gradient"
+                  onClick={getOnSubmit(ispoData.id)}
+                  sx={{width: 'fit-content'}}
+                  disabled={!canJoin}
+                >
+                  Join ISPO
+                </Button>
+              </div>
+            </Tooltip>
           </Box>
           {successMsg && <Alert severity="success" onClose={() => setSuccess(null)}>{successMsg}</Alert>}
           {alertMsg && <Alert severity="error" onClose={() => setAlert(null)}>{alertMsg}</Alert>}
