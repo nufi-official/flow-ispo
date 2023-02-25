@@ -177,16 +177,6 @@ pub contract FlowIDTableStaking {
                 !FlowIDTableStaking.getStakingKeyClaimed(key: stakingKey): "The stakingKey cannot have already been claimed"
             }
 
-            let stakeKey = PublicKey(
-                publicKey: stakingKey.decodeHex(),
-                signatureAlgorithm: SignatureAlgorithm.BLS_BLS12_381
-            )
-
-            let netKey = PublicKey(
-                publicKey: networkingKey.decodeHex(),
-                signatureAlgorithm: SignatureAlgorithm.ECDSA_P256
-            )
-
             // TODO: Verify the provided Proof of Possession of the staking private key
 
             self.id = id
@@ -1829,7 +1819,10 @@ pub contract FlowIDTableStaking {
         return self.rewardRatios
     }
 
-    init(_ epochTokenPayout: UFix64, _ rewardCut: UFix64, _ candidateNodeLimits: {UInt8: UInt64}) {
+    init() {
+        let epochTokenPayout = 1000000.0
+        let rewardCut = 0.08
+        let candidateNodeLimits: {UInt8: UInt64} = {4: 50000}
         self.account.save(true, to: /storage/stakingEnabled)
 
         self.nodes <- {}
@@ -1877,4 +1870,5 @@ pub contract FlowIDTableStaking {
         self.account.save(<-create Admin(), to: self.StakingAdminStoragePath)
     }
 }
+ 
  

@@ -1,5 +1,5 @@
 import Crypto
-import FlowStakingCollection from "../../contracts/standard/FlowStakingCollection.cdc"
+import FlowStakingCollection from 0x01cf0e2f2f715450
 
 /// Registers a delegator in the staking collection resource
 /// for the specified node information and the amount of tokens to commit

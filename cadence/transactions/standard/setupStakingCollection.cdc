@@ -1,8 +1,8 @@
 import FungibleToken from "../../contracts/standard/FungibleToken.cdc"
 import FlowToken from "../../contracts/standard/FlowToken.cdc"
-import FlowIDTableStaking from "../../contracts/standard/FlowIDTableStaking.cdc"
-import LockedTokens from "../../contracts/standard/LockedTokens.cdc"
-import FlowStakingCollection from "../../contracts/standard/FlowStakingCollection.cdc"
+import FlowIDTableStaking from 0x01cf0e2f2f715450
+import LockedTokens from 0x01cf0e2f2f715450
+import FlowStakingCollection from 0x01cf0e2f2f715450
 
 /// This transaction sets up an account to use a staking collection
 /// It will work regardless of whether they have a regular account, a two-account locked tokens setup,
@@ -49,3 +49,4 @@ transaction {
         }
     }
 }
+ 

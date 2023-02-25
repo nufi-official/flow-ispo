@@ -1,4 +1,6 @@
 #!/bin/bash
+flow transactions send ./cadence/transactions/standard/transferFlow.cdc 5000.0 0x01cf0e2f2f715450
+flow project deploy
 flow transactions send ./cadence/transactions/standard/setupStakingCollection.cdc
 flow transactions send ./cadence/transactions/standard/registerNode.cdc "26c1cd3254ec259b4faea0f53e3a446539256d81f0c06fff430690433d69731f" 4 "verification-001.mainnet6.nodes.onflow.org:3569" "9d25887798c6774ce009bd7b2ac4dde023b6e3694a465b6cf4b69ba429b8999b3ef8c703cb21154eaa40be296b232d3d94d351b2d023f11b1d3ac1af58ff9d4d" "b05920f227823f20a676c3376506aa9217d394746ad073ab63371ca3c2bdf8093f974f5285b7ca6f92b9ed8dbf2ce31c0b4e71305ea27939f78bf27ec1e3080075199c5025a3676013ba7c173d905f290471059a952a80d79cc36f839bdf0d3e" 200000.0
  

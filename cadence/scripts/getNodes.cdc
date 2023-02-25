@@ -1,4 +1,4 @@
-import FlowIDTableStaking from "../contracts/standard/FlowIDTableStaking.cdc"
+import FlowIDTableStaking from 0x01cf0e2f2f715450
 
   // This script returns validator nodes with info
 
@@ -15,3 +15,4 @@ import FlowIDTableStaking from "../contracts/standard/FlowIDTableStaking.cdc"
     }
     return proposedNodes
   }
+ 
