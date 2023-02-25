@@ -157,4 +157,3 @@ function stringToColor(string) {
 
   return color
 }
- 
