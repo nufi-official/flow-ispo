@@ -120,6 +120,10 @@ pub contract ISPOManager {
             return <- nodeDelegator!
         }
 
+        pub fun hasNodeDelegator(): Bool {
+            return self.borrowNodeDelegator() != nil
+        }
+
         destroy() {
             pre {
                 // TODO: pre conditions for destroying nodeDelegator
@@ -382,7 +386,7 @@ pub contract ISPOManager {
 
         // withdraws admin portion of delegator rewards to ISPO rewardsVault, and return NodeDelegator 
         pub fun hasNodeDelegator(delegatorId: UInt64): Bool {
-            return self.borrowDelegatorRecord(delegatorId: delegatorId) != nil
+            return self.borrowDelegatorRecord(delegatorId: delegatorId)!.hasNodeDelegator()
         }
 
         destroy() {

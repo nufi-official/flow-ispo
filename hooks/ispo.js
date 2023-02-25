@@ -87,7 +87,7 @@ export function useAccountIspos(address) {
         : {}
       res = Object.entries(rawIspos).map(([key, value]) => ({
         id: key,
-        ispo: allIspos.find((ispo) => ispo.id === value.ispoId),
+        ispo: allIspos.find((ispo) => ispo.id === value.info.ispoId),
         ...value.info,
         hasDelegation: JSON.parse(value.hasDelegation),
         createdAt: new Date(Number(value.info.createdAt) * 1000),

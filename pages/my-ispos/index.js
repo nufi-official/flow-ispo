@@ -46,7 +46,7 @@ export default function MyIspos() {
               justifyContent="space-around"
               flexWrap="wrap"
               alignItems="center"
-              gap={2}
+              gap={1}
             >
               <IspoDetail
                 label="Delegators"

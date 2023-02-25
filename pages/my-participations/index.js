@@ -73,7 +73,7 @@ function MyParticipationCard({
   const [successMsg, setSuccess] = useState(null)
   const [hasDelegation, setHasDelegation] = useState(_hasDelegation)
 
-  const canWithdrawTokenRewards = currentEpoch != null && Number(currentEpoch) >= Number(ispo.epochEnd)
+  const canWithdrawTokenRewards = currentEpoch != null && ispo != null && Number(currentEpoch) >= Number(ispo.epochEnd)
 
   const onWithdrawTokenRewards = async () => {
     setAlert(null)
@@ -108,7 +108,7 @@ function MyParticipationCard({
       })
       await fcl.tx(txId).onceSealed()
       setSuccess('Transaction successfully submitted!')
-      setHasDelegation(true) // dirty hack to reflect the change without cache invalidation which we don't have
+      setHasDelegation(false) // dirty hack to reflect the change without cache invalidation which we don't have
     } catch (e) {
       setAlert(e.toString())
     }
@@ -144,16 +144,20 @@ function MyParticipationCard({
       footerContent={
         <>
           <Box sx={{display: 'flex', gap: 2, '& > *': {width: '50%', mt: 1}, mb: 1}}>
-            <Tooltip title="You can withdraw rewards after the last ISPO epoch">
+            <Tooltip title={!canWithdrawTokenRewards ? "You can withdraw rewards after the last ISPO epoch" : ""}>
               <div>
-                <Button variant="outlined" disabled={!canWithdrawTokenRewards} onClick={onWithdrawTokenRewards}>
+                <Button variant="gradient" disabled={!canWithdrawTokenRewards} onClick={onWithdrawTokenRewards}>
                   Claim rewards
                 </Button>
               </div>
             </Tooltip>
-            <Button variant="gradient" disabled={!hasDelegation} onClick={onWithdrawFlow}>
-              withdraw flow
-            </Button>
+            <Tooltip title={!hasDelegation ? "Delegated $FLOW already withdrawn" : ""}>
+              <div>
+                <Button variant="gradient" disabled={!hasDelegation} onClick={onWithdrawFlow}>
+                  withdraw flow
+                </Button>
+              </div>
+            </Tooltip>
           </Box>
           {successMsg && <Alert severity="success" onClose={() => setSuccess(null)}>{successMsg}</Alert>}
           {alertMsg && <Alert severity="error" onClose={() => setAlert(null)} >{alertMsg}</Alert>}
