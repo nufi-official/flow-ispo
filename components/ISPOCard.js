@@ -36,7 +36,8 @@ export default function ISPOCard(props) {
             width={`calc(100% - ${imageSize + imageRightSpace}px)`}
           >
             <Link
-              href={props.name}
+              href={props.projectUrl}
+              disabled={true}
               target="_blank"
               sx={{
                 display: 'inline-flex',
@@ -44,6 +45,10 @@ export default function ISPOCard(props) {
                 alignItems: 'center',
                 maxWidth: '100%',
                 textDecoration: 'none',
+                ...(!props.projectUrl ? {
+                  pointerEvents: 'none',
+                  cursor: 'default'
+                } : {}),
                 '&:hover': {
                   textDecoration: 'underline',
                 },
@@ -57,7 +62,7 @@ export default function ISPOCard(props) {
               >
                 {props.name}
               </Typography>
-              <ExternalIcon fontSize="medium" color="inherit" />
+              {props.projectUrl ? <ExternalIcon fontSize="medium" color="inherit" /> : <Box mr={1}/>}
             </Link>
             {props.epochStart && props.epochEnd && (
               <Box
@@ -152,3 +157,4 @@ function stringToColor(string) {
 
   return color
 }
+ 
