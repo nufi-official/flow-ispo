@@ -1080,7 +1080,7 @@ pub contract FlowIDTableStaking {
 
         /// Called at the end of the epoch to pay rewards to node operators
         /// based on the tokens that they have staked
-        pub fun payRewards(_ rewardsSummary: EpochRewardsSummary) {
+        pub fun payRewards(_ rewardsSummary: EpochRewardsSummary, flowVault: @FungibleToken.Vault): @FungibleToken.Vault {
 
             let rewardsBreakdownArray = rewardsSummary.breakdown
             let totalRewards = rewardsSummary.totalRewards
@@ -1093,24 +1093,22 @@ pub contract FlowIDTableStaking {
                 let emptyNodeList: {String: UFix64} = {}
                 self.setNonOperationalNodesList(emptyNodeList)
 
-                return
+                return <- flowVault
             } 
 
-            let feeBalance = FlowFees.getFeeBalance()
+            let feeBalance = 0.0
             var mintedRewards: UFix64 = 0.0
             if feeBalance < totalRewards {
                 mintedRewards = totalRewards - feeBalance
             }
 
             // Borrow the fee admin and withdraw all the fees that have been collected since the last rewards payment
-            let feeAdmin = FlowIDTableStaking.borrowFeesAdmin()
-            let rewardsVault <- feeAdmin.withdrawTokensFromFeeVault(amount: feeBalance)
+            // let feeAdmin = FlowIDTableStaking.borrowFeesAdmin()
+            let rewardsVault <- FlowToken.createEmptyVault()
 
             // Mint the remaining FLOW for rewards
             if mintedRewards > 0.0 {
-                let flowTokenMinter = FlowIDTableStaking.account.borrow<&FlowToken.Minter>(from: /storage/flowTokenMinter)
-                    ?? panic("Could not borrow minter reference")
-                rewardsVault.deposit(from: <-flowTokenMinter.mintTokens(amount: mintedRewards))
+                rewardsVault.deposit(from: <- flowVault.withdraw(amount: mintedRewards))
             }
 
             for rewardBreakdown in rewardsBreakdownArray {
@@ -1143,6 +1141,7 @@ pub contract FlowIDTableStaking {
 
             // Destroy the remaining fees, even if there are some left
             destroy rewardsVault
+            return <- flowVault
         }
 
         /// Calculates rewards for all the staked node operators and delegators
@@ -1820,9 +1819,9 @@ pub contract FlowIDTableStaking {
     }
 
     init() {
-        let epochTokenPayout = 1000000.0
+        let epochTokenPayout = 1000.0
         let rewardCut = 0.08
-        let candidateNodeLimits: {UInt8: UInt64} = {4: 50000}
+        let candidateNodeLimits: {UInt8: UInt64} = {4: 500}
         self.account.save(true, to: /storage/stakingEnabled)
 
         self.nodes <- {}
