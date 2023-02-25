@@ -96,6 +96,10 @@ pub contract ISPOManager {
 
         pub fun withdrawRewards(amount: UFix64): @FungibleToken.Vault {
             self.withdrawnFlowTokenRewardAmount = self.withdrawnFlowTokenRewardAmount + amount
+            let nodeDelegatorRef: &FlowIDTableStaking.NodeDelegator? = self.borrowNodeDelegator()
+            if nodeDelegatorRef == nil {
+                return <- FlowToken.createEmptyVault()
+            }
             return <- self.borrowNodeDelegator()!.withdrawRewardedTokens(amount: amount)
         }
 
@@ -106,7 +110,6 @@ pub contract ISPOManager {
             if (nodeDelegatorRef == nil) {
                 return self.withdrawnFlowTokenRewardAmount
             }
-
             let rewardBalance: UFix64 = FlowIDTableStaking.DelegatorInfo(nodeID: nodeDelegatorRef!.nodeID, delegatorID: nodeDelegatorRef!.id).tokensRewarded
             return rewardBalance + self.withdrawnFlowTokenRewardAmount
         }
@@ -164,7 +167,7 @@ pub contract ISPOManager {
             self.delegators <- {}
             self.epochStart = epochStart
             self.epochEnd = epochEnd
-            self.stakingRewardsVault <- nil
+            self.stakingRewardsVault <- FlowToken.createEmptyVault()
             self.createdAt = createdAt
         }
 
@@ -356,38 +359,24 @@ pub contract ISPOManager {
         }
 
         pub fun withdrawAdminFlowRewards(): @FungibleToken.Vault {
-            if self.stakingRewardsVault == nil {
-                self.stakingRewardsVault <-! FlowToken.createEmptyVault()
-            }
-            let stakingRewardsVaultRef: &FungibleToken.Vault? = &self.stakingRewardsVault as &FungibleToken.Vault?
+            let stakingRewardsVaultRef: &FungibleToken.Vault = (&self.stakingRewardsVault as &FungibleToken.Vault?)!
             for key in self.delegators.keys {
-                let delegatorRecordRef: &ISPOManager.DelegatorRecord? = self.borrowDelegatorRecord(delegatorId: key)
-                if delegatorRecordRef == nil {
-                    continue
-                }
-                let adminRewardAmount: UFix64 = self.calculateAdminRewardAmount(delegatorRef: delegatorRecordRef!)
-                let delegatorRewardsVault: @FungibleToken.Vault <- delegatorRecordRef!.withdrawRewards(amount: adminRewardAmount)
-                if (stakingRewardsVaultRef == nil) {
-                    self.stakingRewardsVault <-! delegatorRewardsVault
-                } else {
-                    stakingRewardsVaultRef!.deposit(from: <- delegatorRewardsVault)
-                }
+                let delegatorRecordRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: key)!
+                let adminRewardAmount: UFix64 = self.calculateAdminRewardAmount(delegatorRef: delegatorRecordRef)
+                let delegatorRewardsVault: @FungibleToken.Vault <- delegatorRecordRef.withdrawRewards(amount: adminRewardAmount)
+                stakingRewardsVaultRef.deposit(from: <- delegatorRewardsVault)
             }
-            return <- stakingRewardsVaultRef!.withdraw(amount: stakingRewardsVaultRef!.balance)
+            return <- stakingRewardsVaultRef.withdraw(amount: stakingRewardsVaultRef.balance)
         }
         
-        // withdraws admin portion of delegator rewards to ISPO rewardsVault, and return NodeDelegator 
+        // withdraws admin portion of delegator rewards to ISPO rewardsVault, and return NodeDelegator
         pub fun withdrawNodeDelegator(delegatorId: UInt64): @FlowIDTableStaking.NodeDelegator {
             // TODO: we could reuse withdrawAdminFlowRewards
             let delegatorRecordRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: delegatorId)!
             let adminRewardAmount: UFix64 = self.calculateAdminRewardAmount(delegatorRef: delegatorRecordRef)
             let rewardsVault: @FungibleToken.Vault <- delegatorRecordRef.withdrawRewards(amount: adminRewardAmount)
-            let stakingRewardsVaultRef: &FungibleToken.Vault? = &self.stakingRewardsVault as &FungibleToken.Vault?
-            if (stakingRewardsVaultRef == nil) {
-                self.stakingRewardsVault <-! rewardsVault
-            } else {
-                stakingRewardsVaultRef!.deposit(from: <- rewardsVault)
-            }
+            let stakingRewardsVaultRef: &FungibleToken.Vault = (&self.stakingRewardsVault as &FungibleToken.Vault?)!
+            stakingRewardsVaultRef.deposit(from: <- rewardsVault)
             return <- delegatorRecordRef.withdrawNodeDelegator()
         }
 
