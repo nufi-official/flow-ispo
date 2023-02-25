@@ -1,0 +1,7 @@
+{
+  "Role": "verification",
+  "Address": "example.com:3569",
+  "NodeID": "edc096b1d1c08008cb1c1f34fbbd09d8f47891da7ade37f3f458f820606214ae",
+  "NetworkPrivKey": "215b6d15a48f6bce13e92eccb98215d663a468a816527e63e55650e9445b102a",
+  "StakingPrivKey": "25bd4a856766f9c75f053945efd2ba51e1a9ecbd4cf3f98aeb6260f86dd90ee5"
+}

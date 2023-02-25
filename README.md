@@ -97,8 +97,7 @@ yarn dev
 ### Testing ISPO contract with Flow CLI
 
 - `flow emulator`
-- `flow project deploy`
-- `flow transactions send ./cadence/transactions/admin/mintRewardToken.cdc 1000.0`
-- `flow transactions send ./cadence/transactions/admin/createISPO.cdc "testISPO" 5 10 "ispoExampleRewardTokenVault" "ispoExampleRewardTokenReceiver" "ispoExampleRewardTokenBalance" 1000.0 `
-- `flow scripts execute ./cadence/scripts/getISPOInfos.cdc`
-- `flow transactions send ./cadence/transactions/admin/destroyISPO.cdc`
+- `./actions/init.sh `
+- `./actions/createNode.sh`
+- `./actions/createISPO.sh `
+- `flow scripts execute ./cadence/scripts/getCurrentEpoch.cdc`

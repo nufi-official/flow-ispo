@@ -1,6 +1,6 @@
 import FungibleToken from "./FungibleToken.cdc"
 import FlowToken from "./FlowToken.cdc"
-import FlowIDTableStaking from "./FlowIDTableStaking.cdc"
+import FlowIDTableStaking from 0x01cf0e2f2f715450
 import FlowClusterQC from "./FlowClusterQC.cdc"
 import FlowDKG from "./FlowDKG.cdc"
 import FlowFees from "./FlowFees.cdc"
