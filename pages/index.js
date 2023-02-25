@@ -37,7 +37,7 @@ export default function Home() {
             gap: 1,
           }}
         >
-          <img src="/veleslogo.png" alt="Veles logo" height={40} width={40} />
+          <img src="/veleslogo.png" alt="Veles logo" height={60} width={60} />
           <b>Veles</b>
         </Typography>
 
