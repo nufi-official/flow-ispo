@@ -88,9 +88,9 @@ export function useAccountIspos(address) {
       res = Object.entries(rawIspos).map(([key, value]) => ({
         id: key,
         ispo: allIspos.find((ispo) => ispo.id === value.ispoId),
-        ...value,
+        ...value.info,
         hasDelegation: JSON.parse(value.hasDelegation),
-        createdAt: new Date(Number(value.createdAt) * 1000),
+        createdAt: new Date(Number(value.info.createdAt) * 1000),
       }))
     } catch (e) {
       // Likely need to mint first to create capability if this fails

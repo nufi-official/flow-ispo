@@ -211,7 +211,7 @@ pub contract ISPOManager {
         }
 
         access(self) fun borrowDelegatorRecord(delegatorId: UInt64): &DelegatorRecord? {
-            return (&self.delegators[delegatorId] as &DelegatorRecord?)!
+            return (&self.delegators[delegatorId] as &DelegatorRecord?)
         }
 
         // returns "prefix sum" array of commited tokens 
@@ -391,6 +391,11 @@ pub contract ISPOManager {
             return <- delegatorRecordRef.withdrawNodeDelegator()
         }
 
+        // withdraws admin portion of delegator rewards to ISPO rewardsVault, and return NodeDelegator 
+        pub fun hasNodeDelegator(delegatorId: UInt64): Bool {
+            return self.borrowDelegatorRecord(delegatorId: delegatorId) != nil
+        }
+
         destroy() {
             pre {
                 self.rewardTokenVault.balance == UFix64(0.0): "ISPO record still hold some reward token, so it cannot be destroyed"
@@ -561,41 +566,33 @@ pub contract ISPOManager {
     pub let ispoClientStoragePath: StoragePath
 
     pub struct ISPOClientInfo {
-        access(self) let ispoClientId: UInt64
         access(self) let ispoId: UInt64
         access(self) let delegatedFlowBalance: UFix64
         access(self) let rewardTokenBalance: UFix64
         access(self) let createdAt: UFix64
-        access(self) let hasDelegation: Bool
 
         init(
-            ispoClientId: UInt64,
             ispoId: UInt64,
             delegatedFlowBalance: UFix64,
             rewardTokenBalance: UFix64,
             createdAt: UFix64,
-            hasDelegation: Bool,
         ) {
-            self.ispoClientId = ispoClientId
             self.ispoId = ispoId
             self.delegatedFlowBalance = delegatedFlowBalance
             self.rewardTokenBalance = rewardTokenBalance
             self.createdAt = createdAt
-            self.hasDelegation = hasDelegation
         }
     }
 
     pub resource ISPOClient {
         pub let ispoId: UInt64
         pub let createdAt: UFix64
-        pub var hasDelegation: Bool
 
         init(ispoId: UInt64, flowVault: @FungibleToken.Vault, createdAt: UFix64) {
             self.ispoId = ispoId
             self.createdAt = createdAt
             let ispoRef: &ISPOManager.ISPO = ISPOManager.borrowISPORecord(id: ispoId)
             ispoRef.delegateNewTokens(delegatorId: self.uuid, flowVault: <- flowVault)
-            self.hasDelegation = true
         }
 
         pub fun delegateNewTokens(flowVault: @FungibleToken.Vault) {
@@ -605,7 +602,6 @@ pub contract ISPOManager {
 
         pub fun withdrawNodeDelegator(): @FlowIDTableStaking.NodeDelegator {
             let ispoRef: &ISPOManager.ISPO = ISPOManager.borrowISPORecord(id: self.ispoId)
-            self.hasDelegation = false
             return <- ispoRef.withdrawNodeDelegator(delegatorId: self.uuid)
         }
 
@@ -626,13 +622,15 @@ pub contract ISPOManager {
 
         pub fun getInfo(): ISPOClientInfo {
             return ISPOClientInfo(
-                ispoClientId: self.uuid,
                 ispoId: self.ispoId,
                 delegatedFlowBalance: self.getDelegatedFlowBalance(),
                 rewardTokenBalance: self.getRewardTokenBalance(epoch: FlowEpoch.currentEpochCounter),
                 createdAt: self.createdAt,
-                hasDelegation: self.hasDelegation,
             )
+        }
+
+        pub fun hasDelegation(): Bool {
+            return ISPOManager.borrowISPORecord(id: self.ispoId).hasNodeDelegator(delegatorId: self.uuid)
         }
         // TODO: destroy
     }
