@@ -73,7 +73,7 @@ function MyParticipationCard({
   const [successMsg, setSuccess] = useState(null)
   const [hasDelegation, setHasDelegation] = useState(_hasDelegation)
 
-  const canWithdrawTokenRewards = currentEpoch != null && Number(currentEpoch) > Number(ispo.epochEnd)
+  const canWithdrawTokenRewards = currentEpoch != null && Number(currentEpoch) >= Number(ispo.epochEnd)
 
   const onWithdrawTokenRewards = async () => {
     setAlert(null)
