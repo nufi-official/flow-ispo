@@ -26,6 +26,10 @@ export default function MyParticipations() {
 
   return (
     <CardGrid>
+      {!accountIspos && !!addr && <CircularProgress />}
+      {accountIspos?.map((data) => (
+        <MyParticipationCard {...data} key={data.id} />
+      ))}
       {!addr && (
         <Box>
           <Typography variant="h5" sx={{fontWeight: 'bold'}}>
@@ -33,11 +37,7 @@ export default function MyParticipations() {
           </Typography>
         </Box>
       )}
-      {!accountIspos && !!addr && <CircularProgress />}
-      {accountIspos?.map((data) => (
-        <MyParticipationCard {...data} key={data.id} />
-      ))}
-      {accountIspos?.length === 0 && (
+      {addr && accountIspos?.length === 0 && (
         <Box
           sx={{
             display: 'flex',
