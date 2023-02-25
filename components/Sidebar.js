@@ -93,8 +93,12 @@ export default function Sidebar(props) {
           textTransform: 'uppercase',
           letterSpacing: 6,
           fontWeight: 'bold',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
         }}
       >
+        <img src="/veleslogo.png" alt="Veles logo" height={40} width={40} />
         <b>Veles</b>
       </Toolbar>
 
