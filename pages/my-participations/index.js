@@ -74,14 +74,14 @@ function MyParticipationCard({
     setAlert(null)
     setIsSubmitting(true)
     try {
-      const delegateToIspoTxId = await fcl.mutate({
+      const txId = await fcl.mutate({
         cadence: withdrawFlowFromIspo,
         args: (arg, t) => [
           arg(ispoClientId, t.UInt64),
         ],
         limit: 9999,
       })
-      await fcl.tx(delegateToIspoTxId).onceSealed()
+      await fcl.tx(txId).onceSealed()
       setSuccess('Transaction successfully submitted!')
       setHasDelegation(true) // dirty hack to reflect the change without cache invalidation which we don't have
     } catch (e) {
@@ -131,7 +131,7 @@ function MyParticipationCard({
             </Button>
           </Box>
           {successMsg && <Alert severity="success" onClose={() => setSuccess(null)}>{successMsg}</Alert>}
-          {alertMsg && <Alert severity="error">{alertMsg}</Alert>}
+          {alertMsg && <Alert severity="error" onClose={() => setAlert(null)} >{alertMsg}</Alert>}
           <Portal>
             <Backdrop
               sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}}

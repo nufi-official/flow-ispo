@@ -331,7 +331,7 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
     } catch (e) {
       console.log('e', e.toString())
 
-      const message = e.toString().includes('Code: 1101')
+      const message = e.toString().includes('ISPO already exists')
         ? 'Currently, only one ISPO per account can be registered'
         : e.toString()
 

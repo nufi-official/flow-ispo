@@ -1,5 +1,5 @@
-import ISPOManager from "../../contracts/ISPOManager.cdc"
-import FungibleToken from "../../contracts/standard/FungibleToken.cdc"
+import ISPOManager from 0xISPOManager
+import FungibleToken from 0xFungibleToken
 
 transaction() {
 
