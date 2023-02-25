@@ -226,7 +226,7 @@ pub contract ISPOManager {
             var epochIndexIterator: UInt64 = self.epochStart
             var weights: {UInt64: UFix64} = {}
             var lastCommitedValue: UFix64 = 0.0
-            while (epochIndexIterator < self.epochEnd) {
+            while (epochIndexIterator <= self.epochEnd) {
                 let epochCommitment: UFix64? = epochFlowCommitments[epochIndexIterator]
                 if (epochCommitment != nil) {
                     lastCommitedValue = lastCommitedValue + epochCommitment!
@@ -273,7 +273,7 @@ pub contract ISPOManager {
                 let delegatorEpochWeights: {UInt64: UFix64} = self.getDelegatorWeights(delegatorRef: delegatorRef)
 
                 var epochIndexIterator: UInt64 = self.epochStart
-                while (epochIndexIterator < self.epochEnd) {
+                while (epochIndexIterator <= self.epochEnd) {
                     let epochCommitment: UFix64? = delegatorEpochWeights[epochIndexIterator]!
                     if (totalWeights[epochIndexIterator] == nil) {
                         totalWeights[epochIndexIterator] = epochCommitment!
@@ -299,7 +299,7 @@ pub contract ISPOManager {
             let totalRewardTokenAmountPerEpoch: UFix64 = self.rewardTokenMetadata.totalRewardTokenAmount / UFix64(self.epochEnd - self.epochStart)
             var rewardAmount: UFix64 = 0.0
             var epochIndexIterator: UInt64 = self.epochStart
-            while (epochIndexIterator < self.epochEnd) {
+            while (epochIndexIterator <= self.epochEnd) {
                 rewardAmount = rewardAmount + (totalRewardTokenAmountPerEpoch * (delegatorWeights[epochIndexIterator]! / totalWeights[epochIndexIterator]!)) // TODO: remove division?
                 epochIndexIterator = epochIndexIterator + 1
             }
