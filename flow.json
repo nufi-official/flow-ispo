@@ -13,6 +13,10 @@
     "testnet-account": {
       "address": "0xd896e224391a4f0b",
       "key": "5e79038e4857519f54dad224b0f8d10c74561e7d95a16eadf12bd8ee3f7a601c"
+    },
+    "emulator-user": {
+      "address": "01cf0e2f2f715450",
+      "key": "cf141d995afb2971958f2f0e914fd763bb62ee3ca8e948b56eb91ee2ad62e2cf"
     }
   },
   "contracts": {
@@ -67,14 +71,7 @@
         "mainnet": "0x8624b52f9ddcd04a"
       }
     },
-    "FlowIDTableStaking": {
-      "source": "./cadence/contracts/standard/FlowIDTableStaking.cdc",
-      "aliases": {
-        "testnet": "0x9eca2b38b18b5dfe",
-        "emulator": "0xf8d6e0586b0a20c7",
-        "mainnet": "0x8624b52f9ddcd04a"
-      }
-    },
+    "FlowIDTableStaking": "./cadence/contracts/standard/FlowIDTableStaking.cdc",
     "FlowStorageFees": {
       "source": "./cadence/contracts/standard/FlowStorageFees.cdc",
       "aliases": {
@@ -83,14 +80,7 @@
         "mainnet": "0xe467b9dd11fa00df"
       }
     },
-    "LockedTokens": {
-      "source": "./cadence/contracts/standard/LockedTokens.cdc",
-      "aliases": {
-        "testnet": "0x95e019a17d0e23d7",
-        "emulator": "0xf8d6e0586b0a20c7",
-        "mainnet": "0x8d0e87b65159ae63"
-      }
-    },
+    "LockedTokens": "./cadence/contracts/standard/LockedTokens.cdc",
     "StakingProxy": {
       "source": "./cadence/contracts/standard/StakingProxy.cdc",
       "aliases": {
@@ -99,22 +89,17 @@
         "mainnet": "0x62430cf28c26d095"
       }
     },
-    "FlowStakingCollection": {
-      "source": "./cadence/contracts/standard/FlowStakingCollection.cdc",
-      "aliases": {
-        "testnet": "0x95e019a17d0e23d7",
-        "emulator": "0xf8d6e0586b0a20c7",
-        "mainnet": "0x8d0e87b65159ae63"
-      }
-    }
+    "FlowStakingCollection": "./cadence/contracts/standard/FlowStakingCollection.cdc"
   },
   "deployments": {
     "emulator": {
-      "emulator-account": [
-        "ISPOManager",
-        "ISPOExampleRewardToken",
+      "emulator-user": [
+        "FlowIDTableStaking",
+        "LockedTokens",
+        "FlowStakingCollection",
         "FlowEpochProxy"
-      ]
+      ],
+      "emulator-account": ["ISPOManager", "ISPOExampleRewardToken"]
     },
     "testnet": {
       "testnet-account": [
@@ -125,3 +110,4 @@
     }
   }
 }
+ 

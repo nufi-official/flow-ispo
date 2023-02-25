@@ -12,8 +12,8 @@
 
 import FungibleToken from "./FungibleToken.cdc"
 import FlowToken from "./FlowToken.cdc"
-import FlowIDTableStaking from "./FlowIDTableStaking.cdc"
-import LockedTokens from "./LockedTokens.cdc"
+import FlowIDTableStaking from 0x01cf0e2f2f715450
+import LockedTokens from 0x01cf0e2f2f715450
 import FlowStorageFees from "./FlowStorageFees.cdc"
 import FlowClusterQC from "./FlowClusterQC.cdc"
 import FlowDKG from "./FlowDKG.cdc"
@@ -438,8 +438,8 @@ pub contract FlowStakingCollection {
             if nodeInfo.role == FlowEpoch.NodeRole.Collector.rawValue {
 
                 // Get the voter object and store it
-                let qcVoter <- FlowEpoch.getClusterQCVoter(nodeStaker: nodeReference)
-                machineAcct.save(<-qcVoter, to: FlowClusterQC.VoterStoragePath)
+                // let qcVoter <- FlowEpoch.getClusterQCVoter(nodeStaker: nodeReference)
+                // machineAcct.save(<-qcVoter, to: FlowClusterQC.VoterStoragePath)
 
                 // set this node's machine account
                 self.machineAccounts[nodeInfo.id] = machineAccountInfo
@@ -452,8 +452,8 @@ pub contract FlowStakingCollection {
             } else if nodeInfo.role == FlowEpoch.NodeRole.Consensus.rawValue {
 
                 // get the participant object and store it
-                let dkgParticipant <- FlowEpoch.getDKGParticipant(nodeStaker: nodeReference)
-                machineAcct.save(<-dkgParticipant, to: FlowDKG.ParticipantStoragePath)
+                // let dkgParticipant <- FlowEpoch.getDKGParticipant(nodeStaker: nodeReference)
+                // machineAcct.save(<-dkgParticipant, to: FlowDKG.ParticipantStoragePath)
 
                 // set this node's machine account
                 self.machineAccounts[nodeInfo.id] = machineAccountInfo

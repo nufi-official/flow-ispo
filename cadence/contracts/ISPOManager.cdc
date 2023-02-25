@@ -1,8 +1,7 @@
 import FungibleToken from "./standard/FungibleToken.cdc"
 import FlowIDTableStaking from "./standard/FlowIDTableStaking.cdc"
-import FlowEpoch from "./standard/FlowEpoch.cdc"
 import FlowToken from "./standard/FlowToken.cdc"
-import FlowEpochProxy from "FlowEpochProxy.cdc"
+import FlowEpochProxy from "./FlowEpochProxy.cdc"
 
 pub contract ISPOManager {
 
@@ -178,9 +177,7 @@ pub contract ISPOManager {
 
         access(self) fun isISPOActive(): Bool {
             let currentEpoch: UInt64 = FlowEpochProxy.getCurrentEpoch()
-            // TODO we should probably check for epochStart as well, but the check was removed
-            // to be able to delegate before ISPO start
-            return currentEpoch < self.epochEnd
+            return currentEpoch >= self.epochStart && currentEpoch <= self.epochEnd
         }
 
         pub fun getInfo(): ISPOInfo {
@@ -642,8 +639,9 @@ pub contract ISPOManager {
 
     init() {
         self.ispos <- {}
-        self.defaultNodeId = ""
+        self.defaultNodeId = "26c1cd3254ec259b4faea0f53e3a446539256d81f0c06fff430690433d69731f"
         self.ispoAdminStoragePath = /storage/ISPOAdmin
         self.ispoClientStoragePath = /storage/ISPOClient
     }
 }
+ 
