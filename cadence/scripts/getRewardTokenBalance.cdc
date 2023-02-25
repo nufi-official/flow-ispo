@@ -6,7 +6,7 @@ pub fun main(address: Address): UFix64 {
     let vaultRef = account.getCapability<&ISPOExampleRewardToken.Vault{FungibleToken.Balance}>(/public/ispoExampleRewardTokenBalance)
 
     if (!vaultRef.check()) {
-      panic("Could not borrow Balance reference to the Vault")
+      0.0
     }
 
     return vaultRef.borrow()!.balance
