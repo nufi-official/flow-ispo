@@ -1,6 +1,6 @@
 import FungibleToken from "./standard/FungibleToken.cdc"
 import FlowIDTableStaking from "./standard/FlowIDTableStaking.cdc"
-import FlowEpoch from "./standard/FlowEpoch.cdc"
+import FlowEpochProxy from "./FlowEpochProxy.cdc"
 
 pub contract ISPOManager {
 
@@ -40,7 +40,7 @@ pub contract ISPOManager {
         }
 
         access(self) fun updateCurrentEpochFlowCommitment(amount: UFix64) {
-            let currentEpoch: UInt64 = FlowEpoch.currentEpochCounter
+            let currentEpoch: UInt64 = FlowEpochProxy.currentEpochCounter
             if (self.epochFlowCommitments.containsKey(currentEpoch)) {
                 let currentEpochCommitment: UFix64 = self.epochFlowCommitments[currentEpoch]!
                 self.epochFlowCommitments[currentEpoch] = currentEpochCommitment + amount
@@ -99,7 +99,7 @@ pub contract ISPOManager {
         }
 
         access(self) fun isISPOActive(): Bool {
-            let currentEpoch: UInt64 = FlowEpoch.currentEpochCounter
+            let currentEpoch: UInt64 = FlowEpochProxy.currentEpochCounter
             return currentEpoch >= self.epochStart && currentEpoch <= self.epochEnd
         }
 
@@ -343,7 +343,7 @@ pub contract ISPOManager {
 
     init() {
         self.ispoRecords <- {}
-        self.defaultNodeId = ""
+        self.defaultNodeId = "26c1cd3254ec259b4faea0f53e3a446539256d81f0c06fff430690433d69731f"
         self.ispoAdminStoragePath = /storage/ISPOAdmin
         self.ispoClientStoragePath = /storage/ISPOClient
     }

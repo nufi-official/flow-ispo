@@ -83,14 +83,16 @@
         "mainnet": "0x62430cf28c26d095"
       }
     },
-    "FlowStakingCollection": "./cadence/contracts/standard/FlowStakingCollection.cdc"
+    "FlowStakingCollection": "./cadence/contracts/standard/FlowStakingCollection.cdc",
+    "FlowEpochProxy": "./cadence/contracts/FlowEpochProxy.cdc"
   },
   "deployments": {
     "emulator": {
       "emulator-user": [
         "FlowIDTableStaking",
         "LockedTokens",
-        "FlowStakingCollection"
+        "FlowStakingCollection",
+        "FlowEpochProxy"
       ],
       "emulator-account": ["ISPOManager"]
     }
