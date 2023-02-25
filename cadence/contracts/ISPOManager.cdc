@@ -615,7 +615,7 @@ pub contract ISPOManager {
             return ISPOClientInfo(
                 ispoId: self.ispoId,
                 delegatedFlowBalance: self.getDelegatedFlowBalance(),
-                rewardTokenBalance: self.getRewardTokenBalance(epoch: FlowEpoch.currentEpochCounter),
+                rewardTokenBalance: self.getRewardTokenBalance(epoch: FlowEpochProxy.currentEpochCounter),
                 createdAt: self.createdAt,
             )
         }
@@ -637,3 +637,4 @@ pub contract ISPOManager {
         self.ispoClientStoragePath = /storage/ISPOClient
     }
 }
+ 
