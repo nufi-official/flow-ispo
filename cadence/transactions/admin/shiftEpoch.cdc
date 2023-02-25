@@ -1,9 +1,10 @@
 import FlowEpochProxy from "../../contracts/FlowEpochProxy.cdc"
 
-transaction(epochShift: Int64) {
+transaction() {
 
   prepare(acct: AuthAccount) {
-    FlowEpochProxy.setEpochShift(shift: epochShift)
+    let currentEpochShift = FlowEpochProxy.getEpochShift()
+    FlowEpochProxy.setEpochShift(shift: currentEpochShift + 1)
   }
 
   execute {}
