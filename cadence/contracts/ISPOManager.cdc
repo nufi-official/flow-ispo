@@ -361,12 +361,12 @@ pub contract ISPOManager {
             }
             let stakingRewardsVaultRef: &FungibleToken.Vault? = &self.stakingRewardsVault as &FungibleToken.Vault?
             for key in self.delegators.keys {
-                let delegatorRecordRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: key)!
+                let delegatorRecordRef: &ISPOManager.DelegatorRecord? = self.borrowDelegatorRecord(delegatorId: key)
                 if delegatorRecordRef == nil {
                     continue
                 }
-                let adminRewardAmount: UFix64 = self.calculateAdminRewardAmount(delegatorRef: delegatorRecordRef)
-                let delegatorRewardsVault: @FungibleToken.Vault <- delegatorRecordRef.withdrawRewards(amount: adminRewardAmount)
+                let adminRewardAmount: UFix64 = self.calculateAdminRewardAmount(delegatorRef: delegatorRecordRef!)
+                let delegatorRewardsVault: @FungibleToken.Vault <- delegatorRecordRef!.withdrawRewards(amount: adminRewardAmount)
                 if (stakingRewardsVaultRef == nil) {
                     self.stakingRewardsVault <-! delegatorRewardsVault
                 } else {
