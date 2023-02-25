@@ -88,7 +88,7 @@ function MyParticipationCard({
         limit: 9999,
       })
       await fcl.tx(txId).onceSealed()
-      process.lastRefresh = new Date()
+      window.lastRefresh = new Date()
       setSuccess('Transaction successfully submitted!')
       setHasDelegation(true) // dirty hack to reflect the change without cache invalidation which we don't have
     } catch (e) {
@@ -109,7 +109,7 @@ function MyParticipationCard({
         limit: 9999,
       })
       await fcl.tx(txId).onceSealed()
-      process.lastRefresh = new Date()
+      window.lastRefresh = new Date()
       setSuccess('Transaction successfully submitted!')
       setHasDelegation(false) // dirty hack to reflect the change without cache invalidation which we don't have
     } catch (e) {

@@ -27,7 +27,7 @@ export default function MyIspos() {
         limit: 9999,
       })
       await fcl.tx(txId).onceSealed()
-      process.lastRefresh = new Date()
+      window.lastRefresh = new Date()
       setSuccess('Transaction successfully submitted!')
     } catch (e) {
       setAlert(e.toString())

@@ -68,6 +68,7 @@ function ParticipateCard({ispoData}) {
         limit: 9999,
       })
       await fcl.tx(delegateToIspoTxId).onceSealed()
+      window.lastRefresh = new Date()
 
       setAlert(null)
       setSuccess('Transaction successfully submitted!')

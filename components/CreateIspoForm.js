@@ -325,7 +325,7 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
         limit: 9999,
       })
       await fcl.tx(createIspoTxId).onceSealed()
-      process.lastRefresh = new Date()
+      window.lastRefresh = new Date()
 
       setAlert(null)
       _onSubmit()

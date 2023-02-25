@@ -108,7 +108,7 @@ export function useAccountIspos(address) {
       fetchAccountIspos()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, process.lastRefresh])
+  }, [address, typeof window != 'undefined' && window.lastRefresh])
 
   return ispos
 }
@@ -136,7 +136,7 @@ export function useAccountAdminIspos(address) {
       fetchAccountAdminIspos()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, process.lastRefresh])
+  }, [address, typeof window != 'undefined' && window.lastRefresh])
 
   return ispos
 }
@@ -167,7 +167,7 @@ export function useAccountBalances(address) {
       fetchRewardTokenBalance()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, process.lastRefresh])
+  }, [address, typeof window != 'undefined' && window.lastRefresh])
 
   return {rewards: balance?.[0], flow: balance?.[1]}
 }

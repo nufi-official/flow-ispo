@@ -91,8 +91,8 @@ export default function DefaultLayout({children}) {
                     </MuiLink>
                   }
                 />
-                <InfoItem label="Balance" value={`${formatCompactAmount(flowBalance)} $FLOW`} />
-                <InfoItem label="Rewards balance" value={`${formatCompactAmount(rewardTokenBalance)} tokens`} />
+                {flowBalance && <InfoItem label="Balance" value={`${formatCompactAmount(flowBalance)} $FLOW`} />}
+                {rewardTokenBalance && <InfoItem label="Rewards balance" value={`${formatCompactAmount(rewardTokenBalance)} tokens`} />}
               </>
             )}
             {config.network && (
