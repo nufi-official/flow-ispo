@@ -1,7 +1,10 @@
 import {CreateIspoForm} from '../../components/CreateIspoForm'
-import {Container, Box} from '@mui/material'
+import {Container, Box, Typography} from '@mui/material'
+import useCurrentUser from '../../hooks/useCurrentUser'
 
 export default function CreateIspoPage() {
+  const {addr} = useCurrentUser()
+
   return (
     <Box
       sx={{
@@ -12,7 +15,14 @@ export default function CreateIspoPage() {
       }}
     >
       <Container maxWidth="sm">
-        <CreateIspoForm />
+        {!addr && (
+          <Box>
+            <Typography variant="h5" sx={{fontWeight: 'bold'}}>
+              You are not logged in
+            </Typography>
+          </Box>
+        )}
+        {addr && <CreateIspoForm />}
       </Container>
     </Box>
   )

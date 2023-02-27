@@ -30,8 +30,10 @@ import {
 import {yupResolver} from '@hookform/resolvers/yup'
 import Card from './Card'
 import createISPO from '../cadence/web/transactions/admin/createISPO.cdc'
+import ispoRewardTokenContract from '../cadence/web/contracts/ISPOExampleRewardToken.cdc'
 import {toUFixString} from '../helpers/utils'
 import {useCurrentEpoch} from '../hooks/epochs'
+import useCurrentUser from '../hooks/useCurrentUser'
 
 const FormInput = ({name, defaultValue, ...otherProps}) => {
   const {
@@ -77,21 +79,27 @@ const FormInput = ({name, defaultValue, ...otherProps}) => {
   )
 }
 
+const getDefaultTokenValues = async () => {
+  const {addr} = await fcl.currentUser.snapshot()
+
+  return {
+    contractAddress: addr,
+    contractName: 'ISPOExampleRewardToken',
+    vaultPath: 'ispoExampleRewardTokenVault',
+    balancePath: 'ispoExampleRewardTokenBalance',
+    receiverPath: 'ispoExampleRewardTokenReceiver',
+  }
+}
+
 function SelectTokenField() {
   const [isOpen, setOpen] = useState(false)
   const onClose = () => setOpen(false)
   const onOpen = () => setOpen(true)
 
-  const [contactAddress, setContactAddress] = useState('Loading ...')
+  const [defaultValues, setDefaultValues] = useState('Loading ...')
   useEffect(() => {
-    const couldNotLoadAddressText = 'Could not load address'
     const fn = async () => {
-      try {
-        const res = await fcl.config.get('0xISPOExampleRewardToken')
-        setContactAddress(res || couldNotLoadAddressText)
-      } catch (err) {
-        setContactAddress(couldNotLoadAddressText)
-      }
+      setDefaultValues(await getDefaultTokenValues())
     }
     fn()
   }, [])
@@ -112,59 +120,46 @@ function SelectTokenField() {
             startAdornment: <InfoIcon fontSize="small" />,
           }}
         >
-          <MenuItem value="dummy">Dummy token</MenuItem>
+          <MenuItem value="dummy">Set token details</MenuItem>
         </Select>
       </FormControl>
       <Dialog onClose={onClose} open={isOpen}>
         <DialogTitle>Choose token</DialogTitle>
         <DialogContent>
-          <Alert severity="info">
-            We do not yet support choosing your own token. For the demo purposes
-            we instead mint a dummy testing token whose info is shown below.
-          </Alert>
-
           <Box
             sx={{
               display: 'flex',
               flexDirection: 'column',
               '& > *': {mt: 2},
+              width: 400
             }}
           >
+            {/* TODO make contractAddress field reactive to current user address  */}
             <FormInput
               name="contractAddress"
               label="Contract address"
               disabled
-              defaultValue={contactAddress}
+              defaultValue={defaultValues.contractAddress || ''}
             />
             <FormInput
               name="contractName"
               label="Contract name"
-              disabled
-              defaultValue="ISPOExampleRewardToken"
+              defaultValue={defaultValues.contractName}
             />
             <FormInput
-              name="symbol"
-              label="Symbol"
-              disabled
-              defaultValue="ISPO-TEST"
-            />
-            <FormInput
-              name="valuePath"
-              label="Value path"
-              disabled
-              defaultValue="/storage/ispoExampleRewardTokenVault"
+              name="vaultPath"
+              label="Vault path"
+              defaultValue={defaultValues.vaultPath}
             />
             <FormInput
               name="balancePath"
               label="Balance path"
-              disabled
-              defaultValue="/public/ispoExampleRewardTokenBalance"
+              defaultValue={defaultValues.balancePath}
             />
             <FormInput
               name="receiverPath"
               label="Receiver path"
-              disabled
-              defaultValue="/public/ispoExampleRewardTokenReceiver"
+              defaultValue={defaultValues.receiverPath}
             />
           </Box>
           <Box sx={{display: 'flex', justifyContent: 'flex-end', mt: 2}}>
@@ -288,6 +283,7 @@ export function CreateIspoForm() {
 
 function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
   const [alertMsg, setAlert] = useState(null)
+  const {addr} = useCurrentUser()
 
   const schema = createRegisterSchema({
     currentEpoch,
@@ -304,8 +300,43 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
 
   const onSubmit = async (data) => {
     try {
+      const defaultTokenValues = await getDefaultTokenValues()
+      const fungibleTokenContractAddr = await fcl.config.get('0xFungibleToken')
+
+      try {
+        const tokenContractDeployTx = await fcl.mutate({
+          cadence: `
+          transaction(name: String, cadence: String) {
+            prepare(signer: AuthAccount) {
+              let code = cadence.utf8
+              signer.contracts.add(name: name, code: code)
+            }
+          }
+          `,
+          args: (arg, t) => [
+            arg(data.contractName || defaultTokenValues.contractName, t.String),
+            arg(
+              ispoRewardTokenContract
+                .replaceAll('ISPOExampleRewardToken', data.contractName || defaultTokenValues.contractName)
+                .replaceAll('0xFungibleToken', fungibleTokenContractAddr),
+              t.String
+            )
+          ],
+          limit: 9999,
+        })
+        await fcl.tx(tokenContractDeployTx).onceSealed()
+      } catch (e) {
+        // hack - this means the contract has already been deployed earlier
+        // and we just skip to the next step as this is not needed
+        if (!e.toString().includes('cannot overwrite existing contract')) {
+          throw e
+        }
+      }
+
       const createIspoTxId = await fcl.mutate({
-        cadence: createISPO,
+        cadence: createISPO
+          .replaceAll('0xISPOExampleRewardToken', data.contractAddress || defaultTokenValues.contractAddress)
+          .replaceAll('ISPOExampleRewardToken', data.contractName || defaultTokenValues.contractName),
         args: (arg, t) => [
           arg(data.ispoName, t.String),
           arg(data.projectUrl || '', t.String),
@@ -317,9 +348,9 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
           ), // some testnet validator
           arg(data.startEpoch.toString(), t.UInt64),
           arg(data.endEpoch.toString(), t.UInt64),
-          arg('ispoExampleRewardTokenVault', t.String),
-          arg('ispoExampleRewardTokenReceiver', t.String),
-          arg('ispoExampleRewardTokenBalance', t.String),
+          arg(data.vaultPath || defaultTokenValues.vaultPath, t.String),
+          arg(data.receiverPath || defaultTokenValues.receiverPath, t.String),
+          arg(data.balancePath || defaultTokenValues.balancePath, t.String),
           arg(toUFixString(data.totalRewardTokensAmount.toString()), t.UFix64),
         ],
         limit: 9999,
@@ -435,3 +466,4 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
     </>
   )
 }
+ 

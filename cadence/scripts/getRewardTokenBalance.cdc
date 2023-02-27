@@ -1,9 +1,8 @@
 import FungibleToken from "../contracts/standard/FungibleToken.cdc"
-import ISPOExampleRewardToken from  "../contracts/ISPOExampleRewardToken.cdc"
 
 pub fun main(address: Address): UFix64 {
     let account = getAccount(address)
-    let vaultRef = account.getCapability<&ISPOExampleRewardToken.Vault{FungibleToken.Balance}>(/public/ispoExampleRewardTokenBalance)
+    let vaultRef = account.getCapability<&FungibleToken.Vault{FungibleToken.Balance}>(/public/ispoExampleRewardTokenBalance)
 
     if (vaultRef == nil || vaultRef.borrow() == nil || !vaultRef.check()) {
       return 0.0
