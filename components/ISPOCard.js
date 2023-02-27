@@ -24,6 +24,7 @@ export default function ISPOCard(props) {
         px: {xs: 2, xl: 3.5},
         display: 'flex',
         flexDirection: 'column',
+        ...(props.sx && props.sx),
       }}
     >
       {props.name && (
