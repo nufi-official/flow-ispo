@@ -224,7 +224,11 @@ pub contract ISPOManager {
         access(self) fun getDelegatorWeights(delegatorRef: &ISPOManager.DelegatorRecord): {UInt64: UFix64} {
             let epochFlowCommitments: {UInt64: UFix64} = delegatorRef.getEpochFlowCommitments()
 
-            var epochIndexIterator: UInt64 = self.epochStart
+            // hack as we allow delegating before ISPO start
+            var epochIndexIterator: UInt64 = epochFlowCommitments.keys[0]
+            if epochIndexIterator == nil {
+                epochIndexIterator = self.epochStart
+            }
             var weights: {UInt64: UFix64} = {}
             var lastCommitedValue: UFix64 = 0.0
             while (epochIndexIterator <= ISPOManager.max(a: self.epochEnd, b: FlowEpochProxy.getCurrentEpoch())) {
