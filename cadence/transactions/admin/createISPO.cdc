@@ -18,14 +18,14 @@ transaction(
 
   prepare(acct: AuthAccount) {
     // mint reward token
-    var oldTokenVault <- acct.load<@FungibleToken.Vault>(from: /storage/ispoExampleRewardTokenVault)
+    var oldTokenVault <- acct.load<@FungibleToken.Vault>(from: StoragePath(identifier: rewardTokenVaultStoragePath)!)
     destroy oldTokenVault // this destroys any leftover tokens from other potential deployments of the contract
     
-    acct.save(<-ISPOExampleRewardToken.createEmptyVault(), to: /storage/ispoExampleRewardTokenVault)
+    acct.save(<-ISPOExampleRewardToken.createEmptyVault(), to: StoragePath(identifier: rewardTokenVaultStoragePath)!)
 
-      // Create a public capability to the stored Vault that only exposes
-      // the `deposit` method through the `Receiver` interface
-      //
+    // Create a public capability to the stored Vault that only exposes
+    // the `deposit` method through the `Receiver` interface
+    //
     acct.link<&ISPOExampleRewardToken.Vault{FungibleToken.Receiver}>(
         PublicPath(identifier: rewardTokenReceiverPublicPath)!,
         target: StoragePath(identifier: rewardTokenVaultStoragePath)!

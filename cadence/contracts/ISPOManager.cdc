@@ -1,8 +1,7 @@
 import FungibleToken from "./standard/FungibleToken.cdc"
 import FlowIDTableStaking from "./standard/FlowIDTableStaking.cdc"
-import FlowEpoch from "./standard/FlowEpoch.cdc"
 import FlowToken from "./standard/FlowToken.cdc"
-import FlowEpochProxy from "FlowEpochProxy.cdc"
+import FlowEpochProxy from "./FlowEpochProxy.cdc"
 
 pub contract ISPOManager {
 
@@ -105,18 +104,18 @@ pub contract ISPOManager {
         }
 
         // current delegator rewards plus those previously withdrawn
-        pub fun getTotalRewardsReceived(): UFix64 {
+        pub fun getNodeDelegatorRewards(): UFix64 {
             let nodeDelegatorRef: &FlowIDTableStaking.NodeDelegator? = self.borrowNodeDelegator()
             // TODO fix, this is just a workaround to not crash after withdrawing flow
             if (nodeDelegatorRef == nil) {
-                return self.withdrawnFlowTokenRewardAmount
+                return 0.0
             }
-            let rewardBalance: UFix64 = FlowIDTableStaking.DelegatorInfo(nodeID: nodeDelegatorRef!.nodeID, delegatorID: nodeDelegatorRef!.id).tokensRewarded
-            return rewardBalance + self.withdrawnFlowTokenRewardAmount
+            return FlowIDTableStaking.DelegatorInfo(nodeID: nodeDelegatorRef!.nodeID, delegatorID: nodeDelegatorRef!.id).tokensRewarded
         }
 
         pub fun withdrawNodeDelegator(): @FlowIDTableStaking.NodeDelegator {
             // TODO: preconditions
+            // TODO: update commitments
             var nodeDelegator:  @FlowIDTableStaking.NodeDelegator? <- self.nodeDelegator <- nil
             return <- nodeDelegator!
         }
@@ -178,9 +177,7 @@ pub contract ISPOManager {
 
         access(self) fun isISPOActive(): Bool {
             let currentEpoch: UInt64 = FlowEpochProxy.getCurrentEpoch()
-            // TODO we should probably check for epochStart as well, but the check was removed
-            // to be able to delegate before ISPO start
-            return currentEpoch < self.epochEnd
+            return currentEpoch >= self.epochStart && currentEpoch <= self.epochEnd
         }
 
         pub fun getInfo(): ISPOInfo {
@@ -226,14 +223,10 @@ pub contract ISPOManager {
         access(self) fun getDelegatorWeights(delegatorRef: &ISPOManager.DelegatorRecord): {UInt64: UFix64} {
             let epochFlowCommitments: {UInt64: UFix64} = delegatorRef.getEpochFlowCommitments()
 
-            // hack as we allow delegating before ISPO start
-            var epochIndexIterator: UInt64 = epochFlowCommitments.keys[0]
-            if epochIndexIterator == nil {
-                epochIndexIterator = self.epochStart
-            }
+            var epochIndexIterator: UInt64 = self.epochStart
             var weights: {UInt64: UFix64} = {}
             var lastCommitedValue: UFix64 = 0.0
-            while (epochIndexIterator < self.epochEnd) {
+            while (epochIndexIterator <= ISPOManager.max(a: self.epochEnd, b: FlowEpochProxy.getCurrentEpoch())) {
                 let epochCommitment: UFix64? = epochFlowCommitments[epochIndexIterator]
                 if (epochCommitment != nil) {
                     lastCommitedValue = lastCommitedValue + epochCommitment!
@@ -253,7 +246,7 @@ pub contract ISPOManager {
             var res: UFix64 = 0.0
             for delegatorKey in self.delegators.keys {
                 let delegatorRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: delegatorKey)!
-                let commitments = delegatorRef.getEpochFlowCommitments()
+                let commitments: {UInt64: UFix64} = delegatorRef.getEpochFlowCommitments()
                 for commitmentKey in commitments.keys {
                     res = res + commitments[commitmentKey]!
                 }
@@ -280,12 +273,13 @@ pub contract ISPOManager {
                 let delegatorEpochWeights: {UInt64: UFix64} = self.getDelegatorWeights(delegatorRef: delegatorRef)
 
                 var epochIndexIterator: UInt64 = self.epochStart
-                while (epochIndexIterator < self.epochEnd) {
+                while (epochIndexIterator <= self.epochEnd) {
                     let epochCommitment: UFix64? = delegatorEpochWeights[epochIndexIterator]!
                     if (totalWeights[epochIndexIterator] == nil) {
                         totalWeights[epochIndexIterator] = epochCommitment!
-                    } 
-                    totalWeights[epochIndexIterator] = totalWeights[epochIndexIterator]! + epochCommitment!
+                    } else {
+                        totalWeights[epochIndexIterator] = totalWeights[epochIndexIterator]! + epochCommitment!
+                    }                    
                     epochIndexIterator = epochIndexIterator + 1
                 }
             }
@@ -296,48 +290,42 @@ pub contract ISPOManager {
             pre {
                 !self.isISPOActive(): "ISPO must be inactive to withdraw reward tokens"
             }
-            let totalWeights: {UInt64: UFix64} = self.getTotalDelegatorWeights()
             let delegatorRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: delegatorId)!
             if (delegatorRef.hasWithdrawRewardToken) {
-                panic("Reward token has already been withdrawn")
+                return <- self.rewardTokenVault.withdraw(amount: 0.0)
             }
-            let delegatorWeights: {UInt64: UFix64} = self.getDelegatorWeights(delegatorRef: delegatorRef)
-
-            let totalRewardTokenAmountPerEpoch: UFix64 = self.rewardTokenMetadata.totalRewardTokenAmount / UFix64(self.epochEnd - self.epochStart)
-            var rewardAmount: UFix64 = 0.0
-            var epochIndexIterator: UInt64 = self.epochStart
-            while (epochIndexIterator < self.epochEnd) {
-                rewardAmount = rewardAmount + (totalRewardTokenAmountPerEpoch * (delegatorWeights[epochIndexIterator]! / totalWeights[epochIndexIterator]!)) // TODO: remove division?
-                epochIndexIterator = epochIndexIterator + 1
-            }
+            let rewardAmount: UFix64 = self.getDelegatorRewardTokenAmount(delegatorRef: delegatorRef, epoch: self.epochEnd)
             delegatorRef.setHasWithrawnRewardToken()
             return <- self.rewardTokenVault.withdraw(amount: rewardAmount)
         }
 
-        access(self) fun min(a: UInt64, b: UInt64): UInt64 {
-            if a < b {
-                return a
+        // gets reward token amount which a client deserves after <epoch>
+        access(self) fun getDelegatorRewardTokenAmount(
+            delegatorRef: &ISPOManager.DelegatorRecord,
+            epoch: UInt64
+        ): UFix64 {
+            let totalWeights: {UInt64: UFix64} = self.getTotalDelegatorWeights()
+            let delegatorWeights: {UInt64: UFix64} = self.getDelegatorWeights(delegatorRef: delegatorRef)
+            let totalRewardTokenAmountPerEpoch: UFix64 = self.rewardTokenMetadata.totalRewardTokenAmount / UFix64(self.epochEnd + 1 - self.epochStart)
+            var rewardAmount: UFix64 = 0.0
+            var epochIndexIterator: UInt64 = self.epochStart
+            while (epochIndexIterator <= ISPOManager.min(a: self.epochEnd, b: epoch)) {
+                // in case they are not delegators for the first epochs, we do not give reward tokens for these epochs
+                let epochRewardAmount: UFix64 = totalWeights[epochIndexIterator]! == 0.0
+                    ? 0.0
+                    : totalRewardTokenAmountPerEpoch * (delegatorWeights[epochIndexIterator]! / totalWeights[epochIndexIterator]!)
+                rewardAmount = rewardAmount + epochRewardAmount
+                epochIndexIterator = epochIndexIterator + 1
             }
-            return b
+            return rewardAmount
         }
 
         pub fun getRewardTokensBalance(delegatorId: UInt64, epoch: UInt64): UFix64 {
-            let totalWeights: {UInt64: UFix64} = self.getTotalDelegatorWeights()
             let delegatorRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: delegatorId)!
             if (delegatorRef.hasWithdrawRewardToken) {
                 return 0.0
             }
-            let delegatorWeights: {UInt64: UFix64} = self.getDelegatorWeights(delegatorRef: delegatorRef)
-
-            let totalRewardTokenAmountPerEpoch: UFix64 = self.rewardTokenMetadata.totalRewardTokenAmount / UFix64(self.epochEnd - self.epochStart)
-            var rewardAmount: UFix64 = 0.0
-            var epochIndexIterator: UInt64 = self.epochStart
-
-            while (epochIndexIterator < self.min(a: self.epochEnd, b: FlowEpochProxy.getCurrentEpoch())) {
-                rewardAmount = rewardAmount + (totalRewardTokenAmountPerEpoch * (delegatorWeights[epochIndexIterator]! / totalWeights[epochIndexIterator]!)) // TODO: remove division?
-                epochIndexIterator = epochIndexIterator + 1
-            }
-            return rewardAmount
+            return self.getDelegatorRewardTokenAmount(delegatorRef: delegatorRef, epoch: epoch)
         }
 
         pub fun getDelegatedFlowBalance(delegatorId: UInt64): UFix64 {
@@ -362,12 +350,27 @@ pub contract ISPOManager {
             for key in delegatorWeights.keys {
                 if (key <= self.epochEnd) {
                     totalWeightDuringISPO = totalWeightDuringISPO + delegatorWeights[key]!
+                } else {
+                    totalWeightAfterISPO = totalWeightAfterISPO + delegatorWeights[key]!
                 }
-                totalWeightAfterISPO = totalWeightAfterISPO + delegatorWeights[key]!
             }
-            let adminRewardCut: UFix64 = totalWeightDuringISPO / (totalWeightDuringISPO + totalWeightAfterISPO) // TODO avoid division? 
-            let totalRewardsReceived: UFix64 = delegatorRef.getTotalRewardsReceived()
-            return (totalRewardsReceived * adminRewardCut) - delegatorRef.withdrawnFlowTokenRewardAmount
+
+            let totalWeight: UFix64 = totalWeightDuringISPO + totalWeightAfterISPO
+            // if no funds were delegated during ISPO
+            if (totalWeight == 0.0) {
+                return 0.0
+            }
+
+            let adminRewardCut: UFix64 = totalWeightDuringISPO / totalWeight
+            let nodeDelegatorRewards: UFix64 = delegatorRef.getNodeDelegatorRewards()
+            let totalRewardsReceived: UFix64 = nodeDelegatorRewards + delegatorRef.withdrawnFlowTokenRewardAmount
+            let adminRewards: UFix64 = (totalRewardsReceived * adminRewardCut) - delegatorRef.withdrawnFlowTokenRewardAmount
+            // it might happend that what we calcualte as the admins portion is a bit bigger than what the delegator actually has
+            // due to differences between rewards distributed each epoch, in this case we return what the delegator has
+            if (adminRewards > nodeDelegatorRewards) {
+                return nodeDelegatorRewards
+            }
+            return adminRewards
         }
 
         pub fun withdrawAdminFlowRewards(): @FungibleToken.Vault {
@@ -625,7 +628,8 @@ pub contract ISPOManager {
             return ISPOClientInfo(
                 ispoId: self.ispoId,
                 delegatedFlowBalance: self.getDelegatedFlowBalance(),
-                rewardTokenBalance: self.getRewardTokenBalance(epoch: FlowEpochProxy.getCurrentEpoch()),
+                // - 1 epoch because the rewards for the current epoch are not yet finalized
+                rewardTokenBalance: self.getRewardTokenBalance(epoch: FlowEpochProxy.getCurrentEpoch() - 1),
                 createdAt: self.createdAt,
             )
         }
@@ -640,10 +644,25 @@ pub contract ISPOManager {
       return <- create ISPOClient(ispoId: ispoId, flowVault: <- flowVault, createdAt: getCurrentBlock().timestamp)
     }
 
+    access(self) fun min(a: UInt64, b: UInt64): UInt64 {
+        if a < b {
+            return a
+        }
+        return b
+    }
+
+    access(self) fun max(a: UInt64, b: UInt64): UInt64 {
+        if a > b {
+            return a
+        }
+        return b
+    }
+
     init() {
         self.ispos <- {}
-        self.defaultNodeId = ""
+        self.defaultNodeId = "26c1cd3254ec259b4faea0f53e3a446539256d81f0c06fff430690433d69731f"
         self.ispoAdminStoragePath = /storage/ISPOAdmin
         self.ispoClientStoragePath = /storage/ISPOClient
     }
 }
+ 
