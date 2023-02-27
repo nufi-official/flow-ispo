@@ -15,6 +15,7 @@ const CardGrid = ({children}) => {
         sx={{
           display: 'flex',
           flexWrap: 'wrap',
+          justifyContent: 'center',
           gap: '10px',
           pb: 4,
         }}
