@@ -19,9 +19,9 @@ export default function ISPOCard(props) {
   return (
     <Card
       sx={{
-        width: '400px',
+        width: {xs: '370px', xl: '400px'},
         py: 2.5,
-        px: 3.5,
+        px: {xs: 2, xl: 3.5},
         display: 'flex',
         flexDirection: 'column',
       }}
