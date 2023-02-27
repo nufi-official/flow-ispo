@@ -177,7 +177,8 @@ pub contract ISPOManager {
 
         access(self) fun isISPOActive(): Bool {
             let currentEpoch: UInt64 = FlowEpochProxy.getCurrentEpoch()
-            return currentEpoch >= self.epochStart && currentEpoch <= self.epochEnd
+            // TMP removed restriction on epochStart
+            return currentEpoch <= self.epochEnd
         }
 
         pub fun getInfo(): ISPOInfo {
