@@ -104,18 +104,18 @@ pub contract ISPOManager {
         }
 
         // current delegator rewards plus those previously withdrawn
-        pub fun getTotalRewardsReceived(): UFix64 {
+        pub fun getNodeDelegatorRewards(): UFix64 {
             let nodeDelegatorRef: &FlowIDTableStaking.NodeDelegator? = self.borrowNodeDelegator()
             // TODO fix, this is just a workaround to not crash after withdrawing flow
             if (nodeDelegatorRef == nil) {
-                return self.withdrawnFlowTokenRewardAmount
+                return 0.0
             }
-            let rewardBalance: UFix64 = FlowIDTableStaking.DelegatorInfo(nodeID: nodeDelegatorRef!.nodeID, delegatorID: nodeDelegatorRef!.id).tokensRewarded
-            return rewardBalance + self.withdrawnFlowTokenRewardAmount
+            return FlowIDTableStaking.DelegatorInfo(nodeID: nodeDelegatorRef!.nodeID, delegatorID: nodeDelegatorRef!.id).tokensRewarded
         }
 
         pub fun withdrawNodeDelegator(): @FlowIDTableStaking.NodeDelegator {
             // TODO: preconditions
+            // TODO: update commitments
             var nodeDelegator:  @FlowIDTableStaking.NodeDelegator? <- self.nodeDelegator <- nil
             return <- nodeDelegator!
         }
@@ -226,7 +226,7 @@ pub contract ISPOManager {
             var epochIndexIterator: UInt64 = self.epochStart
             var weights: {UInt64: UFix64} = {}
             var lastCommitedValue: UFix64 = 0.0
-            while (epochIndexIterator <= self.epochEnd) {
+            while (epochIndexIterator <= ISPOManager.max(a: self.epochEnd, b: FlowEpochProxy.getCurrentEpoch())) {
                 let epochCommitment: UFix64? = epochFlowCommitments[epochIndexIterator]
                 if (epochCommitment != nil) {
                     lastCommitedValue = lastCommitedValue + epochCommitment!
@@ -246,7 +246,7 @@ pub contract ISPOManager {
             var res: UFix64 = 0.0
             for delegatorKey in self.delegators.keys {
                 let delegatorRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: delegatorKey)!
-                let commitments = delegatorRef.getEpochFlowCommitments()
+                let commitments: {UInt64: UFix64} = delegatorRef.getEpochFlowCommitments()
                 for commitmentKey in commitments.keys {
                     res = res + commitments[commitmentKey]!
                 }
@@ -299,13 +299,6 @@ pub contract ISPOManager {
             return <- self.rewardTokenVault.withdraw(amount: rewardAmount)
         }
 
-        access(self) fun min(a: UInt64, b: UInt64): UInt64 {
-            if a < b {
-                return a
-            }
-            return b
-        }
-
         // gets reward token amount which a client deserves after <epoch>
         access(self) fun getDelegatorRewardTokenAmount(
             delegatorRef: &ISPOManager.DelegatorRecord,
@@ -316,7 +309,7 @@ pub contract ISPOManager {
             let totalRewardTokenAmountPerEpoch: UFix64 = self.rewardTokenMetadata.totalRewardTokenAmount / UFix64(self.epochEnd + 1 - self.epochStart)
             var rewardAmount: UFix64 = 0.0
             var epochIndexIterator: UInt64 = self.epochStart
-            while (epochIndexIterator <= self.min(a: self.epochEnd, b: epoch)) {
+            while (epochIndexIterator <= ISPOManager.min(a: self.epochEnd, b: epoch)) {
                 // in case they are not delegators for the first epochs, we do not give reward tokens for these epochs
                 let epochRewardAmount: UFix64 = totalWeights[epochIndexIterator]! == 0.0
                     ? 0.0
@@ -357,12 +350,27 @@ pub contract ISPOManager {
             for key in delegatorWeights.keys {
                 if (key <= self.epochEnd) {
                     totalWeightDuringISPO = totalWeightDuringISPO + delegatorWeights[key]!
+                } else {
+                    totalWeightAfterISPO = totalWeightAfterISPO + delegatorWeights[key]!
                 }
-                totalWeightAfterISPO = totalWeightAfterISPO + delegatorWeights[key]!
             }
-            let adminRewardCut: UFix64 = totalWeightDuringISPO / (totalWeightDuringISPO + totalWeightAfterISPO) // TODO avoid division? 
-            let totalRewardsReceived: UFix64 = delegatorRef.getTotalRewardsReceived()
-            return (totalRewardsReceived * adminRewardCut) - delegatorRef.withdrawnFlowTokenRewardAmount
+
+            let totalWeight: UFix64 = totalWeightDuringISPO + totalWeightAfterISPO
+            // if no funds were delegated during ISPO
+            if (totalWeight == 0.0) {
+                return 0.0
+            }
+
+            let adminRewardCut: UFix64 = totalWeightDuringISPO / totalWeight
+            let nodeDelegatorRewards: UFix64 = delegatorRef.getNodeDelegatorRewards()
+            let totalRewardsReceived: UFix64 = nodeDelegatorRewards + delegatorRef.withdrawnFlowTokenRewardAmount
+            let adminRewards: UFix64 = (totalRewardsReceived * adminRewardCut) - delegatorRef.withdrawnFlowTokenRewardAmount
+            // it might happend that what we calcualte as the admins portion is a bit bigger than what the delegator actually has
+            // due to differences between rewards distributed each epoch, in this case we return what the delegator has
+            if (adminRewards > nodeDelegatorRewards) {
+                return nodeDelegatorRewards
+            }
+            return adminRewards
         }
 
         pub fun withdrawAdminFlowRewards(): @FungibleToken.Vault {
@@ -620,7 +628,7 @@ pub contract ISPOManager {
             return ISPOClientInfo(
                 ispoId: self.ispoId,
                 delegatedFlowBalance: self.getDelegatedFlowBalance(),
-                // - 1 epoch because the rewards for the current epoch are yet finalized
+                // - 1 epoch because the rewards for the current epoch are not yet finalized
                 rewardTokenBalance: self.getRewardTokenBalance(epoch: FlowEpochProxy.getCurrentEpoch() - 1),
                 createdAt: self.createdAt,
             )
@@ -634,6 +642,20 @@ pub contract ISPOManager {
 
     pub fun createISPOClient(ispoId: UInt64, flowVault: @FungibleToken.Vault): @ISPOClient {
       return <- create ISPOClient(ispoId: ispoId, flowVault: <- flowVault, createdAt: getCurrentBlock().timestamp)
+    }
+
+    access(self) fun min(a: UInt64, b: UInt64): UInt64 {
+        if a < b {
+            return a
+        }
+        return b
+    }
+
+    access(self) fun max(a: UInt64, b: UInt64): UInt64 {
+        if a > b {
+            return a
+        }
+        return b
     }
 
     init() {
