@@ -389,25 +389,27 @@ pub contract ISPOManager {
             return adminRewards
         }
 
-        pub fun withdrawAdminFlowRewards(): @FungibleToken.Vault {
+        access(self) fun moveAdminFlowRewardsFromDelegator(delegatorRef: &ISPOManager.DelegatorRecord) {
+            let stakingRewardsVaultRef: &FungibleToken.Vault = (&self.stakingRewardsVault as &FungibleToken.Vault?)!
+            let adminRewardAmount: UFix64 = self.calculateAdminRewardAmount(delegatorRef: delegatorRef)
+            let delegatorRewardsVault: @FungibleToken.Vault <- delegatorRef.withdrawRewards(amount: adminRewardAmount)
+            stakingRewardsVaultRef.deposit(from: <- delegatorRewardsVault)
+        }
+
+        pub fun withdrawAllAdminFlowRewards(): @FungibleToken.Vault {
             let stakingRewardsVaultRef: &FungibleToken.Vault = (&self.stakingRewardsVault as &FungibleToken.Vault?)!
             for key in self.delegators.keys {
                 let delegatorRecordRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: key)!
-                let adminRewardAmount: UFix64 = self.calculateAdminRewardAmount(delegatorRef: delegatorRecordRef)
-                let delegatorRewardsVault: @FungibleToken.Vault <- delegatorRecordRef.withdrawRewards(amount: adminRewardAmount)
-                stakingRewardsVaultRef.deposit(from: <- delegatorRewardsVault)
+                self.moveAdminFlowRewardsFromDelegator(delegatorRef: delegatorRecordRef)
             }
             return <- stakingRewardsVaultRef.withdraw(amount: stakingRewardsVaultRef.balance)
         }
         
         // withdraws admin portion of delegator rewards to ISPO rewardsVault, and return NodeDelegator
         pub fun withdrawNodeDelegator(delegatorId: UInt64): @FlowIDTableStaking.NodeDelegator {
-            // TODO: we could reuse withdrawAdminFlowRewards
             let delegatorRecordRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: delegatorId)!
-            let adminRewardAmount: UFix64 = self.calculateAdminRewardAmount(delegatorRef: delegatorRecordRef)
-            let rewardsVault: @FungibleToken.Vault <- delegatorRecordRef.withdrawRewards(amount: adminRewardAmount)
-            let stakingRewardsVaultRef: &FungibleToken.Vault = (&self.stakingRewardsVault as &FungibleToken.Vault?)!
-            stakingRewardsVaultRef.deposit(from: <- rewardsVault)
+            // move flow rewards from this delegator to admin vault
+            self.moveAdminFlowRewardsFromDelegator(delegatorRef: delegatorRecordRef)
             return <- delegatorRecordRef.withdrawNodeDelegator()
         }
 
@@ -545,7 +547,7 @@ pub contract ISPOManager {
         }
 
         pub fun withdrawRewards(): @FungibleToken.Vault {
-            return <- ISPOManager.borrowISPORecord(id: self.uuid).withdrawAdminFlowRewards()
+            return <- ISPOManager.borrowISPORecord(id: self.uuid).withdrawAllAdminFlowRewards()
         }
 
         pub fun getIspoInfos(): [ISPOInfo] {
