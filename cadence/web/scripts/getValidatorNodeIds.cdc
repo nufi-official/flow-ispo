@@ -1,5 +1,5 @@
 import FlowIDTableStaking from 0xFlowIDTableStaking
 
-pub fun main(address: Address): [String] {
+pub fun main(): [String] {
     return FlowIDTableStaking.getProposedNodeIDs()
 }

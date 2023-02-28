@@ -215,6 +215,7 @@ export function useStakingNodeIds() {
       res = null
     } finally {
       if (!res?.length) {
+        // workaround to have non-empty result for emulator
         res = [
           '2b4dac560725d23c016af31567cff35bdcbc6d3e166419d1570de74dd9ecc416',
         ]
