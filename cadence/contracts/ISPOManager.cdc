@@ -281,8 +281,9 @@ pub contract ISPOManager {
                     let epochCommitment: UFix64? = delegatorEpochWeights[epochIndexIterator]!
                     if (totalWeights[epochIndexIterator] == nil) {
                         totalWeights[epochIndexIterator] = epochCommitment!
-                    } 
-                    totalWeights[epochIndexIterator] = totalWeights[epochIndexIterator]! + epochCommitment!
+                    } else {
+                        totalWeights[epochIndexIterator] = totalWeights[epochIndexIterator]! + epochCommitment!
+                    }                    
                     epochIndexIterator = epochIndexIterator + 1
                 }
             }
@@ -293,20 +294,11 @@ pub contract ISPOManager {
             pre {
                 !self.isISPOActive(): "ISPO must be inactive to withdraw reward tokens"
             }
-            let totalWeights: {UInt64: UFix64} = self.getTotalDelegatorWeights()
             let delegatorRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: delegatorId)!
             if (delegatorRef.hasWithdrawRewardToken) {
-                panic("Reward token has already been withdrawn")
+                return <- self.rewardTokenVault.withdraw(amount: 0.0)
             }
-            let delegatorWeights: {UInt64: UFix64} = self.getDelegatorWeights(delegatorRef: delegatorRef)
-
-            let totalRewardTokenAmountPerEpoch: UFix64 = self.rewardTokenMetadata.totalRewardTokenAmount / UFix64(self.epochEnd - self.epochStart)
-            var rewardAmount: UFix64 = 0.0
-            var epochIndexIterator: UInt64 = self.epochStart
-            while (epochIndexIterator <= self.epochEnd) {
-                rewardAmount = rewardAmount + (totalRewardTokenAmountPerEpoch * (delegatorWeights[epochIndexIterator]! / totalWeights[epochIndexIterator]!)) // TODO: remove division?
-                epochIndexIterator = epochIndexIterator + 1
-            }
+            let rewardAmount: UFix64 = self.getDelegatorRewardTokenAmount(delegatorRef: delegatorRef, epoch: self.epochEnd)
             delegatorRef.setHasWithrawnRewardToken()
             return <- self.rewardTokenVault.withdraw(amount: rewardAmount)
         }
@@ -318,23 +310,28 @@ pub contract ISPOManager {
             return b
         }
 
-        pub fun getRewardTokensBalance(delegatorId: UInt64, epoch: UInt64): UFix64 {
+        access(self) fun getDelegatorRewardTokenAmount(
+            delegatorRef: &ISPOManager.DelegatorRecord,
+            epoch: UInt64
+        ): UFix64 {
             let totalWeights: {UInt64: UFix64} = self.getTotalDelegatorWeights()
-            let delegatorRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: delegatorId)!
-            if (delegatorRef.hasWithdrawRewardToken) {
-                return 0.0
-            }
             let delegatorWeights: {UInt64: UFix64} = self.getDelegatorWeights(delegatorRef: delegatorRef)
-
-            let totalRewardTokenAmountPerEpoch: UFix64 = self.rewardTokenMetadata.totalRewardTokenAmount / UFix64(self.epochEnd - self.epochStart)
+            let totalRewardTokenAmountPerEpoch: UFix64 = self.rewardTokenMetadata.totalRewardTokenAmount / UFix64(self.epochEnd + 1 - self.epochStart)
             var rewardAmount: UFix64 = 0.0
             var epochIndexIterator: UInt64 = self.epochStart
-
-            while (epochIndexIterator < self.min(a: self.epochEnd, b: FlowEpochProxy.getCurrentEpoch())) {
+            while (epochIndexIterator < self.min(a: self.epochEnd, b: epoch)) {
                 rewardAmount = rewardAmount + (totalRewardTokenAmountPerEpoch * (delegatorWeights[epochIndexIterator]! / totalWeights[epochIndexIterator]!)) // TODO: remove division?
                 epochIndexIterator = epochIndexIterator + 1
             }
             return rewardAmount
+        }
+
+        pub fun getRewardTokensBalance(delegatorId: UInt64, epoch: UInt64): UFix64 {
+            let delegatorRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: delegatorId)!
+            if (delegatorRef.hasWithdrawRewardToken) {
+                return 0.0
+            }
+            return self.getDelegatorRewardTokenAmount(delegatorRef: delegatorRef, epoch: epoch)
         }
 
         pub fun getDelegatedFlowBalance(delegatorId: UInt64): UFix64 {
