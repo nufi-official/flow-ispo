@@ -9,8 +9,6 @@ import {
   Portal,
   Backdrop,
   CircularProgress,
-  Chip,
-  Tooltip,
 } from '@mui/material'
 import EventBusyIcon from '@mui/icons-material/EventBusy'
 import ISPOCard, {IspoDetail} from '../../components/ISPOCard'
@@ -20,6 +18,7 @@ import {toUFixString, formatCompactAmount} from '../../helpers/utils'
 import useCurrentUser from '../../hooks/useCurrentUser'
 import CardGrid from '../../layouts/CardGrid'
 import {useCurrentEpoch} from '../../hooks/epochs'
+import {useGlobalContext} from '../../hooks/globalContext'
 
 export default function ParticipateIspoPage() {
   const {addr} = useCurrentUser()
@@ -65,6 +64,7 @@ function ParticipateCard({ispoData, disabled = false}) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [alertMsg, setAlert] = useState(null)
   const [successMsg, setSuccess] = useState(null)
+  const {setRefreshedAt, refreshedAt} = useGlobalContext()
 
   const getRewardPerEpoch = (totalRewardBalance, epochStart, epochEnd) =>
     totalRewardBalance / (epochEnd - epochStart)
@@ -85,7 +85,7 @@ function ParticipateCard({ispoData, disabled = false}) {
         limit: 9999,
       })
       await fcl.tx(delegateToIspoTxId).onceSealed()
-      window.lastRefresh = new Date()
+      setRefreshedAt(new Date())
 
       setAlert(null)
       setSuccess('Transaction successfully submitted!')

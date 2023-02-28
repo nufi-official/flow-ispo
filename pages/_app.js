@@ -6,10 +6,11 @@ import '../styles/globals.css'
 import DefaultLayout from '../layouts/DefaultLayout'
 // Import Flow config
 import '../config/fcl.js'
+import {GlobalContextProvider} from '../components/GlobalContextProvider'
 
 function MyApp({Component, pageProps}) {
   return (
-    <>
+    <GlobalContextProvider>
       <Head>
         <title>VELES</title>
         <link
@@ -36,7 +37,7 @@ function MyApp({Component, pageProps}) {
           <Component {...pageProps} />
         </DefaultLayout>
       </ThemeProvider>
-    </>
+    </GlobalContextProvider>
   )
 }
 

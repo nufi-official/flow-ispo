@@ -36,6 +36,7 @@ import ispoRewardTokenContract from '../cadence/web/contracts/ISPOExampleRewardT
 import {toUFixString} from '../helpers/utils'
 import {useCurrentEpoch} from '../hooks/epochs'
 import {useStakingNodeIds} from '../hooks/ispo'
+import {useGlobalContext} from '../hooks/globalContext'
 
 const FormSelect = ({name, label, InputProps, defaultValue, ...otherProps}) => {
   const {
@@ -375,6 +376,7 @@ const validateStakingNode = async (nodeId) => {
 
 function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
   const [alertMsg, setAlert] = useState(null)
+  const {setRefreshedAt} = useGlobalContext()
 
   const schema = createRegisterSchema({
     currentEpoch,
@@ -462,7 +464,7 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
         limit: 9999,
       })
       await fcl.tx(createIspoTxId).onceSealed()
-      window.lastRefresh = new Date()
+      setRefreshedAt(new Date())
 
       setAlert(null)
       _onSubmit()

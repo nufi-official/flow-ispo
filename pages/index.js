@@ -3,6 +3,7 @@ import {Button, Box, Typography, Link as MuiLink, Divider} from '@mui/material'
 import {Launch as ExternalIcon} from '@mui/icons-material'
 import Link from 'next/link'
 import {learnMoreLink} from '../constants'
+import {GlobalContextProvider} from '../components/GlobalContextProvider'
 
 export default function Home() {
   return (

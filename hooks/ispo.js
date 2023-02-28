@@ -5,6 +5,7 @@ import getIspoAdminInfos from '../cadence/web/scripts/getIspoAdminInfos.cdc'
 import getValidatorNodeIds from '../cadence/web/scripts/getValidatorNodeIds.cdc'
 import getRewardTokenBalance from '../cadence/web/scripts/getRewardTokenBalance.cdc'
 import * as fcl from '@onflow/fcl'
+import {useGlobalContext} from './globalContext'
 
 const fetchIspos = async () => {
   let res
@@ -30,6 +31,7 @@ const fetchIspos = async () => {
 
 export function useIspos() {
   const [ispos, setIspos] = useState(undefined)
+  const {refreshedAt} = useGlobalContext()
 
   const fetch = async () => {
     setIspos(await fetchIspos())
@@ -37,7 +39,7 @@ export function useIspos() {
 
   useEffect(() => {
     fetch()
-  }, [])
+  }, [refreshedAt])
 
   return ispos
 }
@@ -78,6 +80,7 @@ const mockIspo = {
 
 export function useAccountIspos(address) {
   const [ispos, setIspos] = useState(undefined)
+  const {refreshedAt} = useGlobalContext()
 
   const fetchAccountIspos = async () => {
     let res
@@ -111,13 +114,14 @@ export function useAccountIspos(address) {
       fetchAccountIspos()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, typeof window != 'undefined' && window.lastRefresh])
+  }, [address, refreshedAt])
 
   return ispos
 }
 
 export function useAccountAdminIspos(address) {
   const [ispos, setIspos] = useState(null)
+  const {refreshedAt} = useGlobalContext()
 
   const fetchAccountAdminIspos = async () => {
     let res
@@ -139,13 +143,14 @@ export function useAccountAdminIspos(address) {
       fetchAccountAdminIspos()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, typeof window != 'undefined' && window.lastRefresh])
+  }, [address, refreshedAt])
 
   return ispos
 }
 
 export function useAccountFlowBalance(address) {
   const [balance, setBalance] = useState(null)
+  const {refreshedAt} = useGlobalContext()
 
   const fetchBalance = async () => {
     let res
@@ -166,13 +171,14 @@ export function useAccountFlowBalance(address) {
       fetchBalance()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, typeof window != 'undefined' && window.lastRefresh])
+  }, [address, refreshedAt])
 
   return balance
 }
 
 export function useAccountTokenBalance(address, balancePath) {
   const [balance, setBalance] = useState(null)
+  const {refreshedAt} = useGlobalContext()
 
   const fetchBalance = async () => {
     let res
@@ -194,13 +200,14 @@ export function useAccountTokenBalance(address, balancePath) {
       fetchBalance()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, balancePath, typeof window != 'undefined' && window.lastRefresh])
+  }, [address, balancePath, refreshedAt])
 
   return balance
 }
 
 export function useStakingNodeIds() {
   const [stakingNodeIds, setStakingNodeIds] = useState(null)
+  const {refreshedAt} = useGlobalContext()
 
   const fetchStakingNodeIds = async () => {
     let res
@@ -225,8 +232,7 @@ export function useStakingNodeIds() {
 
   useEffect(() => {
     fetchStakingNodeIds()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [window.lastRefresh])
+  }, [refreshedAt])
 
   return stakingNodeIds
 }

@@ -18,6 +18,7 @@ import withdrawAdminRewards from '../../cadence/web/transactions/admin/withdrawA
 import {useState} from 'react'
 import * as fcl from '@onflow/fcl'
 import InfoIcon from '@mui/icons-material/InfoOutlined'
+import {useGlobalContext} from '../../hooks/globalContext'
 
 export default function MyIspos() {
   const {addr} = useCurrentUser()
@@ -25,6 +26,7 @@ export default function MyIspos() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [alertMsg, setAlert] = useState(null)
   const [successMsg, setSuccess] = useState(null)
+  const {setRefreshedAt} = useGlobalContext()
 
   const onWithdrawFlow = async () => {
     setAlert(null)
@@ -36,7 +38,7 @@ export default function MyIspos() {
         limit: 9999,
       })
       await fcl.tx(txId).onceSealed()
-      window.lastRefresh = new Date()
+      setRefreshedAt(new Date())
       setSuccess('Transaction successfully submitted!')
     } catch (e) {
       setAlert(e.toString())

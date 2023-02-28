@@ -20,6 +20,7 @@ import withdrawRewardTokens from '../../cadence/web/transactions/client/withdraw
 import * as fcl from '@onflow/fcl'
 import {useCurrentEpoch} from '../../hooks/epochs'
 import InfoIcon from '@mui/icons-material/InfoOutlined'
+import {useGlobalContext} from '../../hooks/globalContext'
 
 export default function MyParticipations() {
   const {addr} = useCurrentUser()
@@ -78,6 +79,7 @@ function MyParticipationCard({
     addr,
     ispo?.rewardTokenMetadata?.rewardTokenBalancePublicPath?.identifier,
   )
+  const {setRefreshedAt} = useGlobalContext()
 
   const noRewards = Number(rewardTokenBalance) === 0
   const canWithdrawTokenRewards =
@@ -95,7 +97,7 @@ function MyParticipationCard({
         limit: 9999,
       })
       await fcl.tx(txId).onceSealed()
-      window.lastRefresh = new Date()
+      setRefreshedAt(new Date())
       setSuccess('Transaction successfully submitted!')
       setHasDelegation(true) // dirty hack to reflect the change without cache invalidation which we don't have
     } catch (e) {
@@ -114,7 +116,7 @@ function MyParticipationCard({
         limit: 9999,
       })
       await fcl.tx(txId).onceSealed()
-      window.lastRefresh = new Date()
+      setRefreshedAt(new Date())
       setSuccess('Transaction successfully submitted!')
       setHasDelegation(false) // dirty hack to reflect the change without cache invalidation which we don't have
     } catch (e) {
