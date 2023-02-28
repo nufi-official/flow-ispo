@@ -1,3 +1,22 @@
 {
-  "cSpell.words": ["devnet", "ISPO", "sandboxnet"]
+  "files.associations": {
+    ".eslintrc": "jsonc",
+    ".prettierrc": "jsonc",
+    ".eslintignore": "ignore"
+  },
+  "cSpell.words": ["devnet", "ISPO", "sandboxnet"],
+
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.validate": ["javascript", "typescript"],
+
+  "search.exclude": {
+    ".next": true,
+    "**/node_modules": true,
+    "npm-debug.log.*": true,
+    "yarn.lock": true,
+    "*.{css,sass,scss}.d.ts": true
+  }
 }
