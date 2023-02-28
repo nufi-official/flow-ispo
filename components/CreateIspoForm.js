@@ -35,6 +35,7 @@ import ispoRewardTokenContract from '../cadence/web/contracts/ISPOExampleRewardT
 import {toUFixString} from '../helpers/utils'
 import {useCurrentEpoch} from '../hooks/epochs'
 import useCurrentUser from '../hooks/useCurrentUser'
+import {useStakingNodeIds} from '../hooks/ispo'
 
 const FormInput = ({name, defaultValue, ...otherProps}) => {
   const {
@@ -283,6 +284,8 @@ export function CreateIspoForm() {
   const router = useRouter()
 
   const currentEpoch = useCurrentEpoch()
+  const stakingNodeIds = useStakingNodeIds()
+  console.log(stakingNodeIds)
 
   const onSuccess = () => {
     router.push('/participate')
