@@ -96,7 +96,6 @@ export function useAccountIspos(address) {
         hasDelegation: JSON.parse(value.hasDelegation),
         createdAt: new Date(Number(value.info.createdAt) * 1000),
       }))
-      console.log(res)
     } catch (e) {
       // Likely need to mint first to create capability if this fails
       res = []

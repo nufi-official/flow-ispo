@@ -282,11 +282,11 @@ pub contract ISPOManager {
 
                 var epochIndexIterator: UInt64 = self.epochStart
                 while (epochIndexIterator <= self.epochEnd) {
-                    let epochCommitment: UFix64? = delegatorEpochWeights[epochIndexIterator]!
+                    let epochCommitment: UFix64 = delegatorEpochWeights[epochIndexIterator] ?? 0.0
                     if (totalWeights[epochIndexIterator] == nil) {
-                        totalWeights[epochIndexIterator] = epochCommitment!
+                        totalWeights[epochIndexIterator] = epochCommitment
                     } else {
-                        totalWeights[epochIndexIterator] = totalWeights[epochIndexIterator]! + epochCommitment!
+                        totalWeights[epochIndexIterator] = totalWeights[epochIndexIterator]! + epochCommitment
                     }                    
                     epochIndexIterator = epochIndexIterator + 1
                 }
@@ -321,7 +321,7 @@ pub contract ISPOManager {
                 // in case they are not delegators for the first epochs, we do not give reward tokens for these epochs
                 let epochRewardAmount: UFix64 = totalWeights[epochIndexIterator]! == 0.0
                     ? 0.0
-                    : totalRewardTokenAmountPerEpoch * (delegatorWeights[epochIndexIterator]! / totalWeights[epochIndexIterator]!)
+                    : totalRewardTokenAmountPerEpoch * ((delegatorWeights[epochIndexIterator] ?? 0.0) / totalWeights[epochIndexIterator]!)
                 rewardAmount = rewardAmount + epochRewardAmount
                 epochIndexIterator = epochIndexIterator + 1
             }
