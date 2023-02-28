@@ -144,14 +144,14 @@ export function useAccountAdminIspos(address) {
 export function useAccountBalances(address) {
   const [balance, setBalance] = useState(null)
 
-  const fetchRewardTokenBalance = async () => {
+  const fetchBalance = async () => {
     let res
     try {
       res = [
-        await fcl.query({
+        /*await fcl.query({
           cadence: getRewardTokenBalance,
           args: (arg, t) => [arg(address, t.Address)],
-        }),
+        }),*/
         (Number((await fcl.account(address)).balance) / 100000000).toString()
       ]
     } catch (e) {
@@ -164,10 +164,10 @@ export function useAccountBalances(address) {
 
   useEffect(() => {
     if (address) {
-      fetchRewardTokenBalance()
+      fetchBalance()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, typeof window != 'undefined' && window.lastRefresh])
 
-  return {rewards: balance?.[0], flow: balance?.[1]}
+  return {flow: balance?.[0]}
 }
