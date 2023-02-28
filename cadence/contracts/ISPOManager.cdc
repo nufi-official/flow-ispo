@@ -310,6 +310,7 @@ pub contract ISPOManager {
             return b
         }
 
+        // gets reward token amount which a client deserves after <epoch>
         access(self) fun getDelegatorRewardTokenAmount(
             delegatorRef: &ISPOManager.DelegatorRecord,
             epoch: UInt64
@@ -320,7 +321,11 @@ pub contract ISPOManager {
             var rewardAmount: UFix64 = 0.0
             var epochIndexIterator: UInt64 = self.epochStart
             while (epochIndexIterator <= self.min(a: self.epochEnd, b: epoch)) {
-                rewardAmount = rewardAmount + (totalRewardTokenAmountPerEpoch * (delegatorWeights[epochIndexIterator]! / totalWeights[epochIndexIterator]!)) // TODO: remove division?
+                // in case they are not delegators for the first epochs, we do not give reward tokens for these epochs
+                let epochRewardAmount: UFix64 = totalWeights[epochIndexIterator]! == 0.0
+                    ? 0.0
+                    : totalRewardTokenAmountPerEpoch * (delegatorWeights[epochIndexIterator]! / totalWeights[epochIndexIterator]!)
+                rewardAmount = rewardAmount + epochRewardAmount
                 epochIndexIterator = epochIndexIterator + 1
             }
             return rewardAmount
