@@ -226,7 +226,7 @@ export function useStakingNodeIds() {
           '2b4dac560725d23c016af31567cff35bdcbc6d3e166419d1570de74dd9ecc416',
         ]
       }
-      setStakingNodeIds(res.slice(0, 10))
+      setStakingNodeIds(res)
     }
   }
 
