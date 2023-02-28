@@ -120,6 +120,7 @@ function SelectTokenField() {
             startAdornment: <InfoIcon fontSize="small" />,
           }}
         >
+          {/* TODO show current token contract name/address */}
           <MenuItem value="dummy">Set token details</MenuItem>
         </Select>
       </FormControl>
@@ -466,4 +467,3 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
     </>
   )
 }
- 
