@@ -16,7 +16,15 @@ export default function CreateIspoPage() {
     >
       <Container maxWidth="sm">
         {!addr && (
-          <Box>
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: '10px',
+              pb: 4,
+            }}
+          >
             <Typography variant="h5" sx={{fontWeight: 'bold'}}>
               You are not logged in
             </Typography>
