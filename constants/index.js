@@ -9,4 +9,5 @@ export const BLOCK_EXPLORER_URLS = {
   mainnet: 'https://flowscan.org',
 }
 
-export const learnMoreLink = 'https://nu.fi'
+export const learnMoreLink =
+  'https://www.canva.com/design/DAFbOy1x5ok/adcIexJ3wPvSTpjJ0CHvoQ/view?utm_content=DAFbOy1x5ok&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink'
