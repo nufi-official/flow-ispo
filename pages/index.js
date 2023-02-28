@@ -41,10 +41,10 @@ export default function Home() {
         </Typography>
 
         <Typography variant="h6">
-          Suppport projects by delegating your <b>FLOW tokens</b> & earn{' '}
-          <b>ISPO rewards</b>.
-          <br />
-          It&#39;s a <b>win-win</b> kind of delegation!
+          <b>Staking-powered fundraising on Flow.</b>Support a project by
+          staking FLOW and letting the project claim the staking rewards on your
+          behalf to use as funding. In return, you'll get the project's new
+          token. Win-win!.
         </Typography>
 
         <Button

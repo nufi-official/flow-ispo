@@ -1,12 +1,21 @@
 import Link from 'next/link'
-import {Box, Button, Tooltip, Typography, CircularProgress, Portal, Backdrop, Alert} from '@mui/material'
+import {
+  Box,
+  Button,
+  Tooltip,
+  Typography,
+  CircularProgress,
+  Portal,
+  Backdrop,
+  Alert,
+} from '@mui/material'
 import ISPOCard, {IspoDetail} from '../../components/ISPOCard'
 import {useAccountAdminIspos} from '../../hooks/ispo'
 import useCurrentUser from '../../hooks/useCurrentUser'
 import {formatCompactAmount} from '../../helpers/utils'
 import CardGrid from '../../layouts/CardGrid'
 import withdrawAdminRewards from '../../cadence/web/transactions/admin/withdrawAdminRewards.cdc'
-import { useState } from 'react'
+import {useState} from 'react'
 import * as fcl from '@onflow/fcl'
 import InfoIcon from '@mui/icons-material/InfoOutlined'
 
@@ -74,7 +83,14 @@ export default function MyIspos() {
           key={ispo.id}
           footerContent={
             <div>
-              <Box  sx={{display: 'flex', gap: 2, '& > *': {width: '100%', mt: 1}, mb: 1}}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  gap: 2,
+                  '& > *': {width: '100%', mt: 1},
+                  mb: 1,
+                }}
+              >
                 <Button variant="gradient" onClick={onWithdrawFlow}>
                   <Tooltip title='For the sake of the demonstration, even zero rewards can be "withdrawn"'>
                     <Box mr={1} mt={1}>
@@ -84,8 +100,16 @@ export default function MyIspos() {
                   Withdraw staking rewards
                 </Button>
               </Box>
-              {successMsg && <Alert severity="success" onClose={() => setSuccess(null)}>{successMsg}</Alert>}
-              {alertMsg && <Alert severity="error" onClose={() => setAlert(null)}>{alertMsg}</Alert>}
+              {successMsg && (
+                <Alert severity="success" onClose={() => setSuccess(null)}>
+                  {successMsg}
+                </Alert>
+              )}
+              {alertMsg && (
+                <Alert severity="error" onClose={() => setAlert(null)}>
+                  {alertMsg}
+                </Alert>
+              )}
             </div>
           }
         />

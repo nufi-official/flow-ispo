@@ -13,10 +13,12 @@ const fetchIspos = async () => {
         cadence: getIspoInfos,
         args: (arg, t) => [],
       })
-    ).map((ispo) => ({
-      ...ispo,
-      createdAt: new Date(Number(ispo.createdAt) * 1000),
-    })).filter((ispo) => ispo.name !== 'xxx')
+    )
+      .map((ispo) => ({
+        ...ispo,
+        createdAt: new Date(Number(ispo.createdAt) * 1000),
+      }))
+      .filter((ispo) => ispo.name !== 'xxx')
   } catch (e) {
     // Likely need to mint first to create capability if this fails
     res = []
@@ -148,7 +150,9 @@ export function useAccountFlowBalance(address) {
   const fetchBalance = async () => {
     let res
     try {
-      res = (Number((await fcl.account(address)).balance) / 100000000).toString()
+      res = (
+        Number((await fcl.account(address)).balance) / 100000000
+      ).toString()
     } catch (e) {
       // Likely need to mint first to create capability if this fails
       res = null
@@ -176,10 +180,7 @@ export function useAccountTokenBalance(address, balancePath) {
       console.log(balancePath)
       res = await fcl.query({
         cadence: getRewardTokenBalance,
-        args: (arg, t) => [
-          arg(address, t.Address),
-          arg(balancePath, t.String),
-        ],
+        args: (arg, t) => [arg(address, t.Address), arg(balancePath, t.String)],
       })
       console.log(balancePath, res)
     } catch (e) {
