@@ -429,6 +429,9 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
   return (
     <>
       <Card title="Create new ISPO">
+        <Alert severity="info" sx={{my: 1}}>
+          You can create only one ISPO per account
+        </Alert>
         <FormProvider {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Box
