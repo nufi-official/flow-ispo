@@ -33,7 +33,7 @@ export default function ParticipateIspoPage() {
   // sort by time of creation
   const sortedIsposByDate =
     ispos &&
-    [...ispos].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+    [...ispos].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
   // sort ended at the and
   // relies on the sort function being stable
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#sort_stability
