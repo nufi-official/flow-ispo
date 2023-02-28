@@ -21,7 +21,6 @@ import * as fcl from '@onflow/fcl'
 import {useCurrentEpoch} from '../../hooks/epochs'
 import InfoIcon from '@mui/icons-material/InfoOutlined'
 
-
 export default function MyParticipations() {
   const {addr} = useCurrentUser()
   const accountIspos = useAccountIspos(addr)
@@ -75,10 +74,16 @@ function MyParticipationCard({
   const [successMsg, setSuccess] = useState(null)
   const [hasDelegation, setHasDelegation] = useState(_hasDelegation)
   const {addr} = useCurrentUser()
-  const rewardTokenAccountBalance = useAccountTokenBalance(addr, ispo?.rewardTokenMetadata?.rewardTokenBalancePublicPath?.identifier)
+  const rewardTokenAccountBalance = useAccountTokenBalance(
+    addr,
+    ispo?.rewardTokenMetadata?.rewardTokenBalancePublicPath?.identifier,
+  )
 
   const noRewards = Number(rewardTokenBalance) === 0
-  const canWithdrawTokenRewards = currentEpoch != null && ispo != null && Number(currentEpoch) >= Number(ispo.epochEnd)
+  const canWithdrawTokenRewards =
+    currentEpoch != null &&
+    ispo != null &&
+    Number(currentEpoch) >= Number(ispo.epochEnd)
 
   const onWithdrawTokenRewards = async () => {
     setAlert(null)
@@ -86,9 +91,7 @@ function MyParticipationCard({
     try {
       const txId = await fcl.mutate({
         cadence: withdrawRewardTokens,
-        args: (arg, t) => [
-          arg(ispoClientId, t.UInt64),
-        ],
+        args: (arg, t) => [arg(ispoClientId, t.UInt64)],
         limit: 9999,
       })
       await fcl.tx(txId).onceSealed()
@@ -107,9 +110,7 @@ function MyParticipationCard({
     try {
       const txId = await fcl.mutate({
         cadence: withdrawFlowFromIspo,
-        args: (arg, t) => [
-          arg(ispoClientId, t.UInt64),
-        ],
+        args: (arg, t) => [arg(ispoClientId, t.UInt64)],
         limit: 9999,
       })
       await fcl.tx(txId).onceSealed()
@@ -117,7 +118,9 @@ function MyParticipationCard({
       setSuccess('Transaction successfully submitted!')
       setHasDelegation(false) // dirty hack to reflect the change without cache invalidation which we don't have
     } catch (e) {
-      const msg = e.toString().includes('stakingCollectionRef.addDelegatorObject(<- delegator)')
+      const msg = e
+        .toString()
+        .includes('stakingCollectionRef.addDelegatorObject(<- delegator)')
         ? '[Hackathon version limitation] $FLOW cannot be withdrawn because the wallet account is already delegating to the same node.'
         : e.toString()
 
@@ -143,46 +146,84 @@ function MyParticipationCard({
           />
           <IspoDetail
             label="Delegated"
-            value={`${formatCompactAmount(hasDelegation ? delegatedFlowBalance : '0.0')} $FLOW`}
+            value={`${formatCompactAmount(
+              hasDelegation ? delegatedFlowBalance : '0.0',
+            )} $FLOW`}
           />
           <IspoDetail
             label="Rewards to claim"
             highlight
             value={`${formatCompactAmount(rewardTokenBalance)} tokens`}
           />
-          {rewardTokenAccountBalance &&
+          {rewardTokenAccountBalance && (
             <Tooltip title="Current balance of project tokens on your account">
               <Box display="flex">
-                <InfoIcon fontSize="small" sx={{mr: 1}}/>
+                <InfoIcon fontSize="small" sx={{mr: 1}} />
                 <IspoDetail
                   label="Rewards on account"
                   highlight
-                  value={`${formatCompactAmount(rewardTokenAccountBalance)} tokens`}
+                  value={`${formatCompactAmount(
+                    rewardTokenAccountBalance,
+                  )} tokens`}
                 />
               </Box>
-            </Tooltip>}
+            </Tooltip>
+          )}
         </Box>
       }
       footerContent={
         <>
-          <Box sx={{display: 'flex', gap: 2, '& > *': {width: '50%', mt: 1}, mb: 1}}>
-            <Tooltip title={!canWithdrawTokenRewards ? "You can withdraw rewards after the last ISPO epoch" : (noRewards ? "No rewards to claim" : '')}>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 2,
+              '& > *': {width: '50%', mt: 1},
+              mb: 1,
+            }}
+          >
+            <Tooltip
+              title={
+                !canWithdrawTokenRewards
+                  ? 'You can withdraw rewards after the last ISPO epoch'
+                  : noRewards
+                  ? 'No rewards to claim'
+                  : ''
+              }
+            >
               <div>
-                <Button variant="gradient" disabled={!canWithdrawTokenRewards || noRewards} onClick={onWithdrawTokenRewards}>
+                <Button
+                  variant="gradient"
+                  disabled={!canWithdrawTokenRewards || noRewards}
+                  onClick={onWithdrawTokenRewards}
+                >
                   Claim rewards
                 </Button>
               </div>
             </Tooltip>
-            <Tooltip title={!hasDelegation ? "Delegated $FLOW already withdrawn" : ""}>
+            <Tooltip
+              title={!hasDelegation ? 'Delegated $FLOW already withdrawn' : ''}
+            >
               <div>
-                <Button variant="gradient" disabled={!hasDelegation} onClick={onWithdrawFlow}>
+                <Button
+                  variant="gradient"
+                  disabled={!hasDelegation}
+                  onClick={onWithdrawFlow}
+                >
                   withdraw flow
                 </Button>
               </div>
             </Tooltip>
           </Box>
-          {successMsg && <Alert severity="success" onClose={() => setSuccess(null)}>{successMsg}</Alert>}
-          {alertMsg && <Alert severity="error" onClose={() => setAlert(null)} >{alertMsg}</Alert>}
+          {successMsg && (
+            <Alert severity="success" onClose={() => setSuccess(null)}>
+              {successMsg}
+            </Alert>
+          )}
+          {alertMsg && (
+            <Alert severity="error" onClose={() => setAlert(null)}>
+              {alertMsg}
+            </Alert>
+          )}
           <Portal>
             <Backdrop
               sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}}

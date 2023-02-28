@@ -91,7 +91,12 @@ export default function DefaultLayout({children}) {
                     </MuiLink>
                   }
                 />
-                {flowBalance && <InfoItem label="Balance" value={`${formatCompactAmount(flowBalance)} $FLOW`} />}
+                {flowBalance && (
+                  <InfoItem
+                    label="Balance"
+                    value={`${formatCompactAmount(flowBalance)} $FLOW`}
+                  />
+                )}
               </>
             )}
             {config.network && (

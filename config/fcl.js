@@ -24,8 +24,11 @@ config({
   '0xFlowToken':
     process.env.NEXT_PUBLIC_FLOW_TOKEN_ADDRESS || '0x0ae53cb6e3f42a79',
   '0xFlowIDTableStaking':
-    process.env.NEXT_PUBLIC_FLOW_ID_TABLE_STAKING_ADDRESS || '0xf8d6e0586b0a20c7',
+    process.env.NEXT_PUBLIC_FLOW_ID_TABLE_STAKING_ADDRESS ||
+    '0xf8d6e0586b0a20c7',
   '0xFlowStakingCollection':
-    process.env.NEXT_PUBLIC_FLOW_STAKING_COLLECTION_ADDRESS || '0xf8d6e0586b0a20c7',
-  '0xLockedTokens': process.env.NEXT_PUBLIC_LOCKED_TOKENS_ADDRESS || '0xf8d6e0586b0a20c7'
+    process.env.NEXT_PUBLIC_FLOW_STAKING_COLLECTION_ADDRESS ||
+    '0xf8d6e0586b0a20c7',
+  '0xLockedTokens':
+    process.env.NEXT_PUBLIC_LOCKED_TOKENS_ADDRESS || '0xf8d6e0586b0a20c7',
 }).load({flowJSON})
