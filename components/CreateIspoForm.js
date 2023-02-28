@@ -91,21 +91,14 @@ const getDefaultTokenValues = async () => {
   }
 }
 
-function SelectTokenField() {
+function SelectTokenField({selectedValue}) {
   const [isOpen, setOpen] = useState(false)
   const onClose = () => setOpen(false)
   const onOpen = () => setOpen(true)
 
-  const [defaultValues, setDefaultValues] = useState('Loading ...')
-  useEffect(() => {
-    const fn = async () => {
-      setDefaultValues(await getDefaultTokenValues())
-    }
-    fn()
-  }, [])
-
   return (
     <>
+      {/* Select lives outside of the form state */}
       <FormControl>
         <InputLabel variant="standard">Token</InputLabel>
         <Select
@@ -120,8 +113,7 @@ function SelectTokenField() {
             startAdornment: <InfoIcon fontSize="small" />,
           }}
         >
-          {/* TODO show current token contract name/address */}
-          <MenuItem value="dummy">Set token details</MenuItem>
+          <MenuItem value="dummy">{selectedValue}</MenuItem>
         </Select>
       </FormControl>
       <Dialog onClose={onClose} open={isOpen}>
@@ -132,7 +124,7 @@ function SelectTokenField() {
               display: 'flex',
               flexDirection: 'column',
               '& > *': {mt: 2},
-              width: 400
+              width: 400,
             }}
           >
             {/* TODO make contractAddress field reactive to current user address  */}
@@ -140,28 +132,11 @@ function SelectTokenField() {
               name="contractAddress"
               label="Contract address"
               disabled
-              defaultValue={defaultValues.contractAddress || ''}
             />
-            <FormInput
-              name="contractName"
-              label="Contract name"
-              defaultValue={defaultValues.contractName}
-            />
-            <FormInput
-              name="vaultPath"
-              label="Vault path"
-              defaultValue={defaultValues.vaultPath}
-            />
-            <FormInput
-              name="balancePath"
-              label="Balance path"
-              defaultValue={defaultValues.balancePath}
-            />
-            <FormInput
-              name="receiverPath"
-              label="Receiver path"
-              defaultValue={defaultValues.receiverPath}
-            />
+            <FormInput name="contractName" label="Contract name" />
+            <FormInput name="vaultPath" label="Vault path" />
+            <FormInput name="balancePath" label="Balance path" />
+            <FormInput name="receiverPath" label="Receiver path" />
           </Box>
           <Box sx={{display: 'flex', justifyContent: 'flex-end', mt: 2}}>
             <Box mr={2}>
@@ -284,7 +259,6 @@ export function CreateIspoForm() {
 
 function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
   const [alertMsg, setAlert] = useState(null)
-  const {addr} = useCurrentUser()
 
   const schema = createRegisterSchema({
     currentEpoch,
@@ -292,11 +266,13 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
 
   const form = useForm({
     resolver: yupResolver(schema),
+    defaultValues: async () => await getDefaultTokenValues(),
   })
 
   const {
     handleSubmit,
     formState: {isSubmitting},
+    watch,
   } = form
 
   const onSubmit = async (data) => {
@@ -318,10 +294,13 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
             arg(data.contractName || defaultTokenValues.contractName, t.String),
             arg(
               ispoRewardTokenContract
-                .replaceAll('ISPOExampleRewardToken', data.contractName || defaultTokenValues.contractName)
+                .replaceAll(
+                  'ISPOExampleRewardToken',
+                  data.contractName || defaultTokenValues.contractName,
+                )
                 .replaceAll('0xFungibleToken', fungibleTokenContractAddr),
-              t.String
-            )
+              t.String,
+            ),
           ],
           limit: 9999,
         })
@@ -336,8 +315,14 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
 
       const createIspoTxId = await fcl.mutate({
         cadence: createISPO
-          .replaceAll('0xISPOExampleRewardToken', data.contractAddress || defaultTokenValues.contractAddress)
-          .replaceAll('ISPOExampleRewardToken', data.contractName || defaultTokenValues.contractName),
+          .replaceAll(
+            '0xISPOExampleRewardToken',
+            data.contractAddress || defaultTokenValues.contractAddress,
+          )
+          .replaceAll(
+            'ISPOExampleRewardToken',
+            data.contractName || defaultTokenValues.contractName,
+          ),
         args: (arg, t) => [
           arg(data.ispoName, t.String),
           arg(data.projectUrl || '', t.String),
@@ -366,7 +351,9 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
 
       const message = e.toString().includes('ISPO already exists')
         ? '[Hackathon version limitation] Currently, only one ISPO per account can be registered'
-        : (e.toString().includes('NodeID not found') ? 'Staking node ID not found' : e.toString())
+        : e.toString().includes('NodeID not found')
+        ? 'Staking node ID not found'
+        : e.toString()
 
       setAlert(message)
     }
@@ -392,7 +379,7 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
                 defaultValue={Number(currentEpoch) + 1}
               />
               <FormInput name="endEpoch" label="End epoch" type="number" />
-              <SelectTokenField />
+              <SelectTokenField selectedValue={watch('contractName')} />
               <FormInput
                 name="totalRewardTokensAmount"
                 label="Amount of tokens to distribute"
