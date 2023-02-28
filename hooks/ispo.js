@@ -93,6 +93,7 @@ export function useAccountIspos(address) {
         hasDelegation: JSON.parse(value.hasDelegation),
         createdAt: new Date(Number(value.info.createdAt) * 1000),
       }))
+      console.log(res)
     } catch (e) {
       // Likely need to mint first to create capability if this fails
       res = []
@@ -141,19 +142,13 @@ export function useAccountAdminIspos(address) {
   return ispos
 }
 
-export function useAccountBalances(address) {
+export function useAccountFlowBalance(address) {
   const [balance, setBalance] = useState(null)
 
   const fetchBalance = async () => {
     let res
     try {
-      res = [
-        /*await fcl.query({
-          cadence: getRewardTokenBalance,
-          args: (arg, t) => [arg(address, t.Address)],
-        }),*/
-        (Number((await fcl.account(address)).balance) / 100000000).toString()
-      ]
+      res = (Number((await fcl.account(address)).balance) / 100000000).toString()
     } catch (e) {
       // Likely need to mint first to create capability if this fails
       res = null
@@ -169,5 +164,38 @@ export function useAccountBalances(address) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, typeof window != 'undefined' && window.lastRefresh])
 
-  return {flow: balance?.[0]}
+  return balance
+}
+
+export function useAccountTokenBalance(address, balancePath) {
+  const [balance, setBalance] = useState(null)
+
+  const fetchBalance = async () => {
+    let res
+    try {
+      console.log(balancePath)
+      res = await fcl.query({
+        cadence: getRewardTokenBalance,
+        args: (arg, t) => [
+          arg(address, t.Address),
+          arg(balancePath, t.String),
+        ],
+      })
+      console.log(balancePath, res)
+    } catch (e) {
+      // Likely need to mint first to create capability if this fails
+      res = null
+    } finally {
+      setBalance(res)
+    }
+  }
+
+  useEffect(() => {
+    if (address && balancePath) {
+      fetchBalance()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, balancePath, typeof window != 'undefined' && window.lastRefresh])
+
+  return balance
 }

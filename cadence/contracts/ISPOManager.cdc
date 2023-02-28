@@ -487,6 +487,7 @@ pub contract ISPOManager {
     pub let ispoAdminStoragePath: StoragePath
 
     pub struct RewardTokenMetadata {
+        pub let rewardTokenContractAddress: Address
         pub let rewardTokenContractName: String
         pub let rewardTokenVaultStoragePath: StoragePath
         pub let rewardTokenReceiverPublicPath: PublicPath
@@ -494,12 +495,14 @@ pub contract ISPOManager {
         pub let totalRewardTokenAmount: UFix64
 
         init(
+            rewardTokenContractAddress: Address,
             rewardTokenContractName: String,
             rewardTokenVaultStoragePath: StoragePath,
             rewardTokenReceiverPublicPath: PublicPath,
             rewardTokenBalancePublicPath: PublicPath,
             totalRewardTokenAmount: UFix64
         ) {
+            self.rewardTokenContractAddress = rewardTokenContractAddress
             self.rewardTokenContractName = rewardTokenContractName
             self.rewardTokenVaultStoragePath = rewardTokenVaultStoragePath
             self.rewardTokenReceiverPublicPath = rewardTokenReceiverPublicPath

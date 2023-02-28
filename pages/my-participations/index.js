@@ -11,7 +11,7 @@ import {
   Alert,
 } from '@mui/material'
 import ISPOCard, {IspoDetail} from '../../components/ISPOCard'
-import {useAccountIspos} from '../../hooks/ispo'
+import {useAccountIspos, useAccountTokenBalance} from '../../hooks/ispo'
 import useCurrentUser from '../../hooks/useCurrentUser'
 import {formatCompactAmount} from '../../helpers/utils'
 import CardGrid from '../../layouts/CardGrid'
@@ -72,6 +72,8 @@ function MyParticipationCard({
   const [alertMsg, setAlert] = useState(null)
   const [successMsg, setSuccess] = useState(null)
   const [hasDelegation, setHasDelegation] = useState(_hasDelegation)
+  const {addr} = useCurrentUser()
+  const rewardTokenAccountBalance = useAccountTokenBalance(addr, ispo?.rewardTokenMetadata?.rewardTokenBalancePublicPath?.identifier)
 
   const noRewards = Number(rewardTokenBalance) === 0
   const canWithdrawTokenRewards = currentEpoch != null && ispo != null && Number(currentEpoch) >= Number(ispo.epochEnd)
@@ -134,14 +136,19 @@ function MyParticipationCard({
             value={new Date(createdAt).toLocaleDateString()}
           />
           <IspoDetail
-            label="Current rewards"
-            highlight
-            value={`${formatCompactAmount(rewardTokenBalance)} tokens`}
-          />
-          <IspoDetail
             label="Delegated"
             value={`${formatCompactAmount(hasDelegation ? delegatedFlowBalance : '0.0')} $FLOW`}
           />
+          <IspoDetail
+            label="Rewards to claim"
+            highlight
+            value={`${formatCompactAmount(rewardTokenBalance)} tokens`}
+          />
+          {rewardTokenAccountBalance && <IspoDetail
+            label="Rewards on account"
+            highlight
+            value={`${formatCompactAmount(rewardTokenAccountBalance)} tokens`}
+          />}
         </Box>
       }
       footerContent={
