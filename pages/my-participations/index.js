@@ -18,7 +18,9 @@ import CardGrid from '../../layouts/CardGrid'
 import withdrawFlowFromIspo from '../../cadence/web/transactions/client/withdrawNodeDelegator.cdc'
 import withdrawRewardTokens from '../../cadence/web/transactions/client/withdrawRewardTokens.cdc'
 import * as fcl from '@onflow/fcl'
-import { useCurrentEpoch } from '../../hooks/epochs'
+import {useCurrentEpoch} from '../../hooks/epochs'
+import InfoIcon from '@mui/icons-material/InfoOutlined'
+
 
 export default function MyParticipations() {
   const {addr} = useCurrentUser()
@@ -115,7 +117,11 @@ function MyParticipationCard({
       setSuccess('Transaction successfully submitted!')
       setHasDelegation(false) // dirty hack to reflect the change without cache invalidation which we don't have
     } catch (e) {
-      setAlert(e.toString())
+      const msg = e.toString().includes('stakingCollectionRef.addDelegatorObject(<- delegator)')
+        ? '[Hackathon version limitation] $FLOW cannot be withdrawn because the wallet account is already delegating to the same node.'
+        : e.toString()
+
+      setAlert(msg)
     }
     setIsSubmitting(false)
   }
@@ -144,11 +150,17 @@ function MyParticipationCard({
             highlight
             value={`${formatCompactAmount(rewardTokenBalance)} tokens`}
           />
-          {rewardTokenAccountBalance && <IspoDetail
-            label="Rewards on account"
-            highlight
-            value={`${formatCompactAmount(rewardTokenAccountBalance)} tokens`}
-          />}
+          {rewardTokenAccountBalance &&
+            <Tooltip title="Current balance of project tokens on your account">
+              <Box display="flex">
+                <InfoIcon fontSize="small" sx={{mr: 1}}/>
+                <IspoDetail
+                  label="Rewards on account"
+                  highlight
+                  value={`${formatCompactAmount(rewardTokenAccountBalance)} tokens`}
+                />
+              </Box>
+            </Tooltip>}
         </Box>
       }
       footerContent={
