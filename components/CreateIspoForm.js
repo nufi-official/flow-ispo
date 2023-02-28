@@ -19,6 +19,7 @@ import {
   Backdrop,
   CircularProgress,
   Portal,
+  InputAdornment,
 } from '@mui/material'
 import InfoIcon from '@mui/icons-material/InfoOutlined'
 import {
@@ -91,9 +92,50 @@ const getDefaultTokenValues = async () => {
   }
 }
 
-function SelectTokenField({selectedValue}) {
+const tokenFormSectionFields = [
+  {
+    name: 'contractAddress',
+    label: 'Contract address',
+    disabled: true,
+    startAdornment: null,
+  },
+  {
+    name: 'contractName',
+    label: 'Contract name',
+    disabled: false,
+    startAdornment: null,
+  },
+  {
+    name: 'vaultPath',
+    label: 'Vault path',
+    disabled: false,
+    startAdornment: '/storage/',
+  },
+  {
+    name: 'balancePath',
+    label: 'Balance path',
+    disabled: false,
+    startAdornment: '/public/',
+  },
+  {
+    name: 'receiverPath',
+    label: 'Receiver path',
+    disabled: false,
+    startAdornment: '/public/',
+  },
+]
+
+function SelectTokenField({
+  selectedValue,
+  getIsFormSectionValid,
+  onFormSectionReset,
+}) {
   const [isOpen, setOpen] = useState(false)
-  const onClose = () => setOpen(false)
+  const onClose = async () => {
+    if (await getIsFormSectionValid()) {
+      setOpen(false)
+    }
+  }
   const onOpen = () => setOpen(true)
 
   return (
@@ -128,24 +170,37 @@ function SelectTokenField({selectedValue}) {
             }}
           >
             <Alert severity="info">
-              [Hackathon limitation] The ISPO reward token will be deployed/minted from the currently logged in account, therefore the contract address
-              is currently not editable. In the final version, supplying an externally minted token will also be possible
+              [Hackathon limitation] The ISPO reward token will be
+              deployed/minted from the currently logged in account, therefore
+              the contract address is currently not editable. In the final
+              version, supplying an externally minted token will also be
+              possible
             </Alert>
             {/* TODO make contractAddress field reactive to current user address  */}
-            <FormInput
-              name="contractAddress"
-              label="Contract address"
-              disabled
-            />
-            <FormInput name="contractName" label="Contract name" />
-            <FormInput name="vaultPath" label="Vault path" />
-            <FormInput name="balancePath" label="Balance path" />
-            <FormInput name="receiverPath" label="Receiver path" />
+            {tokenFormSectionFields.map(({startAdornment, ...rest}) => (
+              <FormInput
+                {...rest}
+                InputProps={
+                  startAdornment
+                    ? {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            {startAdornment}
+                          </InputAdornment>
+                        ),
+                      }
+                    : undefined
+                }
+              />
+            ))}
           </Box>
           <Box sx={{display: 'flex', justifyContent: 'flex-end', mt: 2}}>
             <Box mr={2}>
-              <Button variant="outlined" onClick={onClose}>
-                Close
+              <Button
+                variant="outlined"
+                onClick={async () => await onFormSectionReset()}
+              >
+                Reset
               </Button>
             </Box>
             <Button variant="contained" onClick={onClose}>
@@ -225,6 +280,11 @@ const createRegisterSchema = ({currentEpoch}) => {
             .required(FIELD_REQUIRED_ERROR)
             .typeError(FIELD_INVALID_TYPE_ERROR),
     ),
+    // custom token fields
+    contractName: yup.string().required(FIELD_REQUIRED_ERROR),
+    vaultPath: yup.string().required(FIELD_REQUIRED_ERROR),
+    balancePath: yup.string().required(FIELD_REQUIRED_ERROR),
+    receiverPath: yup.string().required(FIELD_REQUIRED_ERROR),
   })
 }
 
@@ -277,6 +337,8 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
     handleSubmit,
     formState: {isSubmitting},
     watch,
+    trigger,
+    reset,
   } = form
 
   const onSubmit = async (data) => {
@@ -383,7 +445,20 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
                 defaultValue={Number(currentEpoch) + 1}
               />
               <FormInput name="endEpoch" label="End epoch" type="number" />
-              <SelectTokenField selectedValue={watch('contractName')} />
+              <SelectTokenField
+                selectedValue={watch('contractName')}
+                getIsFormSectionValid={async () =>
+                  trigger(tokenFormSectionFields.map(({name}) => name))
+                }
+                onFormSectionReset={async () => {
+                  const defaultTokenSectionValues =
+                    await getDefaultTokenValues()
+                  reset((formValues) => ({
+                    ...formValues,
+                    ...defaultTokenSectionValues,
+                  }))
+                }}
+              />
               <FormInput
                 name="totalRewardTokensAmount"
                 label="Amount of tokens to distribute"
@@ -458,4 +533,3 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
     </>
   )
 }
- 
