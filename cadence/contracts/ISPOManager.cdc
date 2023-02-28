@@ -161,6 +161,10 @@ pub contract ISPOManager {
             epochEnd: UInt64,
             createdAt: UFix64,
         ) {
+            pre {
+                // === 0 for emulator testing
+                FlowIDTableStaking.getProposedNodeIDs().length == 0 || FlowIDTableStaking.getProposedNodeIDs().contains(delegatorNodeId): "Node id is not in the proposed list",
+            }
             self.id = id
             self.name = name
             self.projectUrl = projectUrl
