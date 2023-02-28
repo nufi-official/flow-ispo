@@ -440,7 +440,8 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
     <>
       <Card title="Create new ISPO">
         <Alert severity="info" sx={{my: 1}}>
-          You can create only one ISPO per account
+          [Hackathon version limitation] Currently, only one ISPO per account
+          can be registered
         </Alert>
         <FormProvider {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -493,7 +494,7 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
                 type="string"
                 InputProps={{
                   startAdornment: (
-                    <Tooltip title="TODO: fill">
+                    <Tooltip title="ID of the node that users' FLOW will be delegated to">
                       <InputAdornment position="start">
                         <InfoIcon fontSize="small" color="primary" />
                       </InputAdornment>

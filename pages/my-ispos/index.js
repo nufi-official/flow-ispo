@@ -64,14 +64,12 @@ export default function MyIspos() {
               />
               <IspoDetail
                 label="Total locked"
-                value={`${formatCompactAmount(
-                  ispo.delegatedFlowBalance,
-                )} $FLOW`}
+                value={`${formatCompactAmount(ispo.delegatedFlowBalance)} FLOW`}
               />
               <IspoDetail
                 highlight
                 label="Staking rewards"
-                value={`${formatCompactAmount(ispo.flowRewardsBalance)} $FLOW`}
+                value={`${formatCompactAmount(ispo.flowRewardsBalance)} FLOW`}
               />
               <IspoDetail
                 highlight

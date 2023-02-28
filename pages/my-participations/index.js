@@ -121,7 +121,7 @@ function MyParticipationCard({
       const msg = e
         .toString()
         .includes('stakingCollectionRef.addDelegatorObject(<- delegator)')
-        ? '[Hackathon version limitation] $FLOW cannot be withdrawn because the wallet account is already delegating to the same node.'
+        ? '[Hackathon version limitation] FLOW cannot be withdrawn because the wallet account is already delegating to the same node.'
         : e.toString()
 
       setAlert(msg)
@@ -148,7 +148,7 @@ function MyParticipationCard({
             label="Delegated"
             value={`${formatCompactAmount(
               hasDelegation ? delegatedFlowBalance : '0.0',
-            )} $FLOW`}
+            )} FLOW`}
           />
           <IspoDetail
             label="Rewards to claim"
@@ -201,7 +201,7 @@ function MyParticipationCard({
               </div>
             </Tooltip>
             <Tooltip
-              title={!hasDelegation ? 'Delegated $FLOW already withdrawn' : ''}
+              title={!hasDelegation ? 'Delegated FLOW already withdrawn' : ''}
             >
               <div>
                 <Button
