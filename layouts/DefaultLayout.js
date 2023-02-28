@@ -25,7 +25,7 @@ export default function DefaultLayout({children}) {
   const user = useCurrentUser()
   const config = useConfig()
   const currentEpoch = useCurrentEpoch()
-  const {rewards: rewardTokenBalance, flow: flowBalance} = useAccountBalances(user.addr)
+  const {flow: flowBalance} = useAccountBalances(user.addr)
 
   return (
     <Box
@@ -92,7 +92,6 @@ export default function DefaultLayout({children}) {
                   }
                 />
                 {flowBalance && <InfoItem label="Balance" value={`${formatCompactAmount(flowBalance)} $FLOW`} />}
-                {rewardTokenBalance && <InfoItem label="Rewards balance" value={`${formatCompactAmount(rewardTokenBalance)} tokens`} />}
               </>
             )}
             {config.network && (
