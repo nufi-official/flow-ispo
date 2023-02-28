@@ -703,9 +703,9 @@ pub contract ISPOManager {
 
     init() {
         self.ispos <- {}
-        self.defaultNodeId = "26c1cd3254ec259b4faea0f53e3a446539256d81f0c06fff430690433d69731f"
-        self.ispoAdminStoragePath = /storage/ISPOAdmin
-        self.ispoClientStoragePath = /storage/ISPOClient
+        self.defaultNodeId = ""
+        self.ispoAdminStoragePath = /storage/ISPOAdminv2
+        self.ispoClientStoragePath = /storage/ISPOClientv2
     }
 }
  
