@@ -48,7 +48,7 @@ export default function Home() {
           <br /> and letting the project claim the staking rewards on your
           behalf to use as
           <br /> funding. In return, you&#39;ll get the project&#39;s new token.
-          Win-win!.
+          Win-win!
         </Typography>
         <Box
           sx={{
@@ -113,7 +113,7 @@ export default function Home() {
               here
             </MuiLink>
             . <br />
-            In order to install it, please follow steps bellow.
+            In order to install it, please follow steps below.
             <ol>
               <li>
                 Open Extensions page in your browser at:{' '}
