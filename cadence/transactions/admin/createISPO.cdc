@@ -10,8 +10,6 @@ transaction(
   delegatorNodeId: String,
   epochStart: UInt64,
   epochEnd: UInt64,
-  rewardTokenContractAddress: Address,
-  rewardTokenContractName: String,
   rewardTokenVaultStoragePath: String,
   rewardTokenReceiverPublicPath: String,
   rewardTokenBalancePublicPath: String,
@@ -57,8 +55,6 @@ transaction(
     }
 
     let rewardTokenMetadata: ISPOManager.RewardTokenMetadata = ISPOManager.RewardTokenMetadata(
-      rewardTokenContractAddress: rewardTokenContractAddress,
-      rewardTokenContractName: rewardTokenContractName,
       rewardTokenVaultStoragePath: StoragePath(identifier: rewardTokenVaultStoragePath)!,
       rewardTokenReceiverPublicPath: PublicPath(identifier: rewardTokenReceiverPublicPath)!,
       rewardTokenBalancePublicPath: PublicPath(identifier: rewardTokenBalancePublicPath)!,
