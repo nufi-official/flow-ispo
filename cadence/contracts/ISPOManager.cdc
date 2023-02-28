@@ -345,15 +345,18 @@ pub contract ISPOManager {
             return ids
         }
 
+        access(self) fun borrowStakingRewardsVault(): &FungibleToken.Vault  {
+            return (&self.stakingRewardsVault as &FungibleToken.Vault?)!
+        }
+
         access(self) fun moveAdminFlowRewardsFromDelegator(delegatorRef: &ISPOManager.DelegatorRecord) {
-            let stakingRewardsVaultRef: &FungibleToken.Vault = (&self.stakingRewardsVault as &FungibleToken.Vault?)!
             let adminRewardAmount: UFix64 = self.calculateAdminRewardAmount(delegatorRef: delegatorRef)
             let delegatorRewardsVault: @FungibleToken.Vault <- delegatorRef.withdrawRewards(amount: adminRewardAmount)
-            stakingRewardsVaultRef.deposit(from: <- delegatorRewardsVault)
+            self.borrowStakingRewardsVault().deposit(from: <- delegatorRewardsVault)
         }
 
         pub fun withdrawAllAdminFlowRewards(): @FungibleToken.Vault {
-            let stakingRewardsVaultRef: &FungibleToken.Vault = (&self.stakingRewardsVault as &FungibleToken.Vault?)!
+            let stakingRewardsVaultRef: &FungibleToken.Vault = self.borrowStakingRewardsVault()
             for key in self.getActiveDelegatorIds() {
                 let delegatorRecordRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: key)
                 self.moveAdminFlowRewardsFromDelegator(delegatorRef: delegatorRecordRef)
@@ -408,8 +411,7 @@ pub contract ISPOManager {
 
         // sums all delegated available flow rewards
         access(self) fun getTotalFlowRewardsBalance(): UFix64 {
-            let stakingRewardsVaultRef: &FungibleToken.Vault = (&self.stakingRewardsVault as &FungibleToken.Vault?)!
-            var res: UFix64 = stakingRewardsVaultRef.balance
+            var res: UFix64 = self.borrowStakingRewardsVault().balance
             for key in self.getActiveDelegatorIds() {
                 let delegatorRecordRef: &ISPOManager.DelegatorRecord = self.borrowDelegatorRecord(delegatorId: key)
                 let adminRewardAmount: UFix64 = self.calculateAdminRewardAmount(delegatorRef: delegatorRecordRef)
