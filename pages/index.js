@@ -43,8 +43,8 @@ export default function Home() {
         <Typography variant="h6">
           <b>Staking-powered fundraising on Flow.</b>Support a project by
           staking FLOW and letting the project claim the staking rewards on your
-          behalf to use as funding. In return, you'll get the project's new
-          token. Win-win!.
+          behalf to use as funding. In return, you&#39;ll get the project&#39;s
+          new token. Win-win!.
         </Typography>
 
         <Button
