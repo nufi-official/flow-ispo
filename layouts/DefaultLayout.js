@@ -15,7 +15,7 @@ import {
 import useCurrentUser from '../hooks/useCurrentUser'
 import useConfig from '../hooks/useConfig'
 import {useCurrentEpoch} from '../hooks/epochs'
-import {useAccountBalances} from '../hooks/ispo'
+import {useAccountFlowBalance} from '../hooks/ispo'
 import {formatCompactAmount} from '../helpers/utils'
 
 const appTopBar = 64
@@ -25,7 +25,7 @@ export default function DefaultLayout({children}) {
   const user = useCurrentUser()
   const config = useConfig()
   const currentEpoch = useCurrentEpoch()
-  const {flow: flowBalance} = useAccountBalances(user.addr)
+  const flowBalance = useAccountFlowBalance(user.addr)
 
   return (
     <Box
