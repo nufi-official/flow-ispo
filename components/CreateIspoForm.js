@@ -349,6 +349,7 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
           ), // some testnet validator
           arg(data.startEpoch.toString(), t.UInt64),
           arg(data.endEpoch.toString(), t.UInt64),
+          arg(data.contractName, t.String),
           arg(data.vaultPath || defaultTokenValues.vaultPath, t.String),
           arg(data.receiverPath || defaultTokenValues.receiverPath, t.String),
           arg(data.balancePath || defaultTokenValues.balancePath, t.String),
