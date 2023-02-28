@@ -180,6 +180,7 @@ function SelectTokenField({
             {tokenFormSectionFields.map(({startAdornment, ...rest}) => (
               <FormInput
                 {...rest}
+                key={rest.name}
                 InputProps={
                   startAdornment
                     ? {
