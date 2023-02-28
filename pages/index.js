@@ -101,8 +101,8 @@ export default function Home() {
             <Typography variant="h6">
               <b>Testnet wallet</b>
             </Typography>
-            If you don't have any testnet wallet, you can download NuFi testnet
-            wallet{' '}
+            If you don&#39;t have any testnet wallet, you can download NuFi
+            testnet wallet{' '}
             <MuiLink
               color="info.main"
               href={
