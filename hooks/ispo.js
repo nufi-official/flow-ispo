@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react'
 import getIspoInfos from '../cadence/web/scripts/getISPOInfos.cdc'
 import getAccountISPOs from '../cadence/web/scripts/getAccountISPOs.cdc'
 import getIspoAdminInfos from '../cadence/web/scripts/getIspoAdminInfos.cdc'
+import getValidatorNodeIds from '../cadence/web/scripts/getValidatorNodeIds.cdc'
 import getRewardTokenBalance from '../cadence/web/scripts/getRewardTokenBalance.cdc'
 import * as fcl from '@onflow/fcl'
 
@@ -177,12 +178,10 @@ export function useAccountTokenBalance(address, balancePath) {
   const fetchBalance = async () => {
     let res
     try {
-      console.log(balancePath)
       res = await fcl.query({
         cadence: getRewardTokenBalance,
         args: (arg, t) => [arg(address, t.Address), arg(balancePath, t.String)],
       })
-      console.log(balancePath, res)
     } catch (e) {
       // Likely need to mint first to create capability if this fails
       res = null
@@ -199,4 +198,35 @@ export function useAccountTokenBalance(address, balancePath) {
   }, [address, balancePath, typeof window != 'undefined' && window.lastRefresh])
 
   return balance
+}
+
+export function useStakingNodeIds() {
+  const [stakingNodeIds, setStakingNodeIds] = useState(null)
+
+  const fetchStakingNodeIds = async () => {
+    let res
+    try {
+      res = await fcl.query({
+        cadence: getValidatorNodeIds,
+        args: () => [],
+      })
+    } catch (e) {
+      // Likely need to mint first to create capability if this fails
+      res = null
+    } finally {
+      if (!res?.length) {
+        res = [
+          '2b4dac560725d23c016af31567cff35bdcbc6d3e166419d1570de74dd9ecc416',
+        ]
+      }
+      setStakingNodeIds(res)
+    }
+  }
+
+  useEffect(() => {
+    fetchStakingNodeIds
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [window.lastRefresh])
+
+  return stakingNodeIds
 }
