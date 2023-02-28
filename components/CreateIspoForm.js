@@ -34,7 +34,6 @@ import createISPO from '../cadence/web/transactions/admin/createISPO.cdc'
 import ispoRewardTokenContract from '../cadence/web/contracts/ISPOExampleRewardToken.cdc'
 import {toUFixString} from '../helpers/utils'
 import {useCurrentEpoch} from '../hooks/epochs'
-import useCurrentUser from '../hooks/useCurrentUser'
 
 const FormInput = ({name, defaultValue, ...otherProps}) => {
   const {

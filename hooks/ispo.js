@@ -96,7 +96,6 @@ export function useAccountIspos(address) {
         hasDelegation: JSON.parse(value.hasDelegation),
         createdAt: new Date(Number(value.info.createdAt) * 1000),
       }))
-      console.log(res)
     } catch (e) {
       // Likely need to mint first to create capability if this fails
       res = []
@@ -220,12 +219,12 @@ export function useStakingNodeIds() {
           '2b4dac560725d23c016af31567cff35bdcbc6d3e166419d1570de74dd9ecc416',
         ]
       }
-      setStakingNodeIds(res)
+      setStakingNodeIds(res.slice(0, 10))
     }
   }
 
   useEffect(() => {
-    fetchStakingNodeIds
+    fetchStakingNodeIds()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [window.lastRefresh])
 
