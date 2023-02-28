@@ -20,6 +20,7 @@ import {
   CircularProgress,
   Portal,
   InputAdornment,
+  Autocomplete,
 } from '@mui/material'
 import InfoIcon from '@mui/icons-material/InfoOutlined'
 import {
@@ -34,6 +35,52 @@ import createISPO from '../cadence/web/transactions/admin/createISPO.cdc'
 import ispoRewardTokenContract from '../cadence/web/contracts/ISPOExampleRewardToken.cdc'
 import {toUFixString} from '../helpers/utils'
 import {useCurrentEpoch} from '../hooks/epochs'
+import {useStakingNodeIds} from '../hooks/ispo'
+
+const FormSelect = ({name, label, InputProps, defaultValue, ...otherProps}) => {
+  const {
+    control,
+    formState: {errors},
+  } = useFormContext()
+  return (
+    <Controller
+      defaultValue={defaultValue}
+      control={control}
+      name={name}
+      render={({field: {onChange, ref, ...field}}) => {
+        return (
+          // https://codesandbox.io/s/priceless-hamilton-pdxlww?fontsize=14&hidenavigation=1&theme=dark&file=/src/components/FormUI/SelectFree.jsx:1036-1049
+          <Autocomplete
+            onChange={(e, data) => {
+              onChange(data)
+            }}
+            onInputChange={(e, data) => {
+              if (data) {
+                onChange(data)
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                variant="standard"
+                {...params}
+                label={label}
+                inputRef={ref}
+                error={!!errors[name]}
+                helperText={errors[name] ? errors[name].message : ''}
+                InputProps={{
+                  ...params.InputProps,
+                  ...InputProps,
+                }}
+              />
+            )}
+            {...otherProps}
+            {...field}
+          />
+        )
+      }}
+    />
+  )
+}
 
 const FormInput = ({name, defaultValue, ...otherProps}) => {
   const {
@@ -322,9 +369,6 @@ const getDefaultTokenValues = async () => {
   }
 }
 
-const DEFAULT_NODE_ID =
-  '2b4dac560725d23c016af31567cff35bdcbc6d3e166419d1570de74dd9ecc416'
-
 const validateStakingNode = async (nodeId) => {
   return true
 }
@@ -336,12 +380,11 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
     currentEpoch,
   })
 
+  const nodeIds = useStakingNodeIds()
+
   const form = useForm({
     resolver: yupResolver(schema),
-    defaultValues: async () => ({
-      ...(await getDefaultTokenValues()),
-      nodeId: DEFAULT_NODE_ID,
-    }),
+    defaultValues: async () => await getDefaultTokenValues(),
   })
 
   const {
@@ -435,7 +478,6 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
       setAlert(message)
     }
   }
-
   return (
     <>
       <Card title="Create new ISPO">
@@ -488,20 +530,35 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
                   ),
                 }}
               />
-              <FormInput
-                name="nodeId"
-                label="Staking node ID"
-                type="string"
-                InputProps={{
-                  startAdornment: (
-                    <Tooltip title="ID of the node that users' FLOW will be delegated to">
-                      <InputAdornment position="start">
-                        <InfoIcon fontSize="small" color="primary" />
-                      </InputAdornment>
-                    </Tooltip>
-                  ),
-                }}
-              />
+              {nodeIds && (
+                <FormSelect
+                  freeSolo
+                  options={nodeIds}
+                  defaultValue={nodeIds[0]}
+                  name="nodeId"
+                  label="Staking node ID"
+                  sx={{
+                    width: '100%',
+                    '.MuiAutocomplete-popper': {width: '50px'},
+                  }}
+                  componentsProps={{
+                    popper: {
+                      sx: {
+                        width: 'fit-content!important',
+                      },
+                    },
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <Tooltip title="ID of the node that users' FLOW will be delegated to">
+                        <InputAdornment position="start">
+                          <InfoIcon fontSize="small" color="primary" />
+                        </InputAdornment>
+                      </Tooltip>
+                    ),
+                  }}
+                />
+              )}
             </Box>
 
             <Typography
