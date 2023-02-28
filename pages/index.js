@@ -43,7 +43,7 @@ export default function Home() {
         </Typography>
 
         <Typography variant="h6">
-          <b>Staking-powered fundraising on Flow.</b>&#160;Support a project by
+          <b>Staking-powered fundraising on Flow. </b>&#160;Support a project by
           staking FLOW
           <br /> and letting the project claim the staking rewards on your
           behalf to use as
