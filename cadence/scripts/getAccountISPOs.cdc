@@ -1,7 +1,7 @@
-import ISPOManager from "../contracts/ISPOManager.cdc"
+import ISPOManager from 0xf8d6e0586b0a20c7
 
-pub fun main(acct: Address): {UInt64: AnyStruct}? {
-  var maybeIspoClientsRef = getAuthAccount(acct).borrow<&{UInt64: ISPOManager.ISPOClient}>(from: ISPOManager.ispoClientStoragePath)
+pub fun main(): {UInt64: AnyStruct}? {
+  var maybeIspoClientsRef = getAuthAccount(0xf8d6e0586b0a20c7).borrow<&{UInt64: ISPOManager.ISPOClient}>(from: ISPOManager.ispoClientStoragePath)
   if maybeIspoClientsRef == nil {
     return {}
   }

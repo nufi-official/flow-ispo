@@ -1,7 +1,7 @@
-import ISPOManager from "../contracts/ISPOManager.cdc"
+import ISPOManager from 0xf8d6e0586b0a20c7
 
-pub fun main(acct: Address): [ISPOManager.ISPOInfo] {
-  var ispoAdmin = getAuthAccount(acct).borrow<&ISPOManager.ISPOAdmin>(from: ISPOManager.ispoAdminStoragePath)
+pub fun main(): [ISPOManager.ISPOInfo] {
+  var ispoAdmin = getAuthAccount(0xf8d6e0586b0a20c7).borrow<&ISPOManager.ISPOAdmin>(from: ISPOManager.ispoAdminStoragePath)
 
   if ispoAdmin == nil {
     return []
@@ -10,3 +10,4 @@ pub fun main(acct: Address): [ISPOManager.ISPOInfo] {
 
   return ispoAdmin!.getIspoInfos()
 }
+ 

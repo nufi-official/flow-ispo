@@ -1,2 +1,2 @@
 #!/bin/bash
-flow transactions send ./cadence/transactions/client/delegateToISPO.cdc 41 100.0
+flow transactions send ./cadence/transactions/client/delegateToISPO.cdc 49 100.0

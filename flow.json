@@ -17,6 +17,10 @@
     "emulator-user": {
       "address": "01cf0e2f2f715450",
       "key": "cf141d995afb2971958f2f0e914fd763bb62ee3ca8e948b56eb91ee2ad62e2cf"
+    },
+    "emulator-user-bob": {
+      "address": "0x179b6b1cb6755e31",
+      "key": "cf141d995afb2971958f2f0e914fd763bb62ee3ca8e948b56eb91ee2ad62e2cf"
     }
   },
   "contracts": {
