@@ -129,7 +129,7 @@ function SelectTokenField({selectedValue}) {
           >
             <Alert severity="info">
               [Hackathon limitation] The ISPO reward token will be deployed/minted from the currently logged in account, therefore the contract address
-              is currently not editable. In the final version, supplying an externally minted token will be possible
+              is currently not editable. In the final version, supplying an externally minted token will also be possible
             </Alert>
             {/* TODO make contractAddress field reactive to current user address  */}
             <FormInput
