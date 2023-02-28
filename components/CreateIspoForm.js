@@ -274,6 +274,7 @@ const createRegisterSchema = ({currentEpoch}) => {
     vaultPath: yup.string().required(FIELD_REQUIRED_ERROR),
     balancePath: yup.string().required(FIELD_REQUIRED_ERROR),
     receiverPath: yup.string().required(FIELD_REQUIRED_ERROR),
+    nodeId: yup.string().required(FIELD_REQUIRED_ERROR),
   })
 }
 
