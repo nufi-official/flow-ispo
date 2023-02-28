@@ -91,14 +91,14 @@ export default function MyIspos() {
                   mb: 1,
                 }}
               >
-                <Button variant="gradient" onClick={onWithdrawFlow}>
-                  <Tooltip title='For the sake of the demonstration, even zero rewards can be "withdrawn"'>
+                <Tooltip title='For the sake of the demonstration, even zero rewards can be "withdrawn"'>
+                  <Button variant="gradient" onClick={onWithdrawFlow}>
                     <Box mr={1} mt={1}>
                       <InfoIcon fontSize="small" />
                     </Box>
-                  </Tooltip>
-                  Withdraw staking rewards
-                </Button>
+                    Withdraw staking rewards
+                  </Button>
+                </Tooltip>
               </Box>
               {successMsg && (
                 <Alert severity="success" onClose={() => setSuccess(null)}>

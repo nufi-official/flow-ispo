@@ -4,6 +4,7 @@ export default function Card(props) {
   return (
     <MuiCard
       {...props}
+      title={undefined} // one of the props is named 'title' that is propagated by MUI into HTML.That results into undesired display of tooltips over the cards in hover state.
       sx={{
         borderRadius: '20px',
         py: 2.5,

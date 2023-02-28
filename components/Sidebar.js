@@ -11,6 +11,7 @@ import {
   ListItemText,
   Box,
   Typography,
+  Link as MuiLink,
 } from '@mui/material'
 import {
   Apps as MyParticipationIcon,
@@ -18,7 +19,10 @@ import {
   Add as CreateISPOIcon,
   AccountBox as OverviewIcon,
   SettingsApplications as MyISPOIcon,
+  Launch as ExternalIcon,
 } from '@mui/icons-material'
+import {learnMoreLink} from '../constants'
+import {generateGradient} from '../theme'
 
 const defaultSidebarWidth = 300
 
@@ -30,6 +34,7 @@ const navList = [
         label: 'Home',
         href: '/',
         Icon: OverviewIcon,
+        external: false,
       },
     ],
   },
@@ -40,11 +45,13 @@ const navList = [
         label: 'My Participations',
         href: '/my-participations',
         Icon: MyParticipationIcon,
+        external: false,
       },
       {
         label: 'Participation Offerings',
         href: '/participate',
         Icon: ParticipationOfferingsIcon,
+        external: false,
       },
     ],
   },
@@ -55,11 +62,24 @@ const navList = [
         label: 'Create ISPO',
         href: '/create',
         Icon: CreateISPOIcon,
+        external: false,
       },
       {
         label: 'My ISPOS',
         href: '/my-ispos',
         Icon: MyISPOIcon,
+        external: false,
+      },
+    ],
+  },
+  {
+    category: 'Docs',
+    links: [
+      {
+        label: 'Learn More',
+        href: learnMoreLink,
+        Icon: ExternalIcon,
+        external: true,
       },
     ],
   },
@@ -99,7 +119,16 @@ export default function Sidebar(props) {
         }}
       >
         <img src="/veleslogo.png" alt="Veles logo" height={40} width={40} />
-        <b>Veles</b>
+        <Box
+          sx={{
+            background: `-webkit-${generateGradient(1, 1)}`,
+            '-webkit-background-clip': 'text',
+            '-webkit-text-fill-color': 'transparent',
+            fontWeight: 700,
+          }}
+        >
+          Veles
+        </Box>
       </Toolbar>
 
       <List sx={{px: 1}}>
@@ -117,11 +146,12 @@ export default function Sidebar(props) {
               {category}
             </Typography>
             <Divider />
-            {links.map(({label, href, Icon}) => (
+            {links.map(({label, href, external, Icon}) => (
               <ListItem key={label + href} sx={{p: 1}}>
                 <ListItemButton
                   component={Link}
                   href={href}
+                  target={external ? '_blank' : undefined}
                   selected={router.pathname === href}
                   sx={{borderRadius: 1, p: 1}}
                 >
@@ -139,6 +169,23 @@ export default function Sidebar(props) {
           </Box>
         ))}
       </List>
+      <Typography
+        sx={{mt: 'auto', pb: 2}}
+        color="textSecondary"
+        variant="caption"
+        textAlign="center"
+      >
+        Enjoying Veles? Join our{' '}
+        <MuiLink
+          underline="hover"
+          href="https://discord.gg/NuFi"
+          target="_blank"
+          color="info.main"
+        >
+          Discord
+        </MuiLink>
+        .
+      </Typography>
     </Drawer>
   )
 }

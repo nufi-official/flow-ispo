@@ -80,18 +80,6 @@ const FormInput = ({name, defaultValue, ...otherProps}) => {
   )
 }
 
-const getDefaultTokenValues = async () => {
-  const {addr} = await fcl.currentUser.snapshot()
-
-  return {
-    contractAddress: addr,
-    contractName: 'ISPOExampleRewardToken',
-    vaultPath: 'ispoExampleRewardTokenVault',
-    balancePath: 'ispoExampleRewardTokenBalance',
-    receiverPath: 'ispoExampleRewardTokenReceiver',
-  }
-}
-
 const tokenFormSectionFields = [
   {
     name: 'contractAddress',
@@ -322,6 +310,25 @@ export function CreateIspoForm() {
   return <CreateIspoFormContent {...{onSubmit, currentEpoch}} />
 }
 
+const getDefaultTokenValues = async () => {
+  const {addr} = await fcl.currentUser.snapshot()
+
+  return {
+    contractAddress: addr,
+    contractName: 'ISPOExampleRewardToken',
+    vaultPath: 'ispoExampleRewardTokenVault',
+    balancePath: 'ispoExampleRewardTokenBalance',
+    receiverPath: 'ispoExampleRewardTokenReceiver',
+  }
+}
+
+const DEFAULT_NODE_ID =
+  '2b4dac560725d23c016af31567cff35bdcbc6d3e166419d1570de74dd9ecc416'
+
+const validateStakingNode = async (nodeId) => {
+  return true
+}
+
 function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
   const [alertMsg, setAlert] = useState(null)
 
@@ -331,7 +338,10 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
 
   const form = useForm({
     resolver: yupResolver(schema),
-    defaultValues: async () => await getDefaultTokenValues(),
+    defaultValues: async () => ({
+      ...(await getDefaultTokenValues()),
+      nodeId: DEFAULT_NODE_ID,
+    }),
   })
 
   const {
@@ -346,6 +356,9 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
     try {
       const defaultTokenValues = await getDefaultTokenValues()
       const fungibleTokenContractAddr = await fcl.config.get('0xFungibleToken')
+
+      // validate nodeId
+      await validateStakingNode(data.nodeId)
 
       try {
         const tokenContractDeployTx = await fcl.mutate({
@@ -395,10 +408,7 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
           arg(data.projectUrl || '', t.String),
           arg(data.projectDescription || '', t.String),
           arg(data.logoUrl || '', t.String),
-          arg(
-            '2b4dac560725d23c016af31567cff35bdcbc6d3e166419d1570de74dd9ecc416',
-            t.String,
-          ), // some testnet validator
+          arg(data.nodeId, t.String), // some testnet validator
           arg(data.startEpoch.toString(), t.UInt64),
           arg(data.endEpoch.toString(), t.UInt64),
           arg(data.vaultPath || defaultTokenValues.vaultPath, t.String),
@@ -429,6 +439,9 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
   return (
     <>
       <Card title="Create new ISPO">
+        <Alert severity="info" sx={{my: 1}}>
+          You can create only one ISPO per account
+        </Alert>
         <FormProvider {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Box
@@ -467,9 +480,23 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
                 InputProps={{
                   startAdornment: (
                     <Tooltip title="The total supply of token that will be distributed among ISPO delegators. For demo purposes just a dummy token with the amount specified will be minted and distributed. In a real ISPO the creator would supply their own token.">
-                      <Box mr={1}>
-                        <InfoIcon fontSize="small" />
-                      </Box>
+                      <InputAdornment position="start">
+                        <InfoIcon fontSize="small" color="primary" />
+                      </InputAdornment>
+                    </Tooltip>
+                  ),
+                }}
+              />
+              <FormInput
+                name="nodeId"
+                label="Staking node ID"
+                type="string"
+                InputProps={{
+                  startAdornment: (
+                    <Tooltip title="TODO: fill">
+                      <InputAdornment position="start">
+                        <InfoIcon fontSize="small" color="primary" />
+                      </InputAdornment>
                     </Tooltip>
                   ),
                 }}
