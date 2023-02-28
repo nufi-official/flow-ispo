@@ -473,7 +473,7 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
 
       const message = e.toString().includes('ISPO already exists')
         ? '[Hackathon version limitation] Currently, only one ISPO per account can be registered'
-        : e.toString().includes('NodeID not found')
+        : e.toString().includes('Node id is not in the proposed list')
         ? 'Staking node ID not found'
         : e.toString()
 
