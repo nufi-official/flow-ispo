@@ -161,7 +161,7 @@ pub contract ISPOManager {
             createdAt: UFix64,
         ) {
             pre {
-                FlowIDTableStaking.getProposedNodeIDs().length == 0 || FlowIDTableStaking.getProposedNodeIDs().contains(delegatorNodeId): "Node id is not in the proposed list",
+                FlowIDTableStaking.getProposedNodeIDs().length == 0 || FlowIDTableStaking.getProposedNodeIDs().contains(delegatorNodeId): "NodeID not found",
             }
             self.id = id
             self.name = name
