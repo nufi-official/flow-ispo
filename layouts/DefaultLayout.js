@@ -94,7 +94,7 @@ export default function DefaultLayout({children}) {
                 {flowBalance && (
                   <InfoItem
                     label="Balance"
-                    value={`${formatCompactAmount(flowBalance)} $FLOW`}
+                    value={`${formatCompactAmount(flowBalance)} FLOW`}
                   />
                 )}
               </>

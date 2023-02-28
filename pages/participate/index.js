@@ -121,7 +121,7 @@ function ParticipateCard({ispoData, disabled = false}) {
               label="Delegated"
               value={`${formatCompactAmount(
                 ispoData.delegatedFlowBalance,
-              )} $FLOW`}
+              )} FLOW`}
             />
             <IspoDetail
               label="Token supply"
@@ -173,7 +173,7 @@ function ParticipateCard({ispoData, disabled = false}) {
                 <TextField
                   variant="standard"
                   name="lockedFlowAmount"
-                  label="Amount $FLOW"
+                  label="Amount FLOW"
                   value={form.lockedFlowAmount || ''}
                   onChange={handleChange}
                 />
