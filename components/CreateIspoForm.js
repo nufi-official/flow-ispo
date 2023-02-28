@@ -539,7 +539,6 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
                   label="Staking node ID"
                   sx={{
                     width: '100%',
-                    '.MuiAutocomplete-popper': {width: '50px'},
                   }}
                   componentsProps={{
                     popper: {
