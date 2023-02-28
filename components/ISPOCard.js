@@ -6,7 +6,6 @@ import {
   DateRange as CalendarIcon,
   RocketLaunch as Placeholder,
 } from '@mui/icons-material'
-import {formatCompactAmount} from '../helpers/utils'
 import {useEpochToDate} from '../hooks/epochs'
 
 const imageSize = 60

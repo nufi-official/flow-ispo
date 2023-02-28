@@ -436,6 +436,8 @@ function CreateIspoFormContent({onSubmit: _onSubmit, currentEpoch}) {
         if (!e.toString().includes('cannot overwrite existing contract')) {
           throw e
         }
+        // otherwise sequence number of the account may get messed up (load balancing?)
+        await new Promise((res) => setTimeout(res, 5000))
       }
 
       const createIspoTxId = await fcl.mutate({
