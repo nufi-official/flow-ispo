@@ -10,4 +10,4 @@ export const BLOCK_EXPLORER_URLS = {
 }
 
 export const learnMoreLink =
-  'https://www.canva.com/design/DAFbOy1x5ok/adcIexJ3wPvSTpjJ0CHvoQ/view?utm_content=DAFbOy1x5ok&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink'
+  'https://www.canva.com/design/DAFb6IVLZ5I/jxBpM4Un3gct3-KcabC4pQ/view?utm_content=DAFb6IVLZ5I&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton#7'
