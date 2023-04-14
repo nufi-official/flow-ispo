@@ -1,11 +1,11 @@
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 import getIspoInfos from '../cadence/web/scripts/getISPOInfos.cdc'
 import getAccountISPOs from '../cadence/web/scripts/getAccountISPOs.cdc'
 import getIspoAdminInfos from '../cadence/web/scripts/getIspoAdminInfos.cdc'
 import getValidatorNodeIds from '../cadence/web/scripts/getValidatorNodeIds.cdc'
 import getRewardTokenBalance from '../cadence/web/scripts/getRewardTokenBalance.cdc'
 import * as fcl from '@onflow/fcl'
-import {useGlobalContext} from './globalContext'
+import { useGlobalContext } from './globalContext'
 
 const fetchIspos = async () => {
   let res
@@ -21,6 +21,8 @@ const fetchIspos = async () => {
         createdAt: new Date(Number(ispo.createdAt) * 1000),
       }))
       .filter((ispo) => ispo.name !== 'xxx')
+
+    console.log(res)
   } catch (e) {
     // Likely need to mint first to create capability if this fails
     res = []
@@ -31,7 +33,7 @@ const fetchIspos = async () => {
 
 export function useIspos() {
   const [ispos, setIspos] = useState(undefined)
-  const {refreshedAt} = useGlobalContext()
+  const { refreshedAt } = useGlobalContext()
 
   const fetch = async () => {
     setIspos(await fetchIspos())
@@ -80,7 +82,7 @@ const mockIspo = {
 
 export function useAccountIspos(address) {
   const [ispos, setIspos] = useState(undefined)
-  const {refreshedAt} = useGlobalContext()
+  const { refreshedAt } = useGlobalContext()
 
   const fetchAccountIspos = async () => {
     let res
@@ -88,9 +90,9 @@ export function useAccountIspos(address) {
       const allIspos = await fetchIspos()
       const rawIspos = address
         ? await fcl.query({
-            cadence: getAccountISPOs,
-            args: (arg, t) => [arg(address, t.Address)],
-          })
+          cadence: getAccountISPOs,
+          args: (arg, t) => [arg(address, t.Address)],
+        })
         : {}
       res = Object.entries(rawIspos).map(([key, value]) => ({
         id: key,
@@ -121,7 +123,7 @@ export function useAccountIspos(address) {
 
 export function useAccountAdminIspos(address) {
   const [ispos, setIspos] = useState(null)
-  const {refreshedAt} = useGlobalContext()
+  const { refreshedAt } = useGlobalContext()
 
   const fetchAccountAdminIspos = async () => {
     let res
@@ -150,7 +152,7 @@ export function useAccountAdminIspos(address) {
 
 export function useAccountFlowBalance(address) {
   const [balance, setBalance] = useState(null)
-  const {refreshedAt} = useGlobalContext()
+  const { refreshedAt } = useGlobalContext()
 
   const fetchBalance = async () => {
     let res
@@ -178,7 +180,7 @@ export function useAccountFlowBalance(address) {
 
 export function useAccountTokenBalance(address, balancePath) {
   const [balance, setBalance] = useState(null)
-  const {refreshedAt} = useGlobalContext()
+  const { refreshedAt } = useGlobalContext()
 
   const fetchBalance = async () => {
     let res
@@ -207,7 +209,7 @@ export function useAccountTokenBalance(address, balancePath) {
 
 export function useStakingNodeIds() {
   const [stakingNodeIds, setStakingNodeIds] = useState(null)
-  const {refreshedAt} = useGlobalContext()
+  const { refreshedAt } = useGlobalContext()
 
   const fetchStakingNodeIds = async () => {
     let res
