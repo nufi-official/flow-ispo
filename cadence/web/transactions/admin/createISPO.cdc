@@ -40,12 +40,14 @@ transaction(
     )
 
     let admin <- ISPOExampleRewardToken.createAdminResource()
+    let minter <- admin.createNewMinter(allowedAmount: totalRewardTokenAmount)
     
 
     let adminRef = &admin as &ISPOExampleRewardToken.Administrator
-    let minterRef = &adminRef.createNewMinter(allowedAmount: totalRewardTokenAmount) as &ISPOExampleRewardToken.Minter?
+    let minterRef = &minter as &ISPOExampleRewardToken.Minter
     let mintedVault <- minterRef!.mintTokens(amount: totalRewardTokenAmount)
     let vaultRef = acct.borrow<&ISPOExampleRewardToken.Vault>(from: StoragePath(identifier: rewardTokenVaultStoragePath)!)!
+    destroy minter
     destroy admin
     vaultRef.deposit(from: <- mintedVault)
 
@@ -79,3 +81,5 @@ transaction(
 
   execute {}
 }
+
+// TODO: this should be a script template, the ISPO admin will have to provide (contractName, contractAddress, storageVaultPath)
